@@ -12,8 +12,11 @@ const SearchPlace = () => {
 
   return (
     <View>
-      <View className="flex justify-center items-center">
-        <Text className="text-xl font-outfit-bold">Search Place</Text>
+      <View className="flex flex-col items-center">
+        <Text className="text-3xl font-outfit-bold">Search A Place</Text>
+        <Text className="text-lg text-gray-400 font-outfit">
+          Find your destination!
+        </Text>
       </View>
 
       <View className="p-6 -mt-36 h-full w-full flex justify-center">
@@ -22,6 +25,9 @@ const SearchPlace = () => {
           textInputProps={{
             placeholderTextColor: "#818181",
             returnKeyType: "search",
+            onSubmitEditing: () => {
+              router.push("/create-trip/select-traveler");
+            },
           }}
           fetchDetails={true}
           onPress={(data, details = null) => {
@@ -31,7 +37,7 @@ const SearchPlace = () => {
                 locationInfo: {
                   name: data.description,
                   coordinates: details?.geometry.location,
-                  photoRef: details?.photos?.[0]?.photo_reference,
+                  //   photoRef: details?.photos?.[0]?.photo_reference,
                   url: details?.url,
                 },
               },
