@@ -10,20 +10,17 @@ import { useRouter } from "expo-router";
 
 const SelectTraveler = () => {
   const router = useRouter();
-  const { tripData, setTripData } = useContext(CreateTripContext);
+  const { updateTripData } = useContext(CreateTripContext);
 
   const handleSelectTraveler = (option: any) => {
-    setTripData([
-      ...tripData,
-      {
-        travelers: {
-          type: option.title,
-          count: option.people,
-        },
+    updateTripData({
+      travelers: {
+        type: option.title,
+        count: option.people,
       },
-    ]);
+    });
     // Navigate to next screen or handle selection
-    // router.push("/create-trip/next-screen");
+    router.push("/create-trip/select-dates");
   };
 
   const renderItem = ({ item }: { item: any }) => (
@@ -55,7 +52,7 @@ const SelectTraveler = () => {
   return (
     <SafeAreaView className="flex-1">
       <View className="p-6">
-        <Text className="text-3xl font-outfit-bold mb-2">
+        <Text className="text-5xl font-outfit-bold mb-2">
           Who's Travelling?
         </Text>
         <Text className="text-gray-500 font-outfit-medium mb-6">

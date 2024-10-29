@@ -8,18 +8,18 @@ import { CreateTripContext } from "@/context/CreateTripContext";
 
 const SearchPlace = () => {
   const router = useRouter();
-  const { tripData, setTripData } = useContext(CreateTripContext);
+  const { updateTripData } = useContext(CreateTripContext);
 
   return (
     <View>
       <View className="flex flex-col items-center">
-        <Text className="text-3xl font-outfit-bold">Search A Place</Text>
+        <Text className="text-5xl font-outfit-bold mt-20">Search A Place</Text>
         <Text className="text-lg text-gray-400 font-outfit">
           Find your destination!
         </Text>
       </View>
 
-      <View className="p-6 -mt-36 h-full w-full flex justify-center">
+      <View className="p-6 -mt-48 h-full w-full flex justify-center">
         <GooglePlacesAutocomplete
           placeholder="Search for a place"
           textInputProps={{
@@ -31,17 +31,13 @@ const SearchPlace = () => {
           }}
           fetchDetails={true}
           onPress={(data, details = null) => {
-            setTripData([
-              ...tripData,
-              {
-                locationInfo: {
-                  name: data.description,
-                  coordinates: details?.geometry.location,
-                  //   photoRef: details?.photos?.[0]?.photo_reference,
-                  url: details?.url,
-                },
+            updateTripData({
+              locationInfo: {
+                name: data.description,
+                coordinates: details?.geometry.location,
+                url: details?.url,
               },
-            ]);
+            });
             router.push("/create-trip/select-traveler");
           }}
           query={{

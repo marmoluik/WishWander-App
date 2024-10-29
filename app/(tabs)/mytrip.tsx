@@ -11,9 +11,9 @@ const MyTrip = () => {
     <SafeAreaView className="p-6 h-full">
       <View className="flex flex-row items-center justify-between">
         <Text className="text-3xl font-outfit-bold text-purple-700">
-          My Trip
+          My Trips
         </Text>
-        <Ionicons name="add-circle" size={36} color="#8b5cf6" />
+        <Ionicons name="add-circle" size={40} color="#8b5cf6" />
       </View>
 
       {userTrips?.length == 0 && <StartNewTripCard />}

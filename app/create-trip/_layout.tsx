@@ -28,6 +28,9 @@ export default function CreateTripLayout() {
     >
       <Stack.Screen name="search-place" />
       <Stack.Screen name="select-traveler" />
+      <Stack.Screen name="select-dates" />
+      <Stack.Screen name="select-budget" />
+      <Stack.Screen name="review-trip" />
     </Stack>
   );
 }
