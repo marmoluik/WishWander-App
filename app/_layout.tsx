@@ -6,16 +6,18 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import "../global.css";
-
+import "react-native-get-random-values";
+import { CreateTripContext } from "@/context/CreateTripContext";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const [tripData, setTripData] = useState<any[]>([]);
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     outfit: require("@/assets/fonts/Outfit-Regular.ttf"),
@@ -35,11 +37,14 @@ export default function RootLayout() {
 
   return (
     <>
-      <StatusBar style="dark" />
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      </Stack>
+      <CreateTripContext.Provider value={{ tripData, setTripData }}>
+        <StatusBar style="dark" />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(tabs)" />
+        </Stack>
+      </CreateTripContext.Provider>
     </>
   );
 }
