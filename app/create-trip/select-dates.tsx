@@ -81,7 +81,7 @@ const SelectDates = () => {
           <CustomButton
             title="Confirm Dates"
             onPress={handleConfirmDates}
-            disabled={!selectedStartDate || !selectedEndDate}
+            disabled={!selectedEndDate}
             className="disabled:opacity-50"
           />
         </View>

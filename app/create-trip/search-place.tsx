@@ -1,4 +1,11 @@
-import { View, Text, TouchableOpacity, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import React, { useContext, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRouter } from "expo-router";
@@ -11,79 +18,92 @@ const SearchPlace = () => {
   const { updateTripData } = useContext(CreateTripContext);
 
   return (
-    <View>
-      <View className="flex flex-col items-center">
-        <Text className="text-5xl font-outfit-bold mt-20">Search A Place</Text>
-        <Text className="text-lg text-gray-400 font-outfit">
-          Find your destination!
-        </Text>
-      </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View>
+        <View className="flex flex-col items-center">
+          <Text className="text-5xl font-outfit-bold mt-20 px-3 mb-2">
+            Where do you want to go?
+          </Text>
+          <Text className="text-lg text-gray-400 font-outfit">
+            Find your destination!
+          </Text>
+        </View>
 
-      <View className="p-6 -mt-48 h-full w-full flex justify-center">
-        <GooglePlacesAutocomplete
-          placeholder="Search for a place"
-          textInputProps={{
-            placeholderTextColor: "#818181",
-            returnKeyType: "search",
-            onSubmitEditing: () => {
-              router.push("/create-trip/select-traveler");
-            },
-          }}
-          fetchDetails={true}
-          onPress={(data, details = null) => {
-            updateTripData({
-              locationInfo: {
-                name: data.description,
-                coordinates: details?.geometry.location,
-                url: details?.url,
+        <View className="p-6 mt-10 h-full w-full flex">
+          <GooglePlacesAutocomplete
+            placeholder="Search for a place"
+            textInputProps={{
+              placeholderTextColor: "#818181",
+              returnKeyType: "search",
+              onSubmitEditing: (e) => {
+                if (e.nativeEvent.text.trim()) {
+                  router.push("/create-trip/select-traveler");
+                }
               },
-            });
-            router.push("/create-trip/select-traveler");
-          }}
-          query={{
-            key: process.env.EXPO_PUBLIC_GOOGLE_MAP_KEY,
-            language: "en",
-          }}
-          styles={{
-            container: {
-              flex: 0,
-            },
-            textInput: {
-              height: 54,
-              backgroundColor: "#e2e2e2",
-              borderRadius: 999,
-              paddingHorizontal: 16,
-              fontSize: 15,
-              fontFamily: "outfit-medium",
-            },
-            listView: {
-              backgroundColor: "#fff",
-              borderRadius: 8,
-              marginTop: 8,
-            },
-            row: {
-              padding: 13,
-              height: 50,
-              flexDirection: "row",
-            },
-            separator: {
-              height: 0.5,
-              backgroundColor: "#c8c7cc",
-            },
-            description: {
-              fontSize: 15,
-              fontFamily: "outfit",
-            },
-            predefinedPlacesDescription: {
-              color: "#666666",
-            },
-            textInputContainer: {
-              color: "#b5b3b3",
-            },
-          }}
-        />
+              clearButtonMode: "never",
+            }}
+            fetchDetails={true}
+            enablePoweredByContainer={false}
+            onPress={(data, details = null) => {
+              updateTripData({
+                locationInfo: {
+                  name: data.description,
+                  coordinates: details?.geometry.location,
+                  url: details?.url,
+                },
+              });
+              router.push("/create-trip/select-traveler");
+            }}
+            query={{
+              key: process.env.EXPO_PUBLIC_GOOGLE_MAP_KEY,
+              language: "en",
+            }}
+            styles={{
+              container: {
+                flex: 0,
+              },
+              textInput: {
+                height: 54,
+                backgroundColor: "#e2e2e2",
+                borderRadius: 999,
+                paddingHorizontal: 16,
+                fontSize: 15,
+                fontFamily: "outfit-medium",
+              },
+              listView: {
+                backgroundColor: "#fff",
+                borderRadius: 8,
+                marginTop: 8,
+              },
+              row: {
+                padding: 13,
+                height: 50,
+                flexDirection: "row",
+                backgroundColor: "#fff",
+                alignItems: "center",
+              },
+              separator: {
+                height: 0.5,
+                backgroundColor: "#c8c7cc",
+              },
+              description: {
+                fontSize: 15,
+                fontFamily: "outfit",
+              },
+              predefinedPlacesDescription: {
+                color: "#666666",
+              },
+              textInputContainer: {
+                color: "#b5b3b3",
+              },
+              clearButton: {
+                color: "#b5b3b3",
+              },
+            }}
+          />
+        </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 

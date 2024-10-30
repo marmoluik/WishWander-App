@@ -60,6 +60,7 @@ export default function RootLayout() {
           <Stack.Screen name="(auth)" />
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="create-trip" />
+          <Stack.Screen name="generate-trip" />
         </Stack>
       </CreateTripContext.Provider>
     </>
