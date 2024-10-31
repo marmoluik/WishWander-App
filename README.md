@@ -1,3 +1,47 @@
+# Avent - AI Travel Planner Mobile App
+
+<p align="center">
+  <img src="./assets/images/splash.png" alt="Avent Logo" width="200"/>
+</p>
+
+## 🚀 About
+
+A smart travel planning mobile application that leverages AI to create personalized travel itineraries. Plan your trips with customized recommendations for flights, accommodations, and places to visit based on your preferences and budget.
+
+## 🚀 Stack Used
+- React Native with Expo and Expo Router for file-based navigation
+- TypeScript for type safety
+- Gemini AI API for trip generation
+- Google Places API for location search
+- Async Storage for local data persistence
+- NativeWind (TailwindCSS) for styling
+- User Authentication (Email and Password) with Firebase
+- Database is Firebase's Firestore DB
+- Google Maps API for mapping features
+
+## Video Demo
+- Because deploying is hard :(
+https://drive.google.com/file/d/1UbQjPsd1CdqOqducUJLfNspNC3GU2N6Z/view?usp=sharing
+
+## ⚡ Key Features
+
+### 👤 User Experience
+- Seamless and Secure Email & Password Authentication
+- Interactive Date Selection Calendar
+- Budget-based Trip Planning
+- Real-time Trip Updates
+
+### 🌍 Travel Planning
+- AI-Powered Custom Itinerary Generation
+- Smart Hotel Recommendations
+- Flight Details and Booking Links
+- Points of Interest Discovery
+- Google Places Integration for Destination Search
+- Direct Google Maps Integration for Navigation
+
+
+-----------------------------------------------------------------
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
