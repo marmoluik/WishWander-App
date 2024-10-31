@@ -12,14 +12,15 @@ import { CreateTripContext } from "@/context/CreateTripContext";
 
 const SelectBudget = () => {
   const router = useRouter();
-  const { updateTripData } = useContext(CreateTripContext);
+  const { setTripData } = useContext(CreateTripContext);
 
   const handleSelectBudget = (option: any) => {
-    updateTripData({
-      budget: {
-        type: option.title,
+    setTripData((prev) => [
+      ...prev,
+      {
+        budget: { type: option.title },
       },
-    });
+    ]);
     // Navigate to next screen or handle selection
     router.push("/create-trip/review-trip");
   };

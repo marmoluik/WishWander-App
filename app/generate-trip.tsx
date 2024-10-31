@@ -5,12 +5,19 @@ import { CreateTripContext } from "@/context/CreateTripContext";
 import { AI_PROMPT } from "@/constants/Options";
 import { chatSession } from "@/config/GeminiConfig";
 import { useRouter } from "expo-router";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "@/config/FirebaseConfig";
 
 const GenerateTrip = () => {
   const { tripData } = useContext(CreateTripContext);
   const [loading, setLoading] = useState(false);
+  const user = auth.currentUser;
 
   const router = useRouter();
+
+  useEffect(() => {
+    generateTrip();
+  }, []);
 
   const generateTrip = async () => {
     setLoading(true);
@@ -38,15 +45,20 @@ const GenerateTrip = () => {
       .replace("{budget}", budget?.type || "");
 
     const result = await chatSession.sendMessage(FINAL_PROMPT);
-    console.log(result.response.text());
+    const tripResponse = JSON.parse(result.response.text());
     setLoading(false);
+
+    const docId = Date.now().toString();
+
+    const res = await setDoc(doc(db, "UserTrips", docId), {
+      userEmail: user?.email,
+      tripPlan: tripResponse,
+      tripData: JSON.stringify(tripData),
+      docId: docId,
+    });
 
     router.push("/mytrip");
   };
-
-  useEffect(() => {
-    tripData && generateTrip();
-  }, [tripData]);
 
   return (
     <SafeAreaView className="p-6 h-full flex flex-col items-center justify-center">

@@ -15,7 +15,7 @@ import { CreateTripContext } from "@/context/CreateTripContext";
 
 const SearchPlace = () => {
   const router = useRouter();
-  const { updateTripData } = useContext(CreateTripContext);
+  const { setTripData } = useContext(CreateTripContext);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -45,13 +45,17 @@ const SearchPlace = () => {
             fetchDetails={true}
             enablePoweredByContainer={false}
             onPress={(data, details = null) => {
-              updateTripData({
-                locationInfo: {
-                  name: data.description,
-                  coordinates: details?.geometry.location,
-                  url: details?.url,
+              setTripData([
+                {
+                  locationInfo: {
+                    name: data.description,
+                    coordinates: details?.geometry.location,
+                    url: details?.url,
+                    // @ts-ignore
+                    photoRef: details?.photos?.[0]?.photo_reference,
+                  },
                 },
-              });
+              ]);
               router.push("/create-trip/select-traveler");
             }}
             query={{

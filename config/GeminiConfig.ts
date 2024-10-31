@@ -36,6 +36,3 @@ export const chatSession = model.startChat({
         },
       ],
     });
-  
-    // const result = chatSession.sendMessage("INSERT_INPUT_HERE");
-    // console.log(result.response.text());

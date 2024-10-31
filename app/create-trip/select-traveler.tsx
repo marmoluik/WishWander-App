@@ -10,16 +10,18 @@ import { useRouter } from "expo-router";
 
 const SelectTraveler = () => {
   const router = useRouter();
-  const { updateTripData } = useContext(CreateTripContext);
+  const { setTripData } = useContext(CreateTripContext);
 
   const handleSelectTraveler = (option: any) => {
-    updateTripData({
-      travelers: {
-        type: option.title,
-        count: option.people,
+    setTripData((prev) => [
+      ...prev,
+      {
+        travelers: {
+          type: option.title,
+          count: option.people,
+        },
       },
-    });
-    // Navigate to next screen or handle selection
+    ]);
     router.push("/create-trip/select-dates");
   };
 

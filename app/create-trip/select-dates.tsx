@@ -9,7 +9,7 @@ import moment from "moment";
 
 const SelectDates = () => {
   const router = useRouter();
-  const { updateTripData } = useContext(CreateTripContext);
+  const { setTripData } = useContext(CreateTripContext);
   const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
 
@@ -28,13 +28,16 @@ const SelectDates = () => {
     );
 
     if (selectedStartDate && selectedEndDate) {
-      updateTripData({
-        dates: {
-          startDate: selectedStartDate,
-          endDate: selectedEndDate,
-          totalNumberOfDays: totalNumberOfDays + 1,
+      setTripData((prev) => [
+        ...prev,
+        {
+          dates: {
+            startDate: selectedStartDate,
+            endDate: selectedEndDate,
+            totalNumberOfDays: totalNumberOfDays + 1,
+          },
         },
-      });
+      ]);
       router.push("/create-trip/select-budget");
     } else {
       alert("Please select both start and end dates");

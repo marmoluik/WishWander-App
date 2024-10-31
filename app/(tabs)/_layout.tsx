@@ -21,9 +21,13 @@ export default function TabLayout() {
       <Tabs.Screen
         name="mytrip"
         options={{
-          tabBarLabel: "My Trip",
-          tabBarIcon: () => (
-            <Ionicons name="location-sharp" size={24} color="#8b5cf6" />
+          tabBarLabel: "My Trips",
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name="location-sharp"
+              size={24}
+              color={focused ? "#8b5cf6" : "#64748b"}
+            />
           ),
         }}
       />
@@ -31,8 +35,12 @@ export default function TabLayout() {
         name="discover"
         options={{
           tabBarLabel: "Discover",
-          tabBarIcon: () => (
-            <MaterialIcons name="travel-explore" size={24} color="#8b5cf6" />
+          tabBarIcon: ({ focused }) => (
+            <MaterialIcons
+              name="travel-explore"
+              size={24}
+              color={focused ? "#8b5cf6" : "#64748b"}
+            />
           ),
         }}
       />
@@ -40,8 +48,12 @@ export default function TabLayout() {
         name="profile"
         options={{
           tabBarLabel: "Profile",
-          tabBarIcon: () => (
-            <FontAwesome name="user-o" size={21} color="#8b5cf6" />
+          tabBarIcon: ({ focused }) => (
+            <FontAwesome
+              name="user-o"
+              size={21}
+              color={focused ? "#8b5cf6" : "#64748b"}
+            />
           ),
         }}
       />

@@ -1,11 +1,19 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import CustomButton from "@/components/CustomButton";
 import { useRouter } from "expo-router";
+import { CreateTripContext } from "@/context/CreateTripContext";
 
 const StartNewTripCard = () => {
   const router = useRouter();
+  const { setTripData } = useContext(CreateTripContext);
+
+  const handleStartNewTrip = () => {
+    setTripData([]); // Clear trip data
+    router.push("/create-trip/search-place");
+  };
+
   return (
     <View className="p-5 flex items-center justify-center gap-5 h-full">
       <FontAwesome6 name="map-location-dot" size={50} color="#8b5cf6" />
@@ -17,7 +25,7 @@ const StartNewTripCard = () => {
       </Text>
       <CustomButton
         title="Start New Trip"
-        onPress={() => router.push("/create-trip/search-place")}
+        onPress={handleStartNewTrip}
         bgVariant="primary"
         className="mt-5"
       />

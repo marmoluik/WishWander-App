@@ -51,9 +51,7 @@ export default function RootLayout() {
 
   return (
     <>
-      <CreateTripContext.Provider
-        value={{ tripData, setTripData, updateTripData }}
-      >
+      <CreateTripContext.Provider value={{ tripData, setTripData }}>
         <StatusBar style="dark" />
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
