@@ -3,8 +3,11 @@ import React from "react";
 import moment from "moment";
 import CustomButton from "../CustomButton";
 import UserTripCard from "./UserTripCard";
+import { useRouter } from "expo-router";
 
 const UserTripList = ({ userTrips }: { userTrips: any[] }) => {
+  const router = useRouter();
+
   // Sort trips by start date
   const sortedTrips = [...userTrips].sort((a, b) => {
     const aData = JSON.parse(a.tripData);
@@ -62,7 +65,15 @@ const UserTripList = ({ userTrips }: { userTrips: any[] }) => {
 
           <CustomButton
             title="View Trip"
-            onPress={() => {}}
+            onPress={() =>
+              router.push({
+                pathname: "/trip-details",
+                params: {
+                  tripData: sortedTrips[0].tripData,
+                  tripPlan: JSON.stringify(sortedTrips[0].tripPlan),
+                },
+              })
+            }
             className={`mt-3 ${isPastTrip ? "opacity-50" : ""}`}
           />
         </View>

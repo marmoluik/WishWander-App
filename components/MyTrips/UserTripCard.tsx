@@ -2,8 +2,11 @@ import { View, Text, Image } from "react-native";
 import React from "react";
 import moment from "moment";
 import CustomButton from "../CustomButton";
+import { useRouter } from "expo-router";
 
 const UserTripCard = ({ trip }: { trip: any }) => {
+  const router = useRouter();
+
   const tripData = JSON.parse(trip?.tripData);
   const locationInfo = tripData?.find(
     (item: any) => item.locationInfo
@@ -44,7 +47,15 @@ const UserTripCard = ({ trip }: { trip: any }) => {
       <View className="flex-1">
         <CustomButton
           title="View Trip"
-          onPress={() => {}}
+          onPress={() =>
+            router.push({
+              pathname: "/trip-details",
+              params: {
+                tripData: trip.tripData,
+                tripPlan: JSON.stringify(trip.tripPlan),
+              },
+            })
+          }
           disabled={isPastTrip}
           className={`mt-2 py-0.5 ${isPastTrip ? "opacity-50" : ""}`}
         />
