@@ -45,17 +45,21 @@ const SearchPlace = () => {
             fetchDetails={true}
             enablePoweredByContainer={false}
             onPress={(data, details = null) => {
-              setTripData([
-                {
-                  locationInfo: {
-                    name: data.description,
-                    coordinates: details?.geometry.location,
-                    url: details?.url,
-                    // @ts-ignore
-                    photoRef: details?.photos?.[0]?.photo_reference,
+              setTripData((prev) => {
+                const newData = prev.filter((item) => !item.locationInfo);
+                return [
+                  ...newData,
+                  {
+                    locationInfo: {
+                      name: data.description,
+                      coordinates: details?.geometry.location,
+                      url: details?.url,
+                      // @ts-ignore
+                      photoRef: details?.photos?.[0]?.photo_reference,
+                    },
                   },
-                },
-              ]);
+                ];
+              });
               router.push("/create-trip/select-traveler");
             }}
             query={{

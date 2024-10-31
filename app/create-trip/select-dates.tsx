@@ -28,16 +28,19 @@ const SelectDates = () => {
     );
 
     if (selectedStartDate && selectedEndDate) {
-      setTripData((prev) => [
-        ...prev,
-        {
-          dates: {
-            startDate: selectedStartDate,
-            endDate: selectedEndDate,
-            totalNumberOfDays: totalNumberOfDays + 1,
+      setTripData((prev) => {
+        const newData = prev.filter((item) => !item.dates);
+        return [
+          ...newData,
+          {
+            dates: {
+              startDate: selectedStartDate,
+              endDate: selectedEndDate,
+              totalNumberOfDays: totalNumberOfDays + 1,
+            },
           },
-        },
-      ]);
+        ];
+      });
       router.push("/create-trip/select-budget");
     } else {
       alert("Please select both start and end dates");

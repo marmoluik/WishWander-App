@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { CreateTripContext } from "@/context/CreateTripContext";
@@ -16,6 +16,11 @@ const ReviewTrip = () => {
   const travelers = tripData.find((item) => item.travelers)?.travelers;
   const dates = tripData.find((item) => item.dates)?.dates;
   const budget = tripData.find((item) => item.budget)?.budget;
+
+  // Use useEffect to update the data whenever tripData changes
+  useEffect(() => {
+    // This will re-render the component whenever tripData changes
+  }, [tripData]);
 
   const renderReviewItem = (
     title: string,

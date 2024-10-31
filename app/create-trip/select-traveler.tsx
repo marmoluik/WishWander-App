@@ -13,15 +13,18 @@ const SelectTraveler = () => {
   const { setTripData } = useContext(CreateTripContext);
 
   const handleSelectTraveler = (option: any) => {
-    setTripData((prev) => [
-      ...prev,
-      {
-        travelers: {
-          type: option.title,
-          count: option.people,
+    setTripData((prev) => {
+      const newData = prev.filter((item) => !item.travelers);
+      return [
+        ...newData,
+        {
+          travelers: {
+            type: option.title,
+            count: option.people,
+          },
         },
-      },
-    ]);
+      ];
+    });
     router.push("/create-trip/select-dates");
   };
 
