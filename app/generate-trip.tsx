@@ -18,6 +18,7 @@ export default function GenerateTrip() {
 
   useEffect(() => {
     generateTrip();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const generateTrip = async () => {
@@ -54,16 +55,38 @@ export default function GenerateTrip() {
       // Send the prompt and await the response
       const result = await session.sendMessage(FINAL_PROMPT);
       const rawText = await result.response.text();
-      const parsed = JSON.parse(rawText);
-      // Unwrap the inner trip_plan object if present
-      const tripResponse = parsed.trip_plan ?? parsed;
 
-      // Save to Firestore
+      // Parse the AI response safely
+      let parsed: any;
+      try {
+        parsed = JSON.parse(rawText);
+      } catch (err) {
+        console.error("parse error", err);
+        throw new Error("Invalid response format");
+      }
+
+      // Ensure we have a nested trip_plan object and populate defaults so
+      // downstream screens can safely render even if the AI omits sections
+      const tripPlan = parsed?.trip_plan ?? {};
+      if (!tripPlan.flight_details) {
+        tripPlan.flight_details = null;
+      }
+      if (!tripPlan.hotel) {
+        tripPlan.hotel = { options: [] };
+      } else if (!tripPlan.hotel.options) {
+        tripPlan.hotel.options = [];
+      }
+      if (!tripPlan.places_to_visit) {
+        tripPlan.places_to_visit = [];
+      }
+      parsed.trip_plan = tripPlan;
+
+      // Save the entire parsed response so downstream screens receive trip_plan
       const docId = Date.now().toString();
       if (db && user) {
         await setDoc(doc(db, "UserTrips", docId), {
           userEmail: user.email,
-          tripPlan: tripResponse,
+          tripPlan: parsed,
           tripData: JSON.stringify(tripData),
           docId,
         });
@@ -73,7 +96,11 @@ export default function GenerateTrip() {
       }
     } catch (err) {
       console.error("Failed to generate trip", err);
-      setError("Failed to generate trip. Please try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to generate trip. Please try again."
+      );
     }
   };
 
