@@ -1,8 +1,7 @@
 import { View, Text, ScrollView, Image, Linking } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
-import moment from "moment";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
 
 const DEFAULT_IMAGE_URL =
@@ -36,11 +35,12 @@ const Discover = () => {
   useEffect(() => {
     if (tripData && tripPlan) {
       const parsedTrip = JSON.parse(tripPlan as string);
-      setParsedTripData(JSON.parse(tripData as string));
+      const parsedData = JSON.parse(tripData as string);
+      setParsedTripData(parsedData);
       setParsedTripPlan(parsedTrip);
 
       // Fetch images for hotels
-      parsedTrip.trip_plan.hotel.options.forEach(
+      parsedTrip?.trip_plan?.hotel?.options?.forEach(
         async (hotel: any, index: number) => {
           const imageUrl = await fetchPlaceImage(hotel.name);
           setParsedTripPlan((prev: any) => ({
@@ -59,7 +59,7 @@ const Discover = () => {
       );
 
       // Fetch images for places to visit
-      parsedTrip.trip_plan.places_to_visit.forEach(
+      parsedTrip?.trip_plan?.places_to_visit?.forEach(
         async (place: any, index: number) => {
           const imageUrl = await fetchPlaceImage(place.name);
           setParsedTripPlan((prev: any) => ({
@@ -107,10 +107,10 @@ const Discover = () => {
       <View className="bg-purple-50 p-4 rounded-xl mb-6">
         <Text className="font-outfit-bold text-lg mb-2">Trip Overview</Text>
         <Text className="font-outfit text-gray-600">
-          Duration: {parsedTripPlan.trip_plan.duration}
+          Duration: {parsedTripPlan?.trip_plan?.duration ?? "N/A"}
         </Text>
         <Text className="font-outfit text-gray-600">
-          Budget: {parsedTripPlan.trip_plan.budget}
+          Budget: {parsedTripPlan?.trip_plan?.budget ?? "N/A"}
         </Text>
         {/* <Text className="font-outfit text-gray-600">
           Group Size: {parsedTripPlan.group_size}
@@ -120,127 +120,145 @@ const Discover = () => {
       {/* Flight Details */}
       <View className="mb-8">
         <Text className="text-2xl font-outfit-bold mb-4">Flight Details</Text>
-        <View className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-          <View className="flex-row justify-between items-center mb-4">
-            <View>
-              <Text className="font-outfit-bold text-lg">
-                {parsedTripPlan.trip_plan.flight_details.departure_city}
-              </Text>
-              <Text className="font-outfit text-gray-600">
-                {parsedTripPlan.trip_plan.flight_details.departure_date}{" "}
-                {parsedTripPlan.trip_plan.flight_details.departure_time}
-              </Text>
+        {parsedTripPlan?.trip_plan?.flight_details ? (
+          <View className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+            <View className="flex-row justify-between items-center mb-4">
+              <View>
+                <Text className="font-outfit-bold text-lg">
+                  {parsedTripPlan.trip_plan.flight_details.departure_city}
+                </Text>
+                <Text className="font-outfit text-gray-600">
+                  {parsedTripPlan.trip_plan.flight_details.departure_date}{" "}
+                  {parsedTripPlan.trip_plan.flight_details.departure_time}
+                </Text>
+              </View>
+              <Ionicons name="airplane" size={24} color="#8b5cf6" />
+              <View>
+                <Text className="font-outfit-bold text-lg">
+                  {parsedTripPlan.trip_plan.flight_details.arrival_city}
+                </Text>
+                <Text className="font-outfit text-gray-600">
+                  {parsedTripPlan.trip_plan.flight_details.arrival_date}{" "}
+                  {parsedTripPlan.trip_plan.flight_details.arrival_time}
+                </Text>
+              </View>
             </View>
-            <Ionicons name="airplane" size={24} color="#8b5cf6" />
-            <View>
-              <Text className="font-outfit-bold text-lg">
-                {parsedTripPlan.trip_plan.flight_details.arrival_city}
+            <View className="border-t border-gray-200 pt-4">
+              <Text className="font-outfit text-gray-600">
+                Airline: {parsedTripPlan.trip_plan.flight_details.airline}
               </Text>
               <Text className="font-outfit text-gray-600">
-                {parsedTripPlan.trip_plan.flight_details.arrival_date}{" "}
-                {parsedTripPlan.trip_plan.flight_details.arrival_time}
-              </Text>
-            </View>
-          </View>
-          <View className="border-t border-gray-200 pt-4">
-            <Text className="font-outfit text-gray-600">
-              Airline: {parsedTripPlan.trip_plan.flight_details.airline}
-            </Text>
-            <Text className="font-outfit text-gray-600">
-              Flight: {parsedTripPlan.trip_plan.flight_details.flight_number}
-            </Text>
-            <Text className="font-outfit text-gray-600">
-              Price: {parsedTripPlan.trip_plan.flight_details.price}
-            </Text>
-            <CustomButton
-              title="Book Flight"
-              onPress={() =>
-                Linking.openURL(
-                  parsedTripPlan.trip_plan.flight_details.booking_url
-                )
-              }
-              className="mt-4"
-            />
-          </View>
-        </View>
-      </View>
-
-      {/* Hotels Section */}
-      <View className="mb-8">
-        <Text className="text-2xl font-outfit-bold mb-4">Hotel Options</Text>
-        {parsedTripPlan.trip_plan.hotel.options.map(
-          (hotel: any, index: number) => (
-            <View
-              key={index}
-              className="bg-gray-50 p-4 rounded-xl mb-4 border border-gray-100"
-            >
-              <Image
-                source={{ uri: hotel.image_url }}
-                className="w-full h-48 rounded-xl mb-4"
-              />
-              <Text className="font-outfit-bold text-lg">{hotel.name}</Text>
-              <Text className="font-outfit text-gray-600 mb-2">
-                {hotel.address}
+                Flight: {parsedTripPlan.trip_plan.flight_details.flight_number}
               </Text>
               <Text className="font-outfit text-gray-600">
-                Price: {hotel.price}
-              </Text>
-              <Text className="font-outfit text-gray-600">
-                Rating: {hotel.rating} ⭐
-              </Text>
-              <Text className="font-outfit text-gray-600 mt-2">
-                {hotel.description}
+                Price: {parsedTripPlan.trip_plan.flight_details.price}
               </Text>
               <CustomButton
-                title="View on Map"
+                title="Book Flight"
                 onPress={() =>
-                  handleOpenMap(
-                    hotel.geo_coordinates.latitude,
-                    hotel.geo_coordinates.longitude
+                  Linking.openURL(
+                    parsedTripPlan.trip_plan.flight_details.booking_url
                   )
                 }
                 className="mt-4"
               />
             </View>
+          </View>
+        ) : (
+          <Text className="font-outfit text-gray-600">
+            No flight details available.
+          </Text>
+        )}
+      </View>
+
+      {/* Hotels Section */}
+      <View className="mb-8">
+        <Text className="text-2xl font-outfit-bold mb-4">Hotel Options</Text>
+        {parsedTripPlan?.trip_plan?.hotel?.options?.length ? (
+          parsedTripPlan.trip_plan.hotel.options.map(
+            (hotel: any, index: number) => (
+              <View
+                key={index}
+                className="bg-gray-50 p-4 rounded-xl mb-4 border border-gray-100"
+              >
+                <Image
+                  source={{ uri: hotel.image_url }}
+                  className="w-full h-48 rounded-xl mb-4"
+                />
+                <Text className="font-outfit-bold text-lg">{hotel.name}</Text>
+                <Text className="font-outfit text-gray-600 mb-2">
+                  {hotel.address}
+                </Text>
+                <Text className="font-outfit text-gray-600">
+                  Price: {hotel.price}
+                </Text>
+                <Text className="font-outfit text-gray-600">
+                  Rating: {hotel.rating} ⭐
+                </Text>
+                <Text className="font-outfit text-gray-600 mt-2">
+                  {hotel.description}
+                </Text>
+                <CustomButton
+                  title="View on Map"
+                  onPress={() =>
+                    handleOpenMap(
+                      hotel.geo_coordinates.latitude,
+                      hotel.geo_coordinates.longitude
+                    )
+                  }
+                  className="mt-4"
+                />
+              </View>
+            )
           )
+        ) : (
+          <Text className="font-outfit text-gray-600">
+            No hotel options available.
+          </Text>
         )}
       </View>
 
       {/* Places to Visit */}
       <View className="mb-8">
         <Text className="text-2xl font-outfit-bold mb-4">Places to Visit</Text>
-        {parsedTripPlan.trip_plan.places_to_visit.map(
-          (place: any, index: number) => (
-            <View
-              key={index}
-              className="bg-gray-50 p-4 rounded-xl mb-4 border border-gray-100"
-            >
-              <Image
-                source={{ uri: place.image_url }}
-                className="w-full h-48 rounded-xl mb-4"
-              />
-              <Text className="font-outfit-bold text-lg">{place.name}</Text>
-              <Text className="font-outfit text-gray-600 mb-2">
-                {place.details}
-              </Text>
-              <Text className="font-outfit text-gray-600">
-                Ticket Price: {place.ticket_price}
-              </Text>
-              <Text className="font-outfit text-gray-600">
-                Time to Travel: {place.time_to_travel}
-              </Text>
-              <CustomButton
-                title="View on Map"
-                onPress={() =>
-                  handleOpenMap(
-                    place.geo_coordinates.latitude,
-                    place.geo_coordinates.longitude
-                  )
-                }
-                className="mt-4"
-              />
-            </View>
+        {parsedTripPlan?.trip_plan?.places_to_visit?.length ? (
+          parsedTripPlan.trip_plan.places_to_visit.map(
+            (place: any, index: number) => (
+              <View
+                key={index}
+                className="bg-gray-50 p-4 rounded-xl mb-4 border border-gray-100"
+              >
+                <Image
+                  source={{ uri: place.image_url }}
+                  className="w-full h-48 rounded-xl mb-4"
+                />
+                <Text className="font-outfit-bold text-lg">{place.name}</Text>
+                <Text className="font-outfit text-gray-600 mb-2">
+                  {place.details}
+                </Text>
+                <Text className="font-outfit text-gray-600">
+                  Ticket Price: {place.ticket_price}
+                </Text>
+                <Text className="font-outfit text-gray-600">
+                  Time to Travel: {place.time_to_travel}
+                </Text>
+                <CustomButton
+                  title="View on Map"
+                  onPress={() =>
+                    handleOpenMap(
+                      place.geo_coordinates.latitude,
+                      place.geo_coordinates.longitude
+                    )
+                  }
+                  className="mt-4"
+                />
+              </View>
+            )
           )
+        ) : (
+          <Text className="font-outfit text-gray-600">
+            No places to visit available.
+          </Text>
         )}
       </View>
     </ScrollView>
