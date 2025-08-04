@@ -22,6 +22,11 @@ const SignIn = () => {
         return;
       }
 
+      if (!auth) {
+        alert("Firebase not initialized");
+        return;
+      }
+
       const userCredential = await signInWithEmailAndPassword(
         auth,
         form.email,
