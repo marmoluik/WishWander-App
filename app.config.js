@@ -11,5 +11,6 @@ export default ({ config }) => ({
     firebaseMessagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
     firebaseAppId: process.env.FIREBASE_APP_ID,
     googlePlacesApiKey: process.env.GOOGLE_PLACES_API_KEY,
+	geminiApiKey: process.env.GEMINI_API_KEY,
   },
 });

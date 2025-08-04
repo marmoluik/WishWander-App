@@ -1,9 +1,11 @@
+// app/generate-trip.tsx
+
 import { Text, Image } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CreateTripContext } from "@/context/CreateTripContext";
 import { AI_PROMPT } from "@/constants/Options";
-import { chatSession } from "@/config/GeminiConfig";
+import { startChatSession } from "@/config/GeminiConfig";
 import { useRouter } from "expo-router";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/config/FirebaseConfig";
@@ -12,7 +14,6 @@ export default function GenerateTrip() {
   const { tripData } = useContext(CreateTripContext);
   const [error, setError] = useState<string | null>(null);
   const user = auth?.currentUser;
-
   const router = useRouter();
 
   useEffect(() => {
@@ -21,16 +22,18 @@ export default function GenerateTrip() {
 
   const generateTrip = async () => {
     try {
-      const locationInfo = tripData.find(
-        (item) => item.locationInfo
-      )?.locationInfo;
+      // Gather pieces from tripData
+      const locationInfo = tripData.find((item) => item.locationInfo)
+        ?.locationInfo;
       const travelers = tripData.find((item) => item.travelers)?.travelers;
       const dates = tripData.find((item) => item.dates)?.dates;
       const budget = tripData.find((item) => item.budget)?.budget;
 
+      // Compute totals
       const totalDays = dates?.totalNumberOfDays || 0;
       const totalNights = totalDays > 0 ? totalDays - 1 : 0;
 
+      // Build your final prompt string
       const FINAL_PROMPT = AI_PROMPT.replace(
         "{location}",
         locationInfo?.name || ""
@@ -43,19 +46,27 @@ export default function GenerateTrip() {
         )
         .replace("{budget}", budget?.type || "");
 
-      const result = await chatSession.sendMessage(FINAL_PROMPT);
-      const tripResponse = JSON.parse(result.response.text());
+      // Create a new chat session with that prompt
+      const session = startChatSession([
+        { role: "user", parts: [{ text: FINAL_PROMPT }] },
+      ]);
 
+      // Send the prompt and await the response
+      const result = await session.sendMessage(FINAL_PROMPT);
+      const rawText = await result.response.text();
+      const parsed = JSON.parse(rawText);
+      // Unwrap the inner trip_plan object if present
+      const tripResponse = parsed.trip_plan ?? parsed;
+
+      // Save to Firestore
       const docId = Date.now().toString();
-
       if (db && user) {
         await setDoc(doc(db, "UserTrips", docId), {
           userEmail: user.email,
           tripPlan: tripResponse,
           tripData: JSON.stringify(tripData),
-          docId: docId,
+          docId,
         });
-
         router.push("/mytrip");
       } else {
         setError("Unable to save trip. Please sign in and try again.");
