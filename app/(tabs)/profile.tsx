@@ -7,12 +7,14 @@ import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
 
 const Profile = () => {
-  const user = auth.currentUser;
+  const user = auth?.currentUser;
 
   const handleLogout = async () => {
     try {
-      await auth.signOut();
-      router.replace("/(auth)/welcome");
+      if (auth) {
+        await auth.signOut();
+        router.replace("/(auth)/welcome");
+      }
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -32,7 +34,9 @@ const Profile = () => {
             <Text className="text-xl font-outfit-bold">{user?.email}</Text>
             <Text className="text-gray-600 font-outfit">
               Member since{" "}
-              {new Date(user?.metadata.creationTime!).getFullYear()}
+              {user?.metadata?.creationTime
+                ? new Date(user.metadata.creationTime).getFullYear()
+                : ""}
             </Text>
           </View>
         </View>
@@ -55,7 +59,9 @@ const Profile = () => {
             <Text className="ml-3 font-outfit">Last Sign In</Text>
           </View>
           <Text className="text-gray-500 font-outfit">
-            {new Date(user?.metadata.lastSignInTime!).toLocaleDateString()}
+            {user?.metadata?.lastSignInTime
+              ? new Date(user.metadata.lastSignInTime).toLocaleDateString()
+              : ""}
           </Text>
         </TouchableOpacity>
       </View>
