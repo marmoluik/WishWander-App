@@ -18,6 +18,7 @@ export default function GenerateTrip() {
 
   useEffect(() => {
     generateTrip();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const generateTrip = async () => {
@@ -54,9 +55,27 @@ export default function GenerateTrip() {
       // Send the prompt and await the response
       const result = await session.sendMessage(FINAL_PROMPT);
       const rawText = await result.response.text();
-      const parsed = JSON.parse(rawText);
+
+      // Parse the AI response safely
+      let parsed: any;
+      try {
+        parsed = JSON.parse(rawText);
+      } catch (err) {
+        console.error("parse error", err);
+        throw new Error("Invalid response format");
+      }
+
       // Unwrap the inner trip_plan object if present
-      const tripResponse = parsed.trip_plan ?? parsed;
+      const tripResponse = parsed?.trip_plan ?? parsed;
+
+      // Ensure the response contains the expected fields before saving
+      if (
+        !tripResponse?.hotel ||
+        !tripResponse?.flight_details ||
+        !tripResponse?.places_to_visit
+      ) {
+        throw new Error("Incomplete trip plan received");
+      }
 
       // Save to Firestore
       const docId = Date.now().toString();

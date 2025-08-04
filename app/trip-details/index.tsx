@@ -8,8 +8,8 @@ const TripDetails = () => {
   const router = useRouter();
   const { tripData, tripPlan } = useLocalSearchParams();
 
-  const parsedTripData = JSON.parse(tripData as string);
-  const parsedTripPlan = JSON.parse(tripPlan as string);
+  const parsedTripData = tripData ? JSON.parse(tripData as string) : null;
+  const parsedTripPlan = tripPlan ? JSON.parse(tripPlan as string) : null;
 
   const locationInfo = parsedTripData?.find(
     (item: any) => item.locationInfo
@@ -21,7 +21,8 @@ const TripDetails = () => {
   const travelers = parsedTripData?.find(
     (item: any) => item.travelers
   )?.travelers;
-  const totalNumberOfDays = moment(endDate).diff(startDate, "days") + 1;
+  const totalNumberOfDays =
+    startDate && endDate ? moment(endDate).diff(startDate, "days") + 1 : 0;
   const budget = parsedTripData?.find((item: any) => item.budget)?.budget?.type;
 
   return (
@@ -35,13 +36,13 @@ const TripDetails = () => {
 
       <View className="p-6">
         <Text className="text-3xl font-outfit-bold">
-          {parsedTripPlan?.trip_plan?.location}
+          {parsedTripPlan?.trip_plan?.location ?? "Unknown"}
         </Text>
 
         <View className="mt-4 space-y-2">
           <Text className="text-lg font-outfit text-gray-600">
-            {moment(startDate).format("MMM D")} -{" "}
-            {moment(endDate).format("MMM D, YYYY")}
+            {startDate ? moment(startDate).format("MMM D") : ""} -{" "}
+            {endDate ? moment(endDate).format("MMM D, YYYY") : ""}
           </Text>
           <Text className="text-lg font-outfit text-gray-600">
             Total Number of Days: {totalNumberOfDays}
@@ -50,7 +51,7 @@ const TripDetails = () => {
             {travelers?.type} ({travelers?.count})
           </Text>
           <Text className="text-lg font-outfit text-gray-600">
-            Budget Type: {budget}
+            Budget Type: {budget ?? "N/A"}
           </Text>
           <View className="flex mt-10 items-center justify-center">
             <Text className="text-lg font-outfit-medium text-gray-600">
