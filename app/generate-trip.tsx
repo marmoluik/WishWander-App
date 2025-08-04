@@ -65,24 +65,25 @@ export default function GenerateTrip() {
         throw new Error("Invalid response format");
       }
 
-      // Unwrap the inner trip_plan object if present
-      const tripResponse = parsed?.trip_plan ?? parsed;
+      // Ensure we have a nested trip_plan object with the sections we expect
+      const tripPlan = parsed?.trip_plan;
+      const missing: string[] = [];
+      if (!tripPlan?.flight_details) missing.push("flight details");
+      if (!tripPlan?.hotel?.options?.length) missing.push("hotel options");
+      if (!tripPlan?.places_to_visit?.length) missing.push("places to visit");
 
-      // Ensure the response contains the expected fields before saving
-      if (
-        !tripResponse?.hotel ||
-        !tripResponse?.flight_details ||
-        !tripResponse?.places_to_visit
-      ) {
-        throw new Error("Incomplete trip plan received");
+      if (missing.length) {
+        throw new Error(
+          `Incomplete trip plan received: missing ${missing.join(", ")}`
+        );
       }
 
-      // Save to Firestore
+      // Save the entire parsed response so downstream screens receive trip_plan
       const docId = Date.now().toString();
       if (db && user) {
         await setDoc(doc(db, "UserTrips", docId), {
           userEmail: user.email,
-          tripPlan: tripResponse,
+          tripPlan: parsed,
           tripData: JSON.stringify(tripData),
           docId,
         });
@@ -92,7 +93,11 @@ export default function GenerateTrip() {
       }
     } catch (err) {
       console.error("Failed to generate trip", err);
-      setError("Failed to generate trip. Please try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to generate trip. Please try again."
+      );
     }
   };
 
