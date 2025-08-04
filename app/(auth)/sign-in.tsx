@@ -8,7 +8,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/config/FirebaseConfig";
 import DummyLogin from "@/components/DummyLogin";
 
-const SignIn = () => {
+export default function SignIn() {
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -110,6 +110,4 @@ const SignIn = () => {
       </View>
     </ScrollView>
   );
-};
-
-export default SignIn;
+}

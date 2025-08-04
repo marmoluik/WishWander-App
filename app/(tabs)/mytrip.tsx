@@ -14,7 +14,7 @@ import { auth, db } from "@/config/FirebaseConfig";
 import UserTripList from "@/components/MyTrips/UserTripList";
 import { useRouter } from "expo-router";
 
-const MyTrip = () => {
+export default function MyTrip() {
   const [userTrips, setUserTrips] = useState<any[]>([]);
   const user = auth?.currentUser;
   const [loading, setLoading] = useState(false);
@@ -63,6 +63,4 @@ const MyTrip = () => {
       )}
     </ScrollView>
   );
-};
-
-export default MyTrip;
+}

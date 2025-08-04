@@ -8,7 +8,7 @@ import { useRouter } from "expo-router";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/config/FirebaseConfig";
 
-const GenerateTrip = () => {
+export default function GenerateTrip() {
   const { tripData } = useContext(CreateTripContext);
   const [loading, setLoading] = useState(false);
   const user = auth?.currentUser;
@@ -81,6 +81,4 @@ const GenerateTrip = () => {
       </Text>
     </SafeAreaView>
   );
-};
-
-export default GenerateTrip;
+}
