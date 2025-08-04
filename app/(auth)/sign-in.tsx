@@ -8,7 +8,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/config/FirebaseConfig";
 import DummyLogin from "@/components/DummyLogin";
 
-const SignIn = () => {
+export default function SignIn() {
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -19,6 +19,11 @@ const SignIn = () => {
     try {
       if (!form.email || !form.password) {
         alert("Please fill in all fields");
+        return;
+      }
+
+      if (!auth) {
+        alert("Firebase not initialized");
         return;
       }
 
@@ -105,6 +110,4 @@ const SignIn = () => {
       </View>
     </ScrollView>
   );
-};
-
-export default SignIn;
+}

@@ -6,9 +6,13 @@ import { onAuthStateChanged } from "firebase/auth";
 
 export default function HomeScreen() {
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState(auth.currentUser);
+  const [user, setUser] = useState(auth?.currentUser ?? null);
 
   useEffect(() => {
+    if (!auth) {
+      setIsLoading(false);
+      return;
+    }
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setIsLoading(false);
