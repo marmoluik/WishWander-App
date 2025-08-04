@@ -1,6 +1,6 @@
 // app/create-trip/search-place.tsx
 
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import {
   View,
   Text,
@@ -20,23 +20,26 @@ import { CreateTripContext } from "@/context/CreateTripContext";
 export default function SearchPlace() {
   const router = useRouter();
   const { setTripData } = useContext(CreateTripContext);
-  const [query, setQuery] = useState("");
 
   // Initialize the hook with your API key and debounce
   const {
-    loading,
-    locations,          // array of { description, place_id, geometry }
-    fetchDetails,       // helper to load full details when needed
-  } = useGoogleAutocomplete({
-    apiKey: Constants.expoConfig.extra.googlePlacesApiKey!,
-    debounce: 300,
-    minLength: 3,
-    components: "country:us", // optional: restrict by country
-  });
+    locationResults,
+    isSearching,
+    setTerm,
+    term,
+    searchDetails,
+  } = useGoogleAutocomplete(
+    Constants.expoConfig.extra.googlePlacesApiKey!,
+    {
+      debounce: 300,
+      minLength: 3,
+      components: "country:us", // optional: restrict by country
+    }
+  );
 
   // Fetch details when a place is selected
   const selectPlace = async (item: any) => {
-    const detail = await fetchDetails(item.place_id);
+    const detail = await searchDetails(item.place_id);
     setTripData(prev => {
       const filtered = prev.filter(i => !i.locationInfo);
       return [
@@ -68,14 +71,14 @@ export default function SearchPlace() {
             placeholder="Search for a place"
             placeholderTextColor="#818181"
             returnKeyType="search"
-            value={query}
-            onChangeText={setQuery}
+            value={term}
+            onChangeText={setTerm}
           />
 
-          {loading && <Text style={styles.loading}>Loading…</Text>}
+          {isSearching && <Text style={styles.loading}>Loading…</Text>}
 
           <FlatList
-            data={locations}
+            data={locationResults}
             keyExtractor={item => item.place_id}
             renderItem={({ item }) => (
               <TouchableOpacity
@@ -85,7 +88,9 @@ export default function SearchPlace() {
                 <Text style={styles.rowText}>{item.description}</Text>
               </TouchableOpacity>
             )}
-            ListEmptyComponent={!loading ? <Text>No results</Text> : null}
+            ListEmptyComponent={
+              !isSearching && term.length >= 3 ? <Text>No results</Text> : null
+            }
           />
         </View>
       </SafeAreaView>
