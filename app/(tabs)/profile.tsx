@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
 
 export default function Profile() {
+const Profile = () => {
   const user = auth?.currentUser;
 
   const handleLogout = async () => {
