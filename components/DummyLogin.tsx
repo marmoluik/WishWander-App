@@ -8,6 +8,10 @@ import { router } from "expo-router";
 const DummyLogin = () => {
   const handleDummyLogin = async () => {
     try {
+      if (!auth) {
+        alert("Firebase not initialized");
+        return;
+      }
       const userCredential = await signInWithEmailAndPassword(
         auth,
         "testuser@gmail.com",

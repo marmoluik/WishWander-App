@@ -8,10 +8,10 @@ import { useRouter } from "expo-router";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/config/FirebaseConfig";
 
-const GenerateTrip = () => {
+export default function GenerateTrip() {
   const { tripData } = useContext(CreateTripContext);
   const [loading, setLoading] = useState(false);
-  const user = auth.currentUser;
+  const user = auth?.currentUser;
 
   const router = useRouter();
 
@@ -50,14 +50,16 @@ const GenerateTrip = () => {
 
     const docId = Date.now().toString();
 
-    const res = await setDoc(doc(db, "UserTrips", docId), {
-      userEmail: user?.email,
-      tripPlan: tripResponse,
-      tripData: JSON.stringify(tripData),
-      docId: docId,
-    });
+    if (db && user) {
+      await setDoc(doc(db, "UserTrips", docId), {
+        userEmail: user.email,
+        tripPlan: tripResponse,
+        tripData: JSON.stringify(tripData),
+        docId: docId,
+      });
 
-    router.push("/mytrip");
+      router.push("/mytrip");
+    }
   };
 
   return (
@@ -79,6 +81,4 @@ const GenerateTrip = () => {
       </Text>
     </SafeAreaView>
   );
-};
-
-export default GenerateTrip;
+}

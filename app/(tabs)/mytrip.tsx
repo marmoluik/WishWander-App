@@ -14,9 +14,9 @@ import { auth, db } from "@/config/FirebaseConfig";
 import UserTripList from "@/components/MyTrips/UserTripList";
 import { useRouter } from "expo-router";
 
-const MyTrip = () => {
+export default function MyTrip() {
   const [userTrips, setUserTrips] = useState<any[]>([]);
-  const user = auth.currentUser;
+  const user = auth?.currentUser;
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -25,11 +25,12 @@ const MyTrip = () => {
   }, [user]);
 
   const getMyTrips = async () => {
+    if (!db || !user) return;
     setLoading(true);
     setUserTrips([]);
     const q = query(
       collection(db, "UserTrips"),
-      where("userEmail", "==", user?.email)
+      where("userEmail", "==", user.email)
     );
     const querySnapshot = await getDocs(q);
 
@@ -62,6 +63,4 @@ const MyTrip = () => {
       )}
     </ScrollView>
   );
-};
-
-export default MyTrip;
+}

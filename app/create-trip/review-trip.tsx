@@ -25,7 +25,7 @@ const ReviewTrip = () => {
   const renderReviewItem = (
     title: string,
     value: string,
-    icon: JSX.Element,
+    icon: React.ReactNode,
     editPath: string
   ) => (
     <View className="flex-row items-center justify-between bg-white p-4 rounded-xl mb-4 shadow-sm border border-neutral-100">
