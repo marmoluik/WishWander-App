@@ -1,3 +1,4 @@
+import 'setimmediate';
 import {
   DarkTheme,
   DefaultTheme,
@@ -13,6 +14,7 @@ import { StatusBar } from "expo-status-bar";
 import "../global.css";
 import "react-native-get-random-values";
 import { CreateTripContext } from "@/context/CreateTripContext";
+
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 

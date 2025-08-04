@@ -33,7 +33,6 @@ export default function SearchPlace() {
     {
       debounce: 300,
       minLength: 3,
-      components: "country:us", // optional: restrict by country
     }
   );
 
