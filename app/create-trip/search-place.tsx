@@ -1,6 +1,6 @@
 // app/create-trip/search-place.tsx
 
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   SafeAreaView,
-  StyleSheet
+  StyleSheet,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useGoogleAutocomplete } from "@appandflow/react-native-google-autocomplete";
@@ -20,25 +20,28 @@ import { CreateTripContext } from "@/context/CreateTripContext";
 export default function SearchPlace() {
   const router = useRouter();
   const { setTripData } = useContext(CreateTripContext);
-  const [query, setQuery] = useState("");
 
-  // Initialize the hook with your API key and debounce
+  // Initialize the hook with your API key and options
   const {
-    loading,
-    locations,          // array of { description, place_id, geometry }
-    fetchDetails,       // helper to load full details when needed
-  } = useGoogleAutocomplete({
-    apiKey: Constants.expoConfig.extra.googlePlacesApiKey!,
-    debounce: 300,
-    minLength: 3,
-    components: "country:us", // optional: restrict by country
-  });
+    locationResults,
+    isSearching,
+    term,
+    setTerm,
+    searchDetails,
+  } = useGoogleAutocomplete(
+    Constants.expoConfig.extra.googlePlacesApiKey!,
+    {
+      debounce: 300,
+      minLength: 3,
+      components: "country:us", // optional: restrict by country
+    }
+  );
 
   // Fetch details when a place is selected
   const selectPlace = async (item: any) => {
-    const detail = await fetchDetails(item.place_id);
-    setTripData(prev => {
-      const filtered = prev.filter(i => !i.locationInfo);
+    const detail = await searchDetails(item.place_id);
+    setTripData((prev) => {
+      const filtered = prev.filter((i) => !i.locationInfo);
       return [
         ...filtered,
         {
@@ -68,15 +71,15 @@ export default function SearchPlace() {
             placeholder="Search for a place"
             placeholderTextColor="#818181"
             returnKeyType="search"
-            value={query}
-            onChangeText={setQuery}
+            value={term}
+            onChangeText={setTerm}
           />
 
-          {loading && <Text style={styles.loading}>Loading…</Text>}
+          {isSearching && <Text style={styles.loading}>Loading…</Text>}
 
           <FlatList
-            data={locations}
-            keyExtractor={item => item.place_id}
+            data={locationResults}
+            keyExtractor={(item) => item.place_id}
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.row}
@@ -85,7 +88,11 @@ export default function SearchPlace() {
                 <Text style={styles.rowText}>{item.description}</Text>
               </TouchableOpacity>
             )}
-            ListEmptyComponent={!loading ? <Text>No results</Text> : null}
+            ListEmptyComponent={
+              !isSearching && term.length >= 3 ? (
+                <Text style={styles.noResults}>No results</Text>
+              ) : null
+            }
           />
         </View>
       </SafeAreaView>
@@ -105,14 +112,15 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 16,
     fontSize: 15,
-    marginBottom: 8
+    marginBottom: 8,
   },
   loading: { textAlign: "center", marginVertical: 8 },
   row: {
     padding: 13,
     backgroundColor: "#fff",
     borderBottomWidth: 0.5,
-    borderBottomColor: "#c8c7cc"
+    borderBottomColor: "#c8c7cc",
   },
-  rowText: { fontSize: 15 }
+  rowText: { fontSize: 15 },
+  noResults: { textAlign: "center", marginTop: 8, color: "#666" },
 });
