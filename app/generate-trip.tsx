@@ -65,22 +65,6 @@ export default function GenerateTrip() {
         throw new Error("Invalid response format");
       }
 
-      // Ensure we have a nested trip_plan object and populate defaults so
-      // downstream screens can safely render even if the AI omits sections
-      const tripPlan = parsed?.trip_plan ?? {};
-      if (!tripPlan.flight_details) {
-        tripPlan.flight_details = null;
-      }
-      if (!tripPlan.hotel) {
-        tripPlan.hotel = { options: [] };
-      } else if (!tripPlan.hotel.options) {
-        tripPlan.hotel.options = [];
-      }
-      if (!tripPlan.places_to_visit) {
-        tripPlan.places_to_visit = [];
-      }
-      parsed.trip_plan = tripPlan;
-
       // Save the entire parsed response so downstream screens receive trip_plan
       const docId = Date.now().toString();
       if (db && user) {
