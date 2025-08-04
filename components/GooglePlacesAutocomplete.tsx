@@ -14,7 +14,7 @@ const YOUR_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAP_KEY;
 
 export default function GooglePlacesAutocomplete({ onPlaceSelected }: Props) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Prediction[]>([]); // always an array
+  const [results, setResults] = useState<any[]>([]); // always an array
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -50,10 +50,10 @@ export default function GooglePlacesAutocomplete({ onPlaceSelected }: Props) {
 
   function buildRowsFromResults() {
     return (results ?? [])
-      .filter((item) =>
+      .filter((item: Prediction) =>
         item.description.toLowerCase().includes(query.toLowerCase()),
       )
-      .map((item) => ({
+      .map((item: Prediction) => ({
         id: item.place_id,
         title: item.description,
       }));
