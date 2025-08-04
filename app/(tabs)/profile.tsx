@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
 import React from "react";
+import { View, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "@/config/FirebaseConfig";
 import { router } from "expo-router";
@@ -7,7 +7,6 @@ import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
 
 export default function Profile() {
-const Profile = () => {
   const user = auth?.currentUser;
 
   const handleLogout = async () => {
@@ -46,6 +45,7 @@ const Profile = () => {
       {/* Account Settings Section */}
       <View className="mb-8">
         <Text className="text-xl font-outfit-bold mb-4">Account Settings</Text>
+
         <TouchableOpacity className="flex-row items-center justify-between bg-gray-50 p-4 rounded-xl mb-3">
           <View className="flex-row items-center">
             <Ionicons name="mail-outline" size={24} color="#8b5cf6" />
