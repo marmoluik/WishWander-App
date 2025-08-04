@@ -1,5 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { View, TextInput, FlatList, TouchableOpacity, Text } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  FlatList,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 type Prediction = {
   place_id: string;
@@ -25,11 +31,17 @@ export default function GooglePlacesAutocomplete({ onPlaceSelected }: Props) {
 
     let cancelled = false;
     setLoading(true);
-    fetch(`https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${YOUR_KEY}&input=${query}`)
+    fetch(
+      `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${YOUR_KEY}&input=${encodeURIComponent(
+        query,
+      )}`,
+    )
       .then((res) => res.json())
       .then((json) => {
         if (!cancelled) {
-          setResults(json.predictions ?? []);
+          setResults(
+            Array.isArray(json.predictions) ? json.predictions : [],
+          );
         }
       })
       .catch(() => {
@@ -48,18 +60,18 @@ export default function GooglePlacesAutocomplete({ onPlaceSelected }: Props) {
     };
   }, [query]);
 
-  function buildRowsFromResults() {
-    return (results ?? [])
-      .filter((item) =>
-        item.description.toLowerCase().includes(query.toLowerCase()),
-      )
-      .map((item) => ({
-        id: item.place_id,
-        title: item.description,
-      }));
-  }
-
-  const rows = buildRowsFromResults();
+  const rows = useMemo(
+    () =>
+      (results ?? [])
+        .filter((item) =>
+          item.description.toLowerCase().includes(query.toLowerCase()),
+        )
+        .map((item) => ({
+          id: item.place_id,
+          title: item.description,
+        })),
+    [results, query],
+  );
 
   return (
     <View>
