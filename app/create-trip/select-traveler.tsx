@@ -58,7 +58,7 @@ const SelectTraveler = () => {
     <SafeAreaView className="flex-1">
       <View className="p-6">
         <Text className="text-5xl font-outfit-bold mb-2">
-          Who's Travelling?
+          {"Who's Travelling?"}
         </Text>
         <Text className="text-gray-500 font-outfit-medium mb-6">
           Choose your travelers
