@@ -1,118 +1,118 @@
+// app/create-trip/search-place.tsx
+
+import React, { useContext, useState } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
   TextInput,
+  FlatList,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  SafeAreaView,
+  StyleSheet
 } from "react-native";
-import React, { useContext, useEffect } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation, useRouter } from "expo-router";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { useRouter } from "expo-router";
+import { useGoogleAutocomplete } from "@appandflow/react-native-google-autocomplete";
+import Constants from "expo-constants";
 import { CreateTripContext } from "@/context/CreateTripContext";
 
-const SearchPlace = () => {
+export default function SearchPlace() {
   const router = useRouter();
   const { setTripData } = useContext(CreateTripContext);
+  const [query, setQuery] = useState("");
+
+  // Initialize the hook with your API key and debounce
+  const {
+    loading,
+    locations,          // array of { description, place_id, geometry }
+    fetchDetails,       // helper to load full details when needed
+  } = useGoogleAutocomplete({
+    apiKey: Constants.expoConfig.extra.googlePlacesApiKey!,
+    debounce: 300,
+    minLength: 3,
+    components: "country:us", // optional: restrict by country
+  });
+
+  // Fetch details when a place is selected
+  const selectPlace = async (item: any) => {
+    const detail = await fetchDetails(item.place_id);
+    setTripData(prev => {
+      const filtered = prev.filter(i => !i.locationInfo);
+      return [
+        ...filtered,
+        {
+          locationInfo: {
+            name: item.description,
+            coordinates: detail.geometry.location,
+            url: detail.url,
+            photoRef: detail.photos?.[0]?.photo_reference,
+          },
+        },
+      ];
+    });
+    router.push("/create-trip/select-traveler");
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View>
-        <View className="flex flex-col items-center">
-          <Text className="text-5xl font-outfit-bold mt-20 px-3 mb-2">
-            Where do you want to go?
-          </Text>
-          <Text className="text-lg text-gray-400 font-outfit">
-            Find your destination!
-          </Text>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Where do you want to go?</Text>
+          <Text style={styles.subtitle}>Find your destination!</Text>
         </View>
 
-        <View className="p-6 mt-10 h-full w-full flex">
-          <GooglePlacesAutocomplete
+        <View style={styles.autocomplete}>
+          <TextInput
+            style={styles.input}
             placeholder="Search for a place"
-            textInputProps={{
-              placeholderTextColor: "#818181",
-              returnKeyType: "search",
-              onSubmitEditing: (e) => {
-                if (e.nativeEvent.text.trim()) {
-                  router.push("/create-trip/select-traveler");
-                }
-              },
-              clearButtonMode: "never",
-            }}
-            fetchDetails={true}
-            enablePoweredByContainer={false}
-            onPress={(data, details = null) => {
-              setTripData((prev) => {
-                const newData = prev.filter((item) => !item.locationInfo);
-                return [
-                  ...newData,
-                  {
-                    locationInfo: {
-                      name: data.description,
-                      coordinates: details?.geometry.location,
-                      url: details?.url,
-                      // @ts-ignore
-                      photoRef: details?.photos?.[0]?.photo_reference,
-                    },
-                  },
-                ];
-              });
-              router.push("/create-trip/select-traveler");
-            }}
-            query={{
-              key: process.env.EXPO_PUBLIC_GOOGLE_MAP_KEY,
-              language: "en",
-            }}
-            styles={{
-              container: {
-                flex: 0,
-              },
-              textInput: {
-                height: 54,
-                backgroundColor: "#e2e2e2",
-                borderRadius: 999,
-                paddingHorizontal: 16,
-                fontSize: 15,
-                fontFamily: "outfit-medium",
-              },
-              listView: {
-                backgroundColor: "#fff",
-                borderRadius: 8,
-                marginTop: 8,
-              },
-              row: {
-                padding: 13,
-                height: 50,
-                flexDirection: "row",
-                backgroundColor: "#fff",
-                alignItems: "center",
-              },
-              separator: {
-                height: 0.5,
-                backgroundColor: "#c8c7cc",
-              },
-              description: {
-                fontSize: 15,
-                fontFamily: "outfit",
-              },
-              predefinedPlacesDescription: {
-                color: "#666666",
-              },
-              textInputContainer: {
-                color: "#b5b3b3",
-              },
-              clearButton: {
-                color: "#b5b3b3",
-              },
-            }}
+            placeholderTextColor="#818181"
+            returnKeyType="search"
+            value={query}
+            onChangeText={setQuery}
+          />
+
+          {loading && <Text style={styles.loading}>Loading…</Text>}
+
+          <FlatList
+            data={locations}
+            keyExtractor={item => item.place_id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.row}
+                onPress={() => selectPlace(item)}
+              >
+                <Text style={styles.rowText}>{item.description}</Text>
+              </TouchableOpacity>
+            )}
+            ListEmptyComponent={!loading ? <Text>No results</Text> : null}
           />
         </View>
-      </View>
+      </SafeAreaView>
     </TouchableWithoutFeedback>
   );
-};
+}
 
-export default SearchPlace;
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "white" },
+  header: { alignItems: "center", marginTop: 20, paddingHorizontal: 16 },
+  title: { fontSize: 32, fontWeight: "700", textAlign: "center", marginBottom: 8 },
+  subtitle: { fontSize: 16, color: "#666" },
+  autocomplete: { flex: 1, padding: 16 },
+  input: {
+    height: 54,
+    backgroundColor: "#e2e2e2",
+    borderRadius: 999,
+    paddingHorizontal: 16,
+    fontSize: 15,
+    marginBottom: 8
+  },
+  loading: { textAlign: "center", marginVertical: 8 },
+  row: {
+    padding: 13,
+    backgroundColor: "#fff",
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#c8c7cc"
+  },
+  rowText: { fontSize: 15 }
+});
