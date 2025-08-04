@@ -65,19 +65,6 @@ export default function GenerateTrip() {
         throw new Error("Invalid response format");
       }
 
-      // Ensure we have a nested trip_plan object with the sections we expect
-      const tripPlan = parsed?.trip_plan;
-      const missing: string[] = [];
-      if (!tripPlan?.flight_details) missing.push("flight details");
-      if (!tripPlan?.hotel?.options?.length) missing.push("hotel options");
-      if (!tripPlan?.places_to_visit?.length) missing.push("places to visit");
-
-      if (missing.length) {
-        throw new Error(
-          `Incomplete trip plan received: missing ${missing.join(", ")}`
-        );
-      }
-
       // Save the entire parsed response so downstream screens receive trip_plan
       const docId = Date.now().toString();
       if (db && user) {
