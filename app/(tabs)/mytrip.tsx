@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import StartNewTripCard from "@/components/MyTrips/StartNewTripCard";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, deleteDoc, doc } from "firebase/firestore";
 import { auth, db } from "@/config/FirebaseConfig";
 import UserTripList from "@/components/MyTrips/UserTripList";
 import { useRouter } from "expo-router";
@@ -48,6 +48,12 @@ export default function MyTrip() {
     setLoading(false);
   };
 
+  const deleteTrip = async (docId: string) => {
+    if (!db || !user) return;
+    await deleteDoc(doc(db, "UserTrips", docId));
+    setUserTrips((prev) => prev.filter((trip) => trip.docId !== docId));
+  };
+
   return (
     <ScrollView
       className="p-6 h-full mt-10"
@@ -67,7 +73,7 @@ export default function MyTrip() {
       {userTrips?.length == 0 ? (
         <StartNewTripCard />
       ) : (
-        <UserTripList userTrips={userTrips} />
+        <UserTripList userTrips={userTrips} onDelete={deleteTrip} />
       )}
     </ScrollView>
   );
