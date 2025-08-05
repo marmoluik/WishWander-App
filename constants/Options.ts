@@ -52,8 +52,6 @@ export const budgetOptions = [
 
 export const AI_PROMPT = `Return only JSON. Generate a trip plan for Location "{location}" lasting {totalDays} day(s) and {totalNights} night(s) for {travelers} with a {budget} budget.
 
-Provide at least three hotel options and three places to visit.
-
 Use this exact schema:
 {
   "trip_plan": {
@@ -83,44 +81,10 @@ Use this exact schema:
           "geo_coordinates": { "latitude": 0, "longitude": 0 },
           "rating": "",
           "description": ""
-        },
-        {
-          "name": "",
-          "address": "",
-          "price": "",
-          "image_url": "",
-          "geo_coordinates": { "latitude": 0, "longitude": 0 },
-          "rating": "",
-          "description": ""
-        },
-        {
-          "name": "",
-          "address": "",
-          "price": "",
-          "image_url": "",
-          "geo_coordinates": { "latitude": 0, "longitude": 0 },
-          "rating": "",
-          "description": ""
         }
       ]
     },
     "places_to_visit": [
-      {
-        "name": "",
-        "details": "",
-        "image_url": "",
-        "geo_coordinates": { "latitude": 0, "longitude": 0 },
-        "ticket_price": "",
-        "time_to_travel": ""
-      },
-      {
-        "name": "",
-        "details": "",
-        "image_url": "",
-        "geo_coordinates": { "latitude": 0, "longitude": 0 },
-        "ticket_price": "",
-        "time_to_travel": ""
-      },
       {
         "name": "",
         "details": "",
