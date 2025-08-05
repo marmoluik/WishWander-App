@@ -83,12 +83,18 @@ const SelectDates = () => {
           />
         </View>
 
-        <View className="mt-6">
+        <View className="mt-6 space-y-2">
           <CustomButton
             title="Confirm Dates"
             onPress={handleConfirmDates}
             disabled={!selectedEndDate}
             className="disabled:opacity-50"
+          />
+          <CustomButton
+            title="Search Flexible Dates"
+            bgVariant="outline"
+            textVariant="primary"
+            onPress={() => router.push('/create-trip/flexible-dates')}
           />
         </View>
       </View>
