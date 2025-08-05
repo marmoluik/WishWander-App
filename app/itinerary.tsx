@@ -1,132 +1,236 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import CustomButton from '@/components/CustomButton';
-import moment from 'moment';
-
-const PERIODS = ['Morning', 'Afternoon', 'Evening', 'Night'];
+import {
+  View,
+  Text,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { CreateTripContext } from "@/context/CreateTripContext";
+import moment from "moment";
+import CustomButton from "@/components/CustomButton";
+import { Ionicons } from "@expo/vector-icons";
 
 interface DayPlan {
-  date: string;
-  activities: { period: string; activity: string }[];
+  date: Date;
+  schedule: {
+    Morning: string;
+    Afternoon: string;
+    Evening: string;
+    Night: string;
+  };
   food: string;
   stay: string;
   optional: string[];
   tips: string;
+  collapsed: boolean;
 }
 
-const buildItinerary = (start: Date, places: any[]): DayPlan[] => {
-  const days: DayPlan[] = [];
-  let idx = 0;
-  const totalDays = Math.max(1, Math.ceil(places.length / PERIODS.length));
-  for (let d = 0; d < totalDays; d++) {
-    const dayDate = new Date(start);
-    dayDate.setDate(start.getDate() + d);
-    const activities = PERIODS.map((p) => {
-      const place = places[idx++];
-      return { period: p, activity: place ? place.name : 'Free Time' };
-    });
-    days.push({
-      date: dayDate.toISOString(),
-      activities,
-      food: 'TBD',
-      stay: 'TBD',
-      optional: [],
-      tips: 'Enjoy your day!'
-    });
-  }
-  return days;
-};
+const Itinerary = () => {
+  const { tripData, selectedPlaces } = useContext(CreateTripContext);
+  const startDateData = tripData.find((i: any) => i.dates)?.dates?.startDate;
+  const totalDaysData = tripData.find((i: any) => i.dates)?.dates
+    ?.totalNumberOfDays;
+  const startDate = startDateData ? new Date(startDateData) : new Date();
+  const totalDays = totalDaysData || Math.max(selectedPlaces.length, 1);
+  const [days, setDays] = useState<DayPlan[]>([]);
+  const [allCollapsed, setAllCollapsed] = useState(false);
 
-export default function Itinerary() {
-  const { places, tripData } = useLocalSearchParams();
-  const selectedPlaces = places ? JSON.parse(places as string) : [];
-  const parsedTripData = tripData ? JSON.parse(tripData as string) : [];
-  const startDate = parsedTripData.find((i: any) => i.dates)?.dates?.startDate
-    ? new Date(parsedTripData.find((i: any) => i.dates).dates.startDate)
-    : new Date();
-  const [collapsed, setCollapsed] = useState(false);
-  const [days, setDays] = useState<DayPlan[]>(buildItinerary(startDate, selectedPlaces));
+  useEffect(() => {
+    const plans: DayPlan[] = [];
+    for (let i = 0; i < totalDays; i++) {
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + i);
+      plans.push({
+        date,
+        schedule: {
+          Morning: selectedPlaces[i]?.name || "",
+          Afternoon: selectedPlaces[i + 1]?.name || "",
+          Evening: "",
+          Night: "",
+        },
+        food: "",
+        stay: "",
+        optional: [],
+        tips: "",
+        collapsed: false,
+      });
+    }
+    setDays(plans);
+  }, []);
+
+  const updateSchedule = (
+    index: number,
+    slot: keyof DayPlan["schedule"],
+    text: string
+  ) => {
+    setDays((prev) => {
+      const updated = [...prev];
+      updated[index].schedule[slot] = text;
+      return updated;
+    });
+  };
+
+  const updateDay = (
+    index: number,
+    field: keyof Omit<DayPlan, "date" | "schedule" | "collapsed" | "optional">,
+    text: string
+  ) => {
+    setDays((prev) => {
+      const updated = [...prev];
+      // @ts-ignore
+      updated[index][field] = text;
+      return updated;
+    });
+  };
+
+  const addOptional = (index: number) => {
+    setDays((prev) => {
+      const updated = [...prev];
+      updated[index].optional.push("");
+      return updated;
+    });
+  };
+
+  const updateOptional = (dayIndex: number, optIndex: number, text: string) => {
+    setDays((prev) => {
+      const updated = [...prev];
+      updated[dayIndex].optional[optIndex] = text;
+      return updated;
+    });
+  };
 
   const addDay = () => {
-    const last = days[days.length - 1];
-    const next = new Date(last.date);
-    next.setDate(next.getDate() + 1);
+    const lastDate = days.length
+      ? days[days.length - 1].date
+      : startDate;
+    const date = new Date(lastDate);
+    date.setDate(lastDate.getDate() + 1);
     setDays([
       ...days,
       {
-        date: next.toISOString(),
-        activities: PERIODS.map((p) => ({ period: p, activity: 'Free Time' })),
-        food: '',
-        stay: '',
+        date,
+        schedule: { Morning: "", Afternoon: "", Evening: "", Night: "" },
+        food: "",
+        stay: "",
         optional: [],
-        tips: ''
-      }
+        tips: "",
+        collapsed: false,
+      },
     ]);
   };
 
   const moveDay = (index: number, dir: number) => {
-    const copy = [...days];
     const target = index + dir;
-    if (target < 0 || target >= copy.length) return;
-    const tmp = copy[index];
-    copy[index] = copy[target];
-    copy[target] = tmp;
-    setDays(copy);
+    if (target < 0 || target >= days.length) return;
+    const newDays = [...days];
+    [newDays[index], newDays[target]] = [newDays[target], newDays[index]];
+    setDays(newDays);
+  };
+
+  const toggleCollapse = (index: number) => {
+    setDays((prev) => {
+      const updated = [...prev];
+      updated[index].collapsed = !updated[index].collapsed;
+      return updated;
+    });
+  };
+
+  const collapseAll = () => {
+    setAllCollapsed(true);
+    setDays((prev) => prev.map((d) => ({ ...d, collapsed: true })));
   };
 
   return (
     <ScrollView className="flex-1 bg-white" contentContainerStyle={{ padding: 24, paddingTop: 80 }}>
-      <View className="mb-4 flex-row justify-between">
-        <CustomButton title="Add Day" onPress={addDay} className="mr-2 flex-1" />
-        <CustomButton
-          title={collapsed ? 'Expand All' : 'Collapse All'}
-          onPress={() => setCollapsed(!collapsed)}
-          bgVariant="secondary"
-          className="flex-1"
-        />
+      <View className="flex-row justify-between items-center mb-4">
+        <Text className="text-3xl font-outfit-bold">Itinerary</Text>
+        <CustomButton title="Collapse All" onPress={collapseAll} />
       </View>
       {days.map((day, index) => (
-        <View key={index} className="mb-4 p-4 border border-gray-200 rounded-xl">
-          <View className="flex-row justify-between items-center mb-2">
-            <Text className="text-lg font-outfit-bold">
-              Day {index + 1} - {moment(day.date).format('MMM D, YYYY')}
+        <View key={index} className="mb-6 border border-gray-200 rounded-xl p-4">
+          <View className="flex-row justify-between items-center">
+            <Text className="font-outfit-bold text-lg">
+              Day {index + 1} - {moment(day.date).format("MMM D, YYYY")}
             </Text>
             <View className="flex-row">
               <TouchableOpacity onPress={() => moveDay(index, -1)} className="mr-2">
-                <Text className="text-purple-500">↑</Text>
+                <Ionicons name="arrow-up" size={20} color="#8b5cf6" />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => moveDay(index, 1)}>
-                <Text className="text-purple-500">↓</Text>
+              <TouchableOpacity onPress={() => moveDay(index, 1)} className="mr-2">
+                <Ionicons name="arrow-down" size={20} color="#8b5cf6" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => toggleCollapse(index)}>
+                <Ionicons
+                  name={day.collapsed ? "chevron-down" : "chevron-up"}
+                  size={20}
+                  color="#8b5cf6"
+                />
               </TouchableOpacity>
             </View>
           </View>
-          {!collapsed && (
+
+          {!day.collapsed && (
             <View>
-              {day.activities.map((act, i) => (
-                <Text key={i} className="font-outfit text-gray-700">
-                  {act.period}: {act.activity}
-                </Text>
-              ))}
-              <Text className="font-outfit text-gray-700 mt-2">
-                Food Recommendation: {day.food || 'TBD'}
-              </Text>
-              <Text className="font-outfit text-gray-700">
-                Stay Option: {day.stay || 'TBD'}
-              </Text>
-              {day.optional.length > 0 && (
-                <View className="mt-2">
-                  <Text className="font-outfit font-bold">Optional Activities:</Text>
-                  {day.optional.map((op, j) => (
-                    <Text key={j} className="font-outfit text-gray-700">• {op}</Text>
-                  ))}
-                </View>
+              <Text className="font-outfit-bold mt-4">Daily Schedule</Text>
+              {(["Morning", "Afternoon", "Evening", "Night"] as const).map(
+                (slot) => (
+                  <View key={slot} className="mt-2">
+                    <Text className="font-outfit">{slot}</Text>
+                    <TextInput
+                      value={day.schedule[slot]}
+                      onChangeText={(t) => updateSchedule(index, slot, t)}
+                      className="border border-gray-200 rounded-md p-2 mt-1"
+                    />
+                  </View>
+                )
               )}
-              <Text className="font-outfit text-gray-700 mt-2">Travel Tips: {day.tips || 'TBD'}</Text>
+
+              <Text className="font-outfit-bold mt-4">Food Recommendations</Text>
+              <TextInput
+                value={day.food}
+                onChangeText={(t) => updateDay(index, "food", t)}
+                className="border border-gray-200 rounded-md p-2 mt-1"
+              />
+
+              <Text className="font-outfit-bold mt-4">Stay Options</Text>
+              <TextInput
+                value={day.stay}
+                onChangeText={(t) => updateDay(index, "stay", t)}
+                className="border border-gray-200 rounded-md p-2 mt-1"
+              />
+
+              <Text className="font-outfit-bold mt-4">Optional Activities</Text>
+              {day.optional.map((opt, i) => (
+                <View key={i} className="flex-row items-center mt-2">
+                  <TextInput
+                    value={opt}
+                    onChangeText={(t) => updateOptional(index, i, t)}
+                    className="border border-gray-200 rounded-md p-2 flex-1 mr-2"
+                  />
+                  <CustomButton title="Quick Bookings" onPress={() => {}} />
+                </View>
+              ))}
+              <CustomButton
+                title="Add Activity"
+                onPress={() => addOptional(index)}
+                className="mt-2"
+              />
+
+              <Text className="font-outfit-bold mt-4">Travel Tips</Text>
+              <TextInput
+                value={day.tips}
+                onChangeText={(t) => updateDay(index, "tips", t)}
+                className="border border-gray-200 rounded-md p-2 mt-1"
+              />
             </View>
           )}
         </View>
       ))}
+
+      <CustomButton title="Add a Day" onPress={addDay} />
     </ScrollView>
   );
-}
+};
+
+export default Itinerary;
