@@ -30,6 +30,7 @@ export default function CreateTripLayout() {
       <Stack.Screen name="select-origin-airport" />
       <Stack.Screen name="select-traveler" />
       <Stack.Screen name="select-dates" />
+      <Stack.Screen name="flexible-dates" />
       <Stack.Screen name="select-budget" />
       <Stack.Screen name="review-trip" />
     </Stack>

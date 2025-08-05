@@ -91,10 +91,11 @@ const SelectDates = () => {
             className="disabled:opacity-50"
           />
           <CustomButton
-            title="Search Flexible Dates"
+            title="Flexible Dates"
+            onPress={() => router.push("/create-trip/flexible-dates")}
             bgVariant="outline"
             textVariant="primary"
-            onPress={() => router.push('/create-trip/flexible-dates')}
+            className="mt-4 bg-gray-200"
           />
         </View>
       </View>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
+import { interestCategories } from "@/constants/Options";
 
 const DEFAULT_IMAGE_URL =
   "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?q=80&w=2071&auto=format&fit=crop";
@@ -23,29 +24,11 @@ const toDate = (value: any) => {
 
 const Discover = () => {
   const { tripData, tripPlan } = useLocalSearchParams();
+  const router = useRouter();
   const [parsedTripData, setParsedTripData] = useState<any>(null);
   const [parsedTripPlan, setParsedTripPlan] = useState<any>(null);
-  const router = useRouter();
-  const INTERESTS = ["Nature", "Culture", "Adventure", "Relaxation", "Food & Drink"];
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [selectedPlaces, setSelectedPlaces] = useState<any[]>([]);
-
-  const toggleInterest = (interest: string) => {
-    setSelectedInterests((prev) =>
-      prev.includes(interest)
-        ? prev.filter((i) => i !== interest)
-        : [...prev, interest]
-    );
-  };
-
-  const togglePlace = (place: any) => {
-    setSelectedPlaces((prev) => {
-      if (prev.find((p) => p.name === place.name)) {
-        return prev.filter((p) => p.name !== place.name);
-      }
-      return [...prev, place];
-    });
-  };
 
   const fetchPlaceImage = async (placeName: string) => {
     try {
@@ -112,6 +95,13 @@ const Discover = () => {
     }
   }, [tripData, tripPlan]);
 
+  const filteredPlaces =
+    parsedTripPlan?.trip_plan?.places_to_visit?.filter((p: any) =>
+      selectedInterests.length === 0
+        ? true
+        : selectedInterests.some((i) => p.categories?.includes(i))
+    ) || [];
+
   if (!parsedTripPlan || !parsedTripData) {
     return (
       <View className="flex-1 items-center justify-center">
@@ -135,12 +125,23 @@ const Discover = () => {
     }`;
   };
 
-  const placesToShow =
-    parsedTripPlan?.trip_plan?.places_to_visit?.filter(
-      (p: any) =>
-        selectedInterests.length === 0 ||
-        p.categories?.some((c: string) => selectedInterests.includes(c))
-    ) || [];
+  const toggleInterest = (interest: string) => {
+    setSelectedInterests((prev) =>
+      prev.includes(interest)
+        ? prev.filter((i) => i !== interest)
+        : [...prev, interest]
+    );
+  };
+
+  const togglePlace = (place: any) => {
+    setSelectedPlaces((prev) => {
+      const exists = prev.find((p) => p.name === place.name);
+      if (exists) {
+        return prev.filter((p) => p.name !== place.name);
+      }
+      return [...prev, place];
+    });
+  };
 
   return (
     <ScrollView
@@ -296,34 +297,31 @@ const Discover = () => {
       {/* Places to Visit */}
       <View className="mb-8">
         <Text className="text-2xl font-outfit-bold mb-4">Places to Visit</Text>
-        <View className="mb-4">
-          <Text className="font-outfit-bold mb-2">Filter by Interests</Text>
-          <View className="flex-row flex-wrap">
-            {INTERESTS.map((interest) => (
-              <TouchableOpacity
-                key={interest}
-                onPress={() => toggleInterest(interest)}
-                className={`px-3 py-1 mr-2 mb-2 rounded-full border ${
-                  selectedInterests.includes(interest)
-                    ? 'bg-purple-500 border-purple-500'
-                    : 'border-gray-300'
+        <View className="flex-row flex-wrap mb-4">
+          {interestCategories.map((cat) => (
+            <TouchableOpacity
+              key={cat}
+              onPress={() => toggleInterest(cat)}
+              className={`px-3 py-1 m-1 rounded-full border ${
+                selectedInterests.includes(cat)
+                  ? "bg-purple-600 border-purple-600"
+                  : "border-gray-300"
+              }`}
+            >
+              <Text
+                className={`font-outfit ${
+                  selectedInterests.includes(cat)
+                    ? "text-white"
+                    : "text-gray-600"
                 }`}
               >
-                <Text
-                  className={`font-outfit ${
-                    selectedInterests.includes(interest)
-                      ? 'text-white'
-                      : 'text-gray-600'
-                  }`}
-                >
-                  {interest}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+                {cat}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
-        {placesToShow.length ? (
-          placesToShow.map((place: any, index: number) => (
+        {filteredPlaces.length ? (
+          filteredPlaces.map((place: any, index: number) => (
             <View
               key={index}
               className="bg-gray-50 p-4 rounded-xl mb-4 border border-gray-100"
@@ -334,13 +332,13 @@ const Discover = () => {
               />
               <TouchableOpacity
                 onPress={() => togglePlace(place)}
-                className="absolute right-4 top-4"
+                className="absolute top-2 right-2"
               >
                 <Ionicons
                   name={
                     selectedPlaces.find((p) => p.name === place.name)
-                      ? 'checkbox'
-                      : 'square-outline'
+                      ? "checkbox"
+                      : "square-outline"
                   }
                   size={24}
                   color="#8b5cf6"
@@ -378,10 +376,10 @@ const Discover = () => {
             title="Generate Itinerary"
             onPress={() =>
               router.push({
-                pathname: '/itinerary',
+                pathname: "/itinerary",
                 params: {
-                  places: JSON.stringify(selectedPlaces),
-                  tripData: JSON.stringify(parsedTripData),
+                  selectedPlaces: JSON.stringify(selectedPlaces),
+                  tripData,
                 },
               })
             }

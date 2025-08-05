@@ -99,3 +99,11 @@ Use this exact schema:
     ]
   }
 }`;
+
+export const interestCategories = [
+  "Nature",
+  "Culture",
+  "Adventure",
+  "Relaxation",
+  "Food & Drink",
+];
