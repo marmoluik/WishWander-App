@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Image, Linking } from "react-native";
+import { View, Text, ScrollView, Image, Linking, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -106,6 +106,14 @@ const Discover = () => {
     Linking.openURL(url);
   };
 
+  const generateBookingUrl = (hotelName: string) => {
+    const affiliateId = process.env.EXPO_PUBLIC_BOOKING_AFFILIATE_ID;
+    const encodedName = encodeURIComponent(hotelName);
+    return `https://www.booking.com/searchresults.html?ss=${encodedName}${
+      affiliateId ? `&aid=${affiliateId}` : ""
+    }`;
+  };
+
   return (
     <ScrollView
       className="flex-1 bg-white"
@@ -180,11 +188,15 @@ const Discover = () => {
               </Text>
               <CustomButton
                 title="Book Flight"
-                onPress={() =>
-                  Linking.openURL(
-                    parsedTripPlan.trip_plan.flight_details.booking_url
-                  )
-                }
+                onPress={() => {
+                  const url =
+                    parsedTripPlan.trip_plan.flight_details.booking_url;
+                  if (url) {
+                    Linking.openURL(url);
+                  } else {
+                    Alert.alert("No booking link available");
+                  }
+                }}
                 className="mt-4"
               />
             </View>
@@ -232,6 +244,13 @@ const Discover = () => {
                     )
                   }
                   className="mt-4"
+                />
+                <CustomButton
+                  title="Book Hotel"
+                  onPress={() =>
+                    Linking.openURL(generateBookingUrl(hotel.name))
+                  }
+                  className="mt-2"
                 />
               </View>
             )
