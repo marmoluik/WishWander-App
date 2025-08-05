@@ -47,23 +47,61 @@ export default function GenerateTrip() {
         )
         .replace("{budget}", budget?.type || "");
 
-      // Create a new chat session with that prompt
-      const session = startChatSession([
-        { role: "user", parts: [{ text: FINAL_PROMPT }] },
-      ]);
+      // Helper to extract JSON from possible extra text
+      const extractJSON = (text: string) => {
+        const match = text.match(/\{[\s\S]*\}/);
+        if (match) {
+          return JSON.parse(match[0]);
+        }
+        throw new Error("Invalid response format");
+      };
+
+      // Normalize various AI response formats into our expected structure
+      const normalizeTripPlan = (data: any) => {
+        const root = data.trip_plan || data;
+        const flight =
+          root.flight_details || root.flights || data.flight_details || data.flights;
+        const hotels =
+          root.hotel?.options ||
+          root.hotel_options ||
+          root.hotels ||
+          data.hotel?.options ||
+          data.hotel_options ||
+          data.hotels;
+        const places =
+          root.places_to_visit ||
+          root.places ||
+          root.sightseeing ||
+          data.places_to_visit ||
+          data.places ||
+          data.sightseeing;
+
+        return {
+          trip_plan: {
+            ...root,
+            flight_details: flight,
+            hotel: { options: hotels || [] },
+            places_to_visit: places || [],
+          },
+        };
+      };
 
       // Try multiple times to obtain a complete trip plan
-      const MAX_RETRIES = 3;
+      const MAX_RETRIES = 5;
       let attempt = 0;
       let prompt = FINAL_PROMPT;
       let parsed: any = null;
 
       while (attempt < MAX_RETRIES) {
+        const session = startChatSession([
+          { role: "user", parts: [{ text: prompt }] },
+        ]);
+
         const result = await session.sendMessage(prompt);
         const rawText = await result.response.text();
 
         try {
-          parsed = JSON.parse(rawText);
+          parsed = normalizeTripPlan(extractJSON(rawText));
         } catch (err) {
           console.error("parse error", err);
           throw new Error("Invalid response format");
@@ -87,7 +125,7 @@ export default function GenerateTrip() {
         }
 
         // Ask the AI again for the missing sections
-        prompt = `The previous response was missing ${missing.join(", ")}. Please resend the entire trip plan in valid JSON including flight_details, hotel options array, and places_to_visit array.`;
+        prompt = `The previous response was missing ${missing.join(", ")}. Please resend the entire trip plan in valid JSON including flight_details object, hotel options array, and places_to_visit array.`;
       }
 
       // Save the entire parsed response so downstream screens receive trip_plan
