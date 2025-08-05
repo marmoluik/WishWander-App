@@ -35,7 +35,15 @@ export default function MyTrip() {
     const querySnapshot = await getDocs(q);
 
     querySnapshot.forEach((doc) => {
-      setUserTrips((prev) => [...prev, doc.data()]);
+      const data = doc.data();
+      const plan = data.tripPlan?.trip_plan;
+      if (
+        plan?.flight_details?.departure_city &&
+        plan?.hotel?.options?.length &&
+        plan?.places_to_visit?.length
+      ) {
+        setUserTrips((prev) => [...prev, data]);
+      }
     });
     setLoading(false);
   };

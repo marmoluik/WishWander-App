@@ -18,6 +18,7 @@ export default function GenerateTrip() {
 
   useEffect(() => {
     generateTrip();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const generateTrip = async () => {
@@ -46,24 +47,137 @@ export default function GenerateTrip() {
         )
         .replace("{budget}", budget?.type || "");
 
-      // Create a new chat session with that prompt
-      const session = startChatSession([
-        { role: "user", parts: [{ text: FINAL_PROMPT }] },
-      ]);
+      // Helper to extract JSON from possible extra text
+      const extractJSON = (text: string) => {
+        const match = text.match(/\{[\s\S]*\}/);
+        if (match) {
+          return JSON.parse(match[0]);
+        }
+        throw new Error("Invalid response format");
+      };
 
-      // Send the prompt and await the response
-      const result = await session.sendMessage(FINAL_PROMPT);
-      const rawText = await result.response.text();
-      const parsed = JSON.parse(rawText);
-      // Unwrap the inner trip_plan object if present
-      const tripResponse = parsed.trip_plan ?? parsed;
+      // Normalize various AI response formats into our expected structure
+      const normalizeTripPlan = (data: any) => {
+        const root = data.trip_plan || data;
+        let flight =
+          root.flight_details || root.flights || data.flight_details || data.flights;
 
-      // Save to Firestore
+        if (Array.isArray(flight)) {
+          flight = flight[0];
+        }
+
+        const hotels =
+          root.hotel?.options ||
+          root.hotel_options ||
+          root.hotels ||
+          data.hotel?.options ||
+          data.hotel_options ||
+          data.hotels;
+        const places =
+          root.places_to_visit ||
+          root.places ||
+          root.sightseeing ||
+          data.places_to_visit ||
+          data.places ||
+          data.sightseeing;
+
+        const filledFlight = {
+          departure_city: flight?.departure_city || "TBD",
+          arrival_city: flight?.arrival_city || locationInfo?.name || "",
+          departure_date: flight?.departure_date || dates?.startDate || "",
+          departure_time: flight?.departure_time || "",
+          arrival_date: flight?.arrival_date || dates?.startDate || "",
+          arrival_time: flight?.arrival_time || "",
+          airline: flight?.airline || "Unknown Airline",
+          flight_number: flight?.flight_number || "",
+          price: flight?.price || "",
+          booking_url: flight?.booking_url || "",
+        };
+
+        return {
+          trip_plan: {
+            ...root,
+            flight_details: filledFlight,
+            hotel: { options: hotels || [] },
+            places_to_visit: places || [],
+          },
+        };
+      };
+
+      // Try multiple times to obtain a complete trip plan
+      const MAX_RETRIES = 5;
+      let attempt = 0;
+      let prompt = FINAL_PROMPT;
+      let parsed: any = null;
+
+      while (attempt < MAX_RETRIES) {
+        try {
+          const session = startChatSession([
+            { role: "user", parts: [{ text: prompt }] },
+          ]);
+          const result = await session.sendMessage(prompt);
+          const rawText = await result.response.text();
+
+          try {
+            parsed = normalizeTripPlan(extractJSON(rawText));
+          } catch (err) {
+            console.error("parse error", err);
+            throw new Error("Invalid response format");
+          }
+        } catch (err) {
+          if (err instanceof Error && err.message.includes("503")) {
+            attempt++;
+            if (attempt >= MAX_RETRIES) {
+              throw new Error("AI service is overloaded. Please try again later.");
+            }
+            await new Promise((res) => setTimeout(res, attempt * 1000));
+            continue; // retry after delay
+          }
+          throw err;
+        }
+
+        const tripPlan = parsed?.trip_plan;
+        const missing: string[] = [];
+
+        const hotelOpts = tripPlan?.hotel?.options;
+        if (
+          !Array.isArray(hotelOpts) ||
+          hotelOpts.length === 0 ||
+          hotelOpts.some((h: any) => !h?.name)
+        ) {
+          missing.push("hotel options");
+        }
+
+        const places = tripPlan?.places_to_visit;
+        if (
+          !Array.isArray(places) ||
+          places.length === 0 ||
+          places.some((p: any) => !p?.name)
+        ) {
+          missing.push("places to visit");
+        }
+
+        if (missing.length === 0) {
+          break; // complete plan obtained
+        }
+
+        attempt++;
+        if (attempt >= MAX_RETRIES) {
+          throw new Error(
+            `Incomplete trip plan received: missing ${missing.join(", ")}`
+          );
+        }
+
+        // Ask the AI again for the missing sections
+        prompt = `The previous response was missing ${missing.join(", ")}. Please resend the entire trip plan in valid JSON including flight_details object, hotel options array, and places_to_visit array.`;
+      }
+
+      // Save the entire parsed response so downstream screens receive trip_plan
       const docId = Date.now().toString();
       if (db && user) {
         await setDoc(doc(db, "UserTrips", docId), {
           userEmail: user.email,
-          tripPlan: tripResponse,
+          tripPlan: parsed,
           tripData: JSON.stringify(tripData),
           docId,
         });
@@ -73,7 +187,15 @@ export default function GenerateTrip() {
       }
     } catch (err) {
       console.error("Failed to generate trip", err);
-      setError("Failed to generate trip. Please try again.");
+      if (err instanceof Error && err.message.includes("503")) {
+        setError("AI service is overloaded. Please try again later.");
+      } else {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Failed to generate trip. Please try again."
+        );
+      }
     }
   };
 
