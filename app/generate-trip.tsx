@@ -191,21 +191,32 @@ export default function GenerateTrip() {
       }
 
       if (originAirport && locationInfo?.name) {
-        const kiwiKey = process.env.EXPO_PUBLIC_KIWI_API_KEY;
-        if (kiwiKey) {
+        const rapidApiKey = process.env.EXPO_PUBLIC_RAPIDAPI_KEY;
+        const rapidHost = "kiwi-com-cheap-flights.p.rapidapi.com";
+        if (rapidApiKey) {
           try {
             const locRes = await fetch(
-              `https://api.tequila.kiwi.com/locations/query?term=${encodeURIComponent(
+              `https://${rapidHost}/locations?term=${encodeURIComponent(
                 locationInfo.name
               )}&location_types=airport&limit=1`,
-              { headers: { apikey: kiwiKey } }
+              {
+                headers: {
+                  "X-RapidAPI-Key": rapidApiKey,
+                  "X-RapidAPI-Host": rapidHost,
+                },
+              }
             );
             const locJson = await locRes.json();
             const arrival = locJson.locations?.[0];
             if (arrival?.code) {
               const flightRes = await fetch(
-                `https://api.tequila.kiwi.com/v2/search?fly_from=${originAirport.code}&fly_to=${arrival.code}&date_from=${startDateStr}&date_to=${startDateStr}&limit=1&sort=price`,
-                { headers: { apikey: kiwiKey } }
+                `https://${rapidHost}/v2/search?fly_from=${originAirport.code}&fly_to=${arrival.code}&date_from=${startDateStr}&date_to=${startDateStr}&limit=1&sort=price`,
+                {
+                  headers: {
+                    "X-RapidAPI-Key": rapidApiKey,
+                    "X-RapidAPI-Host": rapidHost,
+                  },
+                }
               );
               const flightJson = await flightRes.json();
               const flight = flightJson.data?.[0];
