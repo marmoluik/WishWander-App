@@ -160,7 +160,7 @@ export default function GenerateTrip() {
         const hotelOpts = tripPlan?.hotel?.options;
         if (
           !Array.isArray(hotelOpts) ||
-          hotelOpts.length === 0 ||
+          hotelOpts.length < 3 ||
           hotelOpts.some((h: any) => !h?.name)
         ) {
           missing.push("hotel options");

@@ -50,7 +50,7 @@ export const budgetOptions = [
   },
 ];
 
-export const AI_PROMPT = `Return only JSON. Generate a trip plan for Location "{location}" lasting {totalDays} day(s) and {totalNights} night(s) for {travelers} with a {budget} budget.
+export const AI_PROMPT = `Return only JSON. Generate a trip plan for Location "{location}" lasting {totalDays} day(s) and {totalNights} night(s) for {travelers} with a {budget} budget. Include at least three hotel options.
 
 Use this exact schema:
 {
@@ -73,6 +73,24 @@ Use this exact schema:
     },
     "hotel": {
       "options": [
+        {
+          "name": "",
+          "address": "",
+          "price": "",
+          "image_url": "",
+          "geo_coordinates": { "latitude": 0, "longitude": 0 },
+          "rating": "",
+          "description": ""
+        },
+        {
+          "name": "",
+          "address": "",
+          "price": "",
+          "image_url": "",
+          "geo_coordinates": { "latitude": 0, "longitude": 0 },
+          "rating": "",
+          "description": ""
+        },
         {
           "name": "",
           "address": "",
