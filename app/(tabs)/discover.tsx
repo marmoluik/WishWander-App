@@ -1,8 +1,9 @@
-import { View, Text, ScrollView, Image, Linking, Alert } from "react-native";
+import { View, Text, ScrollView, Image, Linking, Alert, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
+import { interestCategories } from "@/constants/Options";
 
 const DEFAULT_IMAGE_URL =
   "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?q=80&w=2071&auto=format&fit=crop";
@@ -23,8 +24,11 @@ const toDate = (value: any) => {
 
 const Discover = () => {
   const { tripData, tripPlan } = useLocalSearchParams();
+  const router = useRouter();
   const [parsedTripData, setParsedTripData] = useState<any>(null);
   const [parsedTripPlan, setParsedTripPlan] = useState<any>(null);
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  const [selectedPlaces, setSelectedPlaces] = useState<any[]>([]);
 
   const fetchPlaceImage = async (placeName: string) => {
     try {
@@ -91,6 +95,13 @@ const Discover = () => {
     }
   }, [tripData, tripPlan]);
 
+  const filteredPlaces =
+    parsedTripPlan?.trip_plan?.places_to_visit?.filter((p: any) =>
+      selectedInterests.length === 0
+        ? true
+        : selectedInterests.some((i) => p.categories?.includes(i))
+    ) || [];
+
   if (!parsedTripPlan || !parsedTripData) {
     return (
       <View className="flex-1 items-center justify-center">
@@ -112,6 +123,24 @@ const Discover = () => {
     return `https://www.booking.com/searchresults.html?ss=${encodedName}${
       affiliateId ? `&aid=${affiliateId}` : ""
     }`;
+  };
+
+  const toggleInterest = (interest: string) => {
+    setSelectedInterests((prev) =>
+      prev.includes(interest)
+        ? prev.filter((i) => i !== interest)
+        : [...prev, interest]
+    );
+  };
+
+  const togglePlace = (place: any) => {
+    setSelectedPlaces((prev) => {
+      const exists = prev.find((p) => p.name === place.name);
+      if (exists) {
+        return prev.filter((p) => p.name !== place.name);
+      }
+      return [...prev, place];
+    });
   };
 
   return (
@@ -268,44 +297,94 @@ const Discover = () => {
       {/* Places to Visit */}
       <View className="mb-8">
         <Text className="text-2xl font-outfit-bold mb-4">Places to Visit</Text>
-        {parsedTripPlan?.trip_plan?.places_to_visit?.length ? (
-          parsedTripPlan.trip_plan.places_to_visit.map(
-            (place: any, index: number) => (
-              <View
-                key={index}
-                className="bg-gray-50 p-4 rounded-xl mb-4 border border-gray-100"
+        <View className="flex-row flex-wrap mb-4">
+          {interestCategories.map((cat) => (
+            <TouchableOpacity
+              key={cat}
+              onPress={() => toggleInterest(cat)}
+              className={`px-3 py-1 m-1 rounded-full border ${
+                selectedInterests.includes(cat)
+                  ? "bg-purple-600 border-purple-600"
+                  : "border-gray-300"
+              }`}
+            >
+              <Text
+                className={`font-outfit ${
+                  selectedInterests.includes(cat)
+                    ? "text-white"
+                    : "text-gray-600"
+                }`}
               >
-                <Image
-                  source={{ uri: place.image_url }}
-                  className="w-full h-48 rounded-xl mb-4"
-                />
-                <Text className="font-outfit-bold text-lg">{place.name}</Text>
-                <Text className="font-outfit text-gray-600 mb-2">
-                  {place.details}
-                </Text>
-                <Text className="font-outfit text-gray-600">
-                  Ticket Price: {place.ticket_price}
-                </Text>
-                <Text className="font-outfit text-gray-600">
-                  Time to Travel: {place.time_to_travel}
-                </Text>
-                <CustomButton
-                  title="View on Map"
-                  onPress={() =>
-                    handleOpenMap(
-                      place.geo_coordinates.latitude,
-                      place.geo_coordinates.longitude
-                    )
+                {cat}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        {filteredPlaces.length ? (
+          filteredPlaces.map((place: any, index: number) => (
+            <View
+              key={index}
+              className="bg-gray-50 p-4 rounded-xl mb-4 border border-gray-100"
+            >
+              <Image
+                source={{ uri: place.image_url }}
+                className="w-full h-48 rounded-xl mb-4"
+              />
+              <TouchableOpacity
+                onPress={() => togglePlace(place)}
+                className="absolute top-2 right-2"
+              >
+                <Ionicons
+                  name={
+                    selectedPlaces.find((p) => p.name === place.name)
+                      ? "checkbox"
+                      : "square-outline"
                   }
-                  className="mt-4"
+                  size={24}
+                  color="#8b5cf6"
                 />
-              </View>
-            )
-          )
+              </TouchableOpacity>
+              <Text className="font-outfit-bold text-lg">{place.name}</Text>
+              <Text className="font-outfit text-gray-600 mb-2">
+                {place.details}
+              </Text>
+              <Text className="font-outfit text-gray-600">
+                Ticket Price: {place.ticket_price}
+              </Text>
+              <Text className="font-outfit text-gray-600">
+                Time to Travel: {place.time_to_travel}
+              </Text>
+              <CustomButton
+                title="View on Map"
+                onPress={() =>
+                  handleOpenMap(
+                    place.geo_coordinates.latitude,
+                    place.geo_coordinates.longitude
+                  )
+                }
+                className="mt-4"
+              />
+            </View>
+          ))
         ) : (
           <Text className="font-outfit text-gray-600">
             No places to visit available.
           </Text>
+        )}
+        {selectedPlaces.length > 0 && (
+          <CustomButton
+            title="Generate Itinerary"
+            onPress={() =>
+              router.push({
+                pathname: "/itinerary",
+                params: {
+                  selectedPlaces: JSON.stringify(selectedPlaces),
+                  tripData,
+                },
+              })
+            }
+            className="mt-4"
+          />
         )}
       </View>
     </ScrollView>

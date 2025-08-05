@@ -90,6 +90,13 @@ const SelectDates = () => {
             disabled={!selectedEndDate}
             className="disabled:opacity-50"
           />
+          <CustomButton
+            title="Flexible Dates"
+            onPress={() => router.push("/create-trip/flexible-dates")}
+            bgVariant="outline"
+            textVariant="primary"
+            className="mt-4 bg-gray-200"
+          />
         </View>
       </View>
     </SafeAreaView>

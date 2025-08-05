@@ -91,8 +91,17 @@ Use this exact schema:
         "image_url": "",
         "geo_coordinates": { "latitude": 0, "longitude": 0 },
         "ticket_price": "",
-        "time_to_travel": ""
+        "time_to_travel": "",
+        "categories": []
       }
     ]
   }
 }`;
+
+export const interestCategories = [
+  "Nature",
+  "Culture",
+  "Adventure",
+  "Relaxation",
+  "Food & Drink",
+];
