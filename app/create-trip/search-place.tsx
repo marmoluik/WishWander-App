@@ -32,13 +32,14 @@ export default function SearchPlace() {
     Constants.expoConfig?.extra?.googlePlacesApiKey!,
     {
       debounce: 300,
-      minLength: 3,
+      minLength: 2,
+      queryTypes: "(cities)",
     }
   );
 
   // Fetch details when a place is selected
   const selectPlace = async (item: any) => {
-    const detail = await searchDetails(item.place_id);
+    const detail: any = await searchDetails(item.place_id);
     setTripData((prev) => {
       const filtered = prev.filter((i) => !i.locationInfo);
       return [

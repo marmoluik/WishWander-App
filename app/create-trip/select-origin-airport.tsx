@@ -31,7 +31,8 @@ export default function SelectOriginAirport() {
     Constants.expoConfig?.extra?.googlePlacesApiKey!,
     {
       debounce: 300,
-      minLength: 3,
+      minLength: 2,
+      queryTypes: "establishment",
     }
   );
 
@@ -76,7 +77,7 @@ export default function SelectOriginAirport() {
           {isSearching && <Text style={styles.loading}>Loading…</Text>}
 
           <FlatList
-            data={locationResults.filter((i) => i.description.includes("Airport"))}
+            data={locationResults.filter((i) => i.types?.includes("airport"))}
             keyExtractor={(item) => item.place_id}
             renderItem={({ item }) => (
               <TouchableOpacity style={styles.row} onPress={() => selectAirport(item)}>
@@ -84,7 +85,7 @@ export default function SelectOriginAirport() {
               </TouchableOpacity>
             )}
             ListEmptyComponent={
-              !isSearching && term.length >= 3 ? (
+              !isSearching && term.length >= 2 ? (
                 <Text style={styles.noResults}>No results</Text>
               ) : null
             }

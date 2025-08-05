@@ -68,6 +68,8 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    EXPO_PUBLIC_KIWI_API_KEY=your_kiwi_api_key
    ```
 
+   The `GOOGLE_PLACES_API_KEY` must have the Places API enabled for city and airport autocomplete.
+
 3. Start the app
 
    ```bash
