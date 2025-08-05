@@ -14,11 +14,7 @@ if (!apiKey) {
 // Create the Generative AI client
 const genAI = new GoogleGenerativeAI(apiKey);
 
-// Prepare your model & default generationConfig
-const model = genAI.getGenerativeModel({
-  model: 'gemini-1.5-flash',
-});
-
+// Default generation config shared by all chat sessions
 const defaultGenerationConfig = {
   temperature: 1,
   topP: 0.95,
@@ -33,8 +29,10 @@ const defaultGenerationConfig = {
  * @returns A running chat session instance.
  */
 export function startChatSession(
-  history: Array<{ role: 'user' | 'model'; parts: { text: string }[] }>
+  history: Array<{ role: 'user' | 'model'; parts: { text: string }[] }>,
+  modelName: string = 'gemini-1.5-flash'
 ) {
+  const model = genAI.getGenerativeModel({ model: modelName });
   return model.startChat({
     generationConfig: defaultGenerationConfig,
     history,
