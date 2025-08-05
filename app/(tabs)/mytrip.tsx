@@ -9,7 +9,14 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import StartNewTripCard from "@/components/MyTrips/StartNewTripCard";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 import { auth, db } from "@/config/FirebaseConfig";
 import UserTripList from "@/components/MyTrips/UserTripList";
 import { useRouter } from "expo-router";
@@ -34,17 +41,29 @@ export default function MyTrip() {
     );
     const querySnapshot = await getDocs(q);
 
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
+    querySnapshot.forEach((docSnap) => {
+      const data = docSnap.data();
       const plan = data.tripPlan?.trip_plan;
       if (
         plan?.flight_details?.departure_city &&
         plan?.hotel?.options?.length &&
         plan?.places_to_visit?.length
       ) {
-        setUserTrips((prev) => [...prev, data]);
+        setUserTrips((prev) => [...prev, { id: docSnap.id, ...data }]);
       }
     });
+    setLoading(false);
+  };
+
+  const deleteTrip = async (id: string) => {
+    if (!db || !id) return;
+    setLoading(true);
+    try {
+      await deleteDoc(doc(db, "UserTrips", id));
+      setUserTrips((prev) => prev.filter((trip) => trip.id !== id));
+    } catch (e) {
+      console.error("failed to delete trip", e);
+    }
     setLoading(false);
   };
 
@@ -67,7 +86,7 @@ export default function MyTrip() {
       {userTrips?.length == 0 ? (
         <StartNewTripCard />
       ) : (
-        <UserTripList userTrips={userTrips} />
+        <UserTripList userTrips={userTrips} onDelete={deleteTrip} />
       )}
     </ScrollView>
   );
