@@ -65,10 +65,11 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    FIREBASE_APP_ID=your_firebase_app_id
    GOOGLE_PLACES_API_KEY=your_google_places_api_key
    EXPO_PUBLIC_BOOKING_AFFILIATE_ID=your_booking_affiliate_id
-   EXPO_PUBLIC_KIWI_API_KEY=your_kiwi_api_key
+   EXPO_PUBLIC_RAPIDAPI_KEY=your_rapidapi_key
    ```
 
    The `GOOGLE_PLACES_API_KEY` must have the Places API enabled for city and airport autocomplete.
+   The `EXPO_PUBLIC_RAPIDAPI_KEY` should be a valid key for the [Kiwi.com Cheap Flights API](https://rapidapi.com/emir12/api/kiwi-com-cheap-flights).
 
 3. Start the app
 
