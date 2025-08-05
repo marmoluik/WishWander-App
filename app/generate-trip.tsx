@@ -96,6 +96,7 @@ export default function GenerateTrip() {
         const session = startChatSession([
           { role: "user", parts: [{ text: prompt }] },
         ]);
+
         const result = await session.sendMessage(prompt);
         const rawText = await result.response.text();
 
@@ -161,6 +162,7 @@ export default function GenerateTrip() {
       }
     } catch (err) {
       console.error("Failed to generate trip", err);
+
       if (err instanceof Error && err.message.includes("503")) {
         setError("AI service is overloaded. Please try again later.");
       } else {
