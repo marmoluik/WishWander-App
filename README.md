@@ -64,6 +64,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
    FIREBASE_APP_ID=your_firebase_app_id
    GOOGLE_PLACES_API_KEY=your_google_places_api_key
+   EXPO_PUBLIC_BOOKING_AFFILIATE_ID=your_booking_affiliate_id
    ```
 
 3. Start the app
