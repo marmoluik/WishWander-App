@@ -21,7 +21,13 @@ const toDate = (value: any) => {
   }
   return undefined;
 };
-const UserTripList = ({ userTrips }: { userTrips: any[] }) => {
+const UserTripList = ({
+  userTrips,
+  onDelete,
+}: {
+  userTrips: any[];
+  onDelete: (id: string) => void;
+}) => {
   const router = useRouter();
 
   // Sort trips by start date
@@ -99,12 +105,18 @@ const UserTripList = ({ userTrips }: { userTrips: any[] }) => {
             }
             className={`mt-3 ${isPastTrip ? "opacity-50" : ""}`}
           />
+          <CustomButton
+            title="Delete Trip"
+            bgVariant="danger"
+            onPress={() => onDelete(sortedTrips[0].docId)}
+            className="mt-2"
+          />
         </View>
 
         <View className="h-0.5 bg-gray-200 mt-4 mb-2" />
 
         {sortedTrips?.slice(1).map((trip, idx) => (
-          <UserTripCard trip={trip} key={idx} />
+          <UserTripCard trip={trip} key={idx} onDelete={onDelete} />
         ))}
       </View>
     </View>
