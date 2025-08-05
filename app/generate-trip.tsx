@@ -18,6 +18,7 @@ export default function GenerateTrip() {
 
   useEffect(() => {
     generateTrip();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const generateTrip = async () => {
@@ -46,24 +47,148 @@ export default function GenerateTrip() {
         )
         .replace("{budget}", budget?.type || "");
 
-      // Create a new chat session with that prompt
-      const session = startChatSession([
-        { role: "user", parts: [{ text: FINAL_PROMPT }] },
-      ]);
+      // Helper to handle 503 overload errors with retries and model fallback
+      const getAIResponse = async (promptText: string) => {
+        const MODELS = ["gemini-1.5-flash", "gemini-1.5-pro"];
+        let lastError: any = null;
 
-      // Send the prompt and await the response
-      const result = await session.sendMessage(FINAL_PROMPT);
-      const rawText = await result.response.text();
-      const parsed = JSON.parse(rawText);
-      // Unwrap the inner trip_plan object if present
-      const tripResponse = parsed.trip_plan ?? parsed;
+        for (const modelName of MODELS) {
+          let tries = 0;
+          while (tries < 3) {
+            const session = startChatSession(
+              [{ role: "user", parts: [{ text: promptText }] }],
+              modelName
+            );
+            try {
+              const result = await session.sendMessage(promptText);
+              return await result.response.text();
+            } catch (err) {
+              lastError = err;
+              if (
+                err instanceof Error &&
+                err.message.includes("503") &&
+                tries < 2
+              ) {
+                // backoff and retry same model
+                await new Promise((r) => setTimeout(r, 1000 * (tries + 1)));
+                tries++;
+                continue;
+              }
+              if (
+                err instanceof Error && err.message.includes("503")
+              ) {
+                // move to next model
+                break;
+              }
+              throw err; // non-503 error
+            }
+          }
+        }
 
-      // Save to Firestore
+        throw lastError || new Error("Service unavailable");
+      };
+
+      // Helper to extract JSON from possible extra text
+      const extractJSON = (text: string) => {
+        const match = text.match(/\{[\s\S]*\}/);
+        if (match) {
+          return JSON.parse(match[0]);
+        }
+        throw new Error("Invalid response format");
+      };
+
+      // Normalize various AI response formats into our expected structure
+      const normalizeTripPlan = (data: any) => {
+        const root = data.trip_plan || data;
+        const flight =
+          root.flight_details || root.flights || data.flight_details || data.flights;
+        const hotels =
+          root.hotel?.options ||
+          root.hotel_options ||
+          root.hotels ||
+          data.hotel?.options ||
+          data.hotel_options ||
+          data.hotels;
+        const places =
+          root.places_to_visit ||
+          root.places ||
+          root.sightseeing ||
+          data.places_to_visit ||
+          data.places ||
+          data.sightseeing;
+
+        return {
+          trip_plan: {
+            ...root,
+            flight_details: flight,
+            hotel: { options: hotels || [] },
+            places_to_visit: places || [],
+          },
+        };
+      };
+
+      // Try multiple times to obtain a complete trip plan
+      const MAX_RETRIES = 5;
+      let attempt = 0;
+      let prompt = FINAL_PROMPT;
+      let parsed: any = null;
+
+      while (attempt < MAX_RETRIES) {
+        const rawText = await getAIResponse(prompt);
+
+        try {
+          parsed = normalizeTripPlan(extractJSON(rawText));
+        } catch (err) {
+          console.error("parse error", err);
+          throw new Error("Invalid response format");
+        }
+
+        const tripPlan = parsed?.trip_plan;
+        const missing: string[] = [];
+
+        const flight = tripPlan?.flight_details;
+        if (!flight?.departure_city || !flight?.arrival_city)
+          missing.push("flight details");
+
+        const hotelOpts = tripPlan?.hotel?.options;
+        if (
+          !Array.isArray(hotelOpts) ||
+          hotelOpts.length === 0 ||
+          hotelOpts.some((h: any) => !h?.name)
+        ) {
+          missing.push("hotel options");
+        }
+
+        const places = tripPlan?.places_to_visit;
+        if (
+          !Array.isArray(places) ||
+          places.length === 0 ||
+          places.some((p: any) => !p?.name)
+        ) {
+          missing.push("places to visit");
+        }
+
+        if (missing.length === 0) {
+          break; // complete plan obtained
+        }
+
+        attempt++;
+        if (attempt >= MAX_RETRIES) {
+          throw new Error(
+            `Incomplete trip plan received: missing ${missing.join(", ")}`
+          );
+        }
+
+        // Ask the AI again for the missing sections
+        prompt = `The previous response was missing ${missing.join(", ")}. Please resend the entire trip plan in valid JSON including flight_details object, hotel options array, and places_to_visit array.`;
+      }
+
+      // Save the entire parsed response so downstream screens receive trip_plan
       const docId = Date.now().toString();
       if (db && user) {
         await setDoc(doc(db, "UserTrips", docId), {
           userEmail: user.email,
-          tripPlan: tripResponse,
+          tripPlan: parsed,
           tripData: JSON.stringify(tripData),
           docId,
         });
@@ -73,7 +198,15 @@ export default function GenerateTrip() {
       }
     } catch (err) {
       console.error("Failed to generate trip", err);
-      setError("Failed to generate trip. Please try again.");
+      if (err instanceof Error && err.message.includes("503")) {
+        setError("AI service is overloaded. Please try again later.");
+      } else {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Failed to generate trip. Please try again."
+        );
+      }
     }
   };
 
