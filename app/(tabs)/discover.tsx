@@ -101,9 +101,28 @@ const Discover = () => {
     );
   }
 
-  const handleOpenMap = (latitude: number, longitude: number) => {
-    const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
-    Linking.openURL(url);
+  const handleOpenMap = (
+    latitude?: number,
+    longitude?: number,
+    address?: string
+  ) => {
+    let url = "";
+    if (
+      typeof latitude === "number" &&
+      typeof longitude === "number" &&
+      (latitude !== 0 || longitude !== 0)
+    ) {
+      url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+    } else if (address) {
+      const encoded = encodeURIComponent(address);
+      url = `https://www.google.com/maps/search/?api=1&query=${encoded}`;
+    }
+
+    if (url) {
+      Linking.openURL(url);
+    } else {
+      Alert.alert("Location not available");
+    }
   };
 
   const generateBookingUrl = (hotelName: string) => {
@@ -144,34 +163,42 @@ const Discover = () => {
         <Text className="text-2xl font-outfit-bold mb-4">Flight Details</Text>
         {parsedTripPlan?.trip_plan?.flight_details ? (
           <View className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-            <View className="flex-row justify-between items-center mb-4">
-              <View>
-                <Text className="font-outfit-bold text-lg">
+            <View className="flex-row items-center mb-4">
+              <View className="flex-1 pr-2">
+                <Text
+                  className="font-outfit-bold text-lg"
+                  numberOfLines={2}
+                >
                   {parsedTripPlan.trip_plan.flight_details.departure_city}
                 </Text>
                 <Text className="font-outfit text-gray-600">
-
                   {
                     toDate(
                       parsedTripPlan.trip_plan.flight_details.departure_date
                     )?.toLocaleDateString() || ""
-                  }{" "}
-
+                  } {""}
                   {parsedTripPlan.trip_plan.flight_details.departure_time}
                 </Text>
               </View>
-              <Ionicons name="airplane" size={24} color="#8b5cf6" />
-              <View>
-                <Text className="font-outfit-bold text-lg">
+              <Ionicons
+                name="airplane"
+                size={24}
+                color="#8b5cf6"
+                style={{ marginHorizontal: 8 }}
+              />
+              <View className="flex-1 pl-2 items-end">
+                <Text
+                  className="font-outfit-bold text-lg text-right"
+                  numberOfLines={2}
+                >
                   {parsedTripPlan.trip_plan.flight_details.arrival_city}
                 </Text>
-                <Text className="font-outfit text-gray-600">
+                <Text className="font-outfit text-gray-600 text-right">
                   {
                     toDate(
                       parsedTripPlan.trip_plan.flight_details.arrival_date
                     )?.toLocaleDateString() || ""
-                  }{" "}
-
+                  } {""}
                   {parsedTripPlan.trip_plan.flight_details.arrival_time}
                 </Text>
               </View>
@@ -186,19 +213,21 @@ const Discover = () => {
               <Text className="font-outfit text-gray-600">
                 Price: {parsedTripPlan.trip_plan.flight_details.price}
               </Text>
-              <CustomButton
-                title="Book Flight"
-                onPress={() => {
-                  const url =
-                    parsedTripPlan.trip_plan.flight_details.booking_url;
-                  if (url) {
-                    Linking.openURL(url);
-                  } else {
-                    Alert.alert("No flight offer available");
+              {parsedTripPlan.trip_plan.flight_details.booking_url ? (
+                <CustomButton
+                  title="Book Flight"
+                  onPress={() =>
+                    Linking.openURL(
+                      parsedTripPlan.trip_plan.flight_details.booking_url
+                    )
                   }
-                }}
-                className="mt-4"
-              />
+                  className="mt-4"
+                />
+              ) : (
+                <Text className="font-outfit text-gray-500 mt-4">
+                  Flight booking not available.
+                </Text>
+              )}
             </View>
           </View>
         ) : (
@@ -240,7 +269,8 @@ const Discover = () => {
                   onPress={() =>
                     handleOpenMap(
                       hotel.geo_coordinates.latitude,
-                      hotel.geo_coordinates.longitude
+                      hotel.geo_coordinates.longitude,
+                      hotel.address
                     )
                   }
                   className="mt-4"
@@ -291,7 +321,8 @@ const Discover = () => {
                   onPress={() =>
                     handleOpenMap(
                       place.geo_coordinates.latitude,
-                      place.geo_coordinates.longitude
+                      place.geo_coordinates.longitude,
+                      place.name
                     )
                   }
                   className="mt-4"
