@@ -10,6 +10,21 @@ import { useRouter } from "expo-router";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/config/FirebaseConfig";
 
+const formatDate = (value: any) => {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  if (typeof value === "number") {
+    return new Date(value).toISOString().split("T")[0];
+  }
+  if (value.seconds) {
+    return new Date(value.seconds * 1000).toISOString().split("T")[0];
+  }
+  if (value._seconds) {
+    return new Date(value._seconds * 1000).toISOString().split("T")[0];
+  }
+  return "";
+};
+
 export default function GenerateTrip() {
   const { tripData } = useContext(CreateTripContext);
   const [error, setError] = useState<string | null>(null);
@@ -81,12 +96,14 @@ export default function GenerateTrip() {
           data.places ||
           data.sightseeing;
 
+        const startDateStr = formatDate(dates?.startDate);
+
         const filledFlight = {
           departure_city: flight?.departure_city || "TBD",
           arrival_city: flight?.arrival_city || locationInfo?.name || "",
-          departure_date: flight?.departure_date || dates?.startDate || "",
+          departure_date: formatDate(flight?.departure_date) || startDateStr,
           departure_time: flight?.departure_time || "",
-          arrival_date: flight?.arrival_date || dates?.startDate || "",
+          arrival_date: formatDate(flight?.arrival_date) || startDateStr,
           arrival_time: flight?.arrival_time || "",
           airline: flight?.airline || "Unknown Airline",
           flight_number: flight?.flight_number || "",

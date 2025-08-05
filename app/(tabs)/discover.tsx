@@ -7,6 +7,20 @@ import CustomButton from "@/components/CustomButton";
 const DEFAULT_IMAGE_URL =
   "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?q=80&w=2071&auto=format&fit=crop";
 
+const toDate = (value: any) => {
+  if (!value) return undefined;
+  if (typeof value === "string" || typeof value === "number") {
+    return new Date(value);
+  }
+  if (value.seconds) {
+    return new Date(value.seconds * 1000);
+  }
+  if (value._seconds) {
+    return new Date(value._seconds * 1000);
+  }
+  return undefined;
+};
+
 const Discover = () => {
   const { tripData, tripPlan } = useLocalSearchParams();
   const [parsedTripData, setParsedTripData] = useState<any>(null);
@@ -17,13 +31,13 @@ const Discover = () => {
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(
           placeName
-        )}&key=${process.env.EXPO_PUBLIC_GOOGLE_MAP_KEY}`
+        )}&key=${process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY}`
       );
       const data = await response.json();
 
       if (data.results && data.results[0] && data.results[0].photos) {
         const photoReference = data.results[0].photos[0].photo_reference;
-        return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${photoReference}&key=${process.env.EXPO_PUBLIC_GOOGLE_MAP_KEY}`;
+        return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${photoReference}&key=${process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY}`;
       }
       return DEFAULT_IMAGE_URL;
     } catch (error) {
@@ -128,7 +142,13 @@ const Discover = () => {
                   {parsedTripPlan.trip_plan.flight_details.departure_city}
                 </Text>
                 <Text className="font-outfit text-gray-600">
-                  {parsedTripPlan.trip_plan.flight_details.departure_date}{" "}
+
+                  {
+                    toDate(
+                      parsedTripPlan.trip_plan.flight_details.departure_date
+                    )?.toLocaleDateString() || ""
+                  }{" "}
+
                   {parsedTripPlan.trip_plan.flight_details.departure_time}
                 </Text>
               </View>
@@ -138,7 +158,12 @@ const Discover = () => {
                   {parsedTripPlan.trip_plan.flight_details.arrival_city}
                 </Text>
                 <Text className="font-outfit text-gray-600">
-                  {parsedTripPlan.trip_plan.flight_details.arrival_date}{" "}
+                  {
+                    toDate(
+                      parsedTripPlan.trip_plan.flight_details.arrival_date
+                    )?.toLocaleDateString() || ""
+                  }{" "}
+
                   {parsedTripPlan.trip_plan.flight_details.arrival_time}
                 </Text>
               </View>
