@@ -67,11 +67,33 @@ export default function GenerateTrip() {
 
       // Helper to extract JSON from possible extra text
       const extractJSON = (text: string) => {
-        const match = text.match(/\{[\s\S]*\}/);
-        if (match) {
-          return JSON.parse(match[0]);
+        const start = text.indexOf("{");
+        if (start === -1) {
+          throw new Error("Invalid response format");
         }
-        throw new Error("Invalid response format");
+
+        // Find the matching closing brace for the first opening brace
+        let depth = 0;
+        let end = start;
+        let inString = false;
+        for (let i = start; i < text.length; i++) {
+          const char = text[i];
+          if (char === "\"" && text[i - 1] !== "\\") {
+            inString = !inString;
+          }
+          if (inString) continue;
+          if (char === "{") depth++;
+          if (char === "}") {
+            depth--;
+            if (depth === 0) {
+              end = i + 1;
+              break;
+            }
+          }
+        }
+
+        const jsonStr = text.slice(start, end).replace(/,\s*([}\]])/g, "$1");
+        return JSON.parse(jsonStr);
       };
 
       // Normalize various AI response formats into our expected structure
