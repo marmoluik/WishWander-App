@@ -16,7 +16,7 @@ type Props = {
   onPlaceSelected: (place: { id: string; title: string }) => void;
 };
 
-const YOUR_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAP_KEY;
+const YOUR_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 export default function GooglePlacesAutocomplete({ onPlaceSelected }: Props) {
   const [query, setQuery] = useState("");
