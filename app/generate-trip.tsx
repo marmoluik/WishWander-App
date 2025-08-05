@@ -47,47 +47,6 @@ export default function GenerateTrip() {
         )
         .replace("{budget}", budget?.type || "");
 
-      // Helper to handle 503 overload errors with retries and model fallback
-      const getAIResponse = async (promptText: string) => {
-        const MODELS = ["gemini-1.5-flash", "gemini-1.5-pro"];
-        let lastError: any = null;
-
-        for (const modelName of MODELS) {
-          let tries = 0;
-          while (tries < 3) {
-            const session = startChatSession(
-              [{ role: "user", parts: [{ text: promptText }] }],
-              modelName
-            );
-            try {
-              const result = await session.sendMessage(promptText);
-              return await result.response.text();
-            } catch (err) {
-              lastError = err;
-              if (
-                err instanceof Error &&
-                err.message.includes("503") &&
-                tries < 2
-              ) {
-                // backoff and retry same model
-                await new Promise((r) => setTimeout(r, 1000 * (tries + 1)));
-                tries++;
-                continue;
-              }
-              if (
-                err instanceof Error && err.message.includes("503")
-              ) {
-                // move to next model
-                break;
-              }
-              throw err; // non-503 error
-            }
-          }
-        }
-
-        throw lastError || new Error("Service unavailable");
-      };
-
       // Helper to extract JSON from possible extra text
       const extractJSON = (text: string) => {
         const match = text.match(/\{[\s\S]*\}/);
@@ -100,8 +59,13 @@ export default function GenerateTrip() {
       // Normalize various AI response formats into our expected structure
       const normalizeTripPlan = (data: any) => {
         const root = data.trip_plan || data;
-        const flight =
+        let flight =
           root.flight_details || root.flights || data.flight_details || data.flights;
+
+        if (Array.isArray(flight)) {
+          flight = flight[0];
+        }
+
         const hotels =
           root.hotel?.options ||
           root.hotel_options ||
@@ -117,10 +81,23 @@ export default function GenerateTrip() {
           data.places ||
           data.sightseeing;
 
+        const filledFlight = {
+          departure_city: flight?.departure_city || "TBD",
+          arrival_city: flight?.arrival_city || locationInfo?.name || "",
+          departure_date: flight?.departure_date || dates?.startDate || "",
+          departure_time: flight?.departure_time || "",
+          arrival_date: flight?.arrival_date || dates?.startDate || "",
+          arrival_time: flight?.arrival_time || "",
+          airline: flight?.airline || "Unknown Airline",
+          flight_number: flight?.flight_number || "",
+          price: flight?.price || "",
+          booking_url: flight?.booking_url || "",
+        };
+
         return {
           trip_plan: {
             ...root,
-            flight_details: flight,
+            flight_details: filledFlight,
             hotel: { options: hotels || [] },
             places_to_visit: places || [],
           },
@@ -134,21 +111,33 @@ export default function GenerateTrip() {
       let parsed: any = null;
 
       while (attempt < MAX_RETRIES) {
-        const rawText = await getAIResponse(prompt);
-
         try {
-          parsed = normalizeTripPlan(extractJSON(rawText));
+          const session = startChatSession([
+            { role: "user", parts: [{ text: prompt }] },
+          ]);
+          const result = await session.sendMessage(prompt);
+          const rawText = await result.response.text();
+
+          try {
+            parsed = normalizeTripPlan(extractJSON(rawText));
+          } catch (err) {
+            console.error("parse error", err);
+            throw new Error("Invalid response format");
+          }
         } catch (err) {
-          console.error("parse error", err);
-          throw new Error("Invalid response format");
+          if (err instanceof Error && err.message.includes("503")) {
+            attempt++;
+            if (attempt >= MAX_RETRIES) {
+              throw new Error("AI service is overloaded. Please try again later.");
+            }
+            await new Promise((res) => setTimeout(res, attempt * 1000));
+            continue; // retry after delay
+          }
+          throw err;
         }
 
         const tripPlan = parsed?.trip_plan;
         const missing: string[] = [];
-
-        const flight = tripPlan?.flight_details;
-        if (!flight?.departure_city || !flight?.arrival_city)
-          missing.push("flight details");
 
         const hotelOpts = tripPlan?.hotel?.options;
         if (
