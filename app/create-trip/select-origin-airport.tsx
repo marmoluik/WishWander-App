@@ -1,4 +1,4 @@
-// app/create-trip/search-place.tsx
+// app/create-trip/select-origin-airport.tsx
 
 import React, { useContext } from "react";
 import {
@@ -17,11 +17,10 @@ import { useGoogleAutocomplete } from "@appandflow/react-native-google-autocompl
 import Constants from "expo-constants";
 import { CreateTripContext } from "@/context/CreateTripContext";
 
-export default function SearchPlace() {
+export default function SelectOriginAirport() {
   const router = useRouter();
   const { setTripData } = useContext(CreateTripContext);
 
-  // Initialize the hook with your API key and options
   const {
     locationResults,
     isSearching,
@@ -33,42 +32,42 @@ export default function SearchPlace() {
     {
       debounce: 300,
       minLength: 2,
-      queryTypes: "(cities)",
+      queryTypes: "establishment",
     }
   );
 
-  // Fetch details when a place is selected
-  const selectPlace = async (item: any) => {
-    const detail: any = await searchDetails(item.place_id);
+  const selectAirport = async (item: any) => {
+    const detail = await searchDetails(item.place_id);
+    const codeMatch = item.description.match(/\(([^)]+)\)/);
+    const code = codeMatch ? codeMatch[1] : "";
     setTripData((prev) => {
-      const filtered = prev.filter((i) => !i.locationInfo);
+      const filtered = prev.filter((i) => !i.originAirport);
       return [
         ...filtered,
         {
-          locationInfo: {
+          originAirport: {
             name: item.description,
+            code,
             coordinates: detail.geometry.location,
-            url: detail.url,
-            photoRef: detail.photos?.[0]?.photo_reference,
           },
         },
       ];
     });
-    router.push("/create-trip/select-origin-airport");
+    router.push("/create-trip/select-traveler");
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.title}>Where do you want to go?</Text>
-          <Text style={styles.subtitle}>Find your destination!</Text>
+          <Text style={styles.title}>Where are you flying from?</Text>
+          <Text style={styles.subtitle}>Search for your departure airport</Text>
         </View>
 
         <View style={styles.autocomplete}>
           <TextInput
             style={styles.input}
-            placeholder="Search for a place"
+            placeholder="Search for an airport"
             placeholderTextColor="#818181"
             returnKeyType="search"
             value={term}
@@ -78,18 +77,15 @@ export default function SearchPlace() {
           {isSearching && <Text style={styles.loading}>Loading…</Text>}
 
           <FlatList
-            data={locationResults}
+            data={locationResults.filter((i) => i.types?.includes("airport"))}
             keyExtractor={(item) => item.place_id}
             renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.row}
-                onPress={() => selectPlace(item)}
-              >
+              <TouchableOpacity style={styles.row} onPress={() => selectAirport(item)}>
                 <Text style={styles.rowText}>{item.description}</Text>
               </TouchableOpacity>
             )}
             ListEmptyComponent={
-              !isSearching && term.length >= 3 ? (
+              !isSearching && term.length >= 2 ? (
                 <Text style={styles.noResults}>No results</Text>
               ) : null
             }
@@ -124,3 +120,4 @@ const styles = StyleSheet.create({
   rowText: { fontSize: 15 },
   noResults: { textAlign: "center", marginTop: 8, color: "#666" },
 });
+
