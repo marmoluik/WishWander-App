@@ -67,10 +67,24 @@ export default function GenerateTrip() {
 
       // Helper to extract JSON from possible extra text
       const extractJSON = (text: string) => {
-        const match = text.match(/\{[\s\S]*\}/);
-        if (match) {
-          return JSON.parse(match[0]);
+        const start = text.indexOf("{");
+        if (start === -1) {
+          throw new Error("Invalid response format");
         }
+
+        let depth = 0;
+        for (let i = start; i < text.length; i++) {
+          const char = text[i];
+          if (char === "{") depth++;
+          else if (char === "}") {
+            depth--;
+            if (depth === 0) {
+              const jsonStr = text.slice(start, i + 1);
+              return JSON.parse(jsonStr);
+            }
+          }
+        }
+
         throw new Error("Invalid response format");
       };
 

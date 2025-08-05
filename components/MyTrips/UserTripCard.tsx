@@ -21,7 +21,13 @@ const toDate = (value: any) => {
   return undefined;
 };
 
-const UserTripCard = ({ trip }: { trip: any }) => {
+const UserTripCard = ({
+  trip,
+  onDelete,
+}: {
+  trip: any;
+  onDelete: (docId: string) => void;
+}) => {
   const router = useRouter();
 
   const tripData = JSON.parse(trip?.tripData);
@@ -79,6 +85,12 @@ const UserTripCard = ({ trip }: { trip: any }) => {
           }
           disabled={isPastTrip}
           className={`mt-2 py-0.5 ${isPastTrip ? "opacity-50" : ""}`}
+        />
+        <CustomButton
+          title="Delete"
+          bgVariant="danger"
+          onPress={() => onDelete(trip.docId)}
+          className="mt-2 py-0.5"
         />
       </View>
     </View>
