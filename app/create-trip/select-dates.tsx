@@ -83,7 +83,7 @@ const SelectDates = () => {
           />
         </View>
 
-        <View className="mt-6">
+        <View className="mt-6 space-y-2">
           <CustomButton
             title="Confirm Dates"
             onPress={handleConfirmDates}
