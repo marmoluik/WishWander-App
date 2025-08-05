@@ -27,6 +27,7 @@ export default function CreateTripLayout() {
       }}
     >
       <Stack.Screen name="search-place" />
+      <Stack.Screen name="select-origin-airport" />
       <Stack.Screen name="select-traveler" />
       <Stack.Screen name="select-dates" />
       <Stack.Screen name="select-budget" />
