@@ -144,34 +144,37 @@ const Discover = () => {
         <Text className="text-2xl font-outfit-bold mb-4">Flight Details</Text>
         {parsedTripPlan?.trip_plan?.flight_details ? (
           <View className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-            <View className="flex-row justify-between items-center mb-4">
-              <View>
-                <Text className="font-outfit-bold text-lg">
+            <View className="flex-row items-center mb-4">
+              <View className="flex-1 pr-2">
+                <Text
+                  className="font-outfit-bold text-lg"
+                  numberOfLines={1}
+                >
                   {parsedTripPlan.trip_plan.flight_details.departure_city}
                 </Text>
                 <Text className="font-outfit text-gray-600">
-
                   {
                     toDate(
                       parsedTripPlan.trip_plan.flight_details.departure_date
                     )?.toLocaleDateString() || ""
                   }{" "}
-
                   {parsedTripPlan.trip_plan.flight_details.departure_time}
                 </Text>
               </View>
               <Ionicons name="airplane" size={24} color="#8b5cf6" />
-              <View>
-                <Text className="font-outfit-bold text-lg">
+              <View className="flex-1 pl-2 items-end">
+                <Text
+                  className="font-outfit-bold text-lg text-right"
+                  numberOfLines={1}
+                >
                   {parsedTripPlan.trip_plan.flight_details.arrival_city}
                 </Text>
-                <Text className="font-outfit text-gray-600">
+                <Text className="font-outfit text-gray-600 text-right">
                   {
                     toDate(
                       parsedTripPlan.trip_plan.flight_details.arrival_date
                     )?.toLocaleDateString() || ""
                   }{" "}
-
                   {parsedTripPlan.trip_plan.flight_details.arrival_time}
                 </Text>
               </View>
