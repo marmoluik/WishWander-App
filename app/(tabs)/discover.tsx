@@ -194,7 +194,8 @@ const Discover = () => {
                   if (url) {
                     Linking.openURL(url);
                   } else {
-                    Alert.alert("No booking link available");
+                    Alert.alert("No flight offer available");
+
                   }
                 }}
                 className="mt-4"

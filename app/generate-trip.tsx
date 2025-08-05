@@ -44,6 +44,9 @@ export default function GenerateTrip() {
       const travelers = tripData.find((item) => item.travelers)?.travelers;
       const dates = tripData.find((item) => item.dates)?.dates;
       const budget = tripData.find((item) => item.budget)?.budget;
+      const originAirport = tripData.find((item) => item.originAirport)?.originAirport;
+
+      const startDateStr = formatDate(dates?.startDate);
 
       // Compute totals
       const totalDays = dates?.totalNumberOfDays || 0;
@@ -96,19 +99,17 @@ export default function GenerateTrip() {
           data.places ||
           data.sightseeing;
 
-        const startDateStr = formatDate(dates?.startDate);
-
         const filledFlight = {
-          departure_city: flight?.departure_city || "TBD",
-          arrival_city: flight?.arrival_city || locationInfo?.name || "",
-          departure_date: formatDate(flight?.departure_date) || startDateStr,
-          departure_time: flight?.departure_time || "",
-          arrival_date: formatDate(flight?.arrival_date) || startDateStr,
-          arrival_time: flight?.arrival_time || "",
-          airline: flight?.airline || "Unknown Airline",
-          flight_number: flight?.flight_number || "",
-          price: flight?.price || "",
-          booking_url: flight?.booking_url || "",
+          departure_city: originAirport?.name || flight?.departure_city || "TBD",
+          arrival_city: locationInfo?.name || flight?.arrival_city || "",
+          departure_date: startDateStr,
+          departure_time: "",
+          arrival_date: startDateStr,
+          arrival_time: "",
+          airline: "",
+          flight_number: "",
+          price: "",
+          booking_url: "",
         };
 
         return {
@@ -187,6 +188,51 @@ export default function GenerateTrip() {
 
         // Ask the AI again for the missing sections
         prompt = `The previous response was missing ${missing.join(", ")}. Please resend the entire trip plan in valid JSON including flight_details object, hotel options array, and places_to_visit array.`;
+      }
+
+      if (originAirport && locationInfo?.name) {
+        const kiwiKey = process.env.EXPO_PUBLIC_KIWI_API_KEY;
+        if (kiwiKey) {
+          try {
+            const locRes = await fetch(
+              `https://api.tequila.kiwi.com/locations/query?term=${encodeURIComponent(
+                locationInfo.name
+              )}&location_types=airport&limit=1`,
+              { headers: { apikey: kiwiKey } }
+            );
+            const locJson = await locRes.json();
+            const arrival = locJson.locations?.[0];
+            if (arrival?.code) {
+              const flightRes = await fetch(
+                `https://api.tequila.kiwi.com/v2/search?fly_from=${originAirport.code}&fly_to=${arrival.code}&date_from=${startDateStr}&date_to=${startDateStr}&limit=1&sort=price`,
+                { headers: { apikey: kiwiKey } }
+              );
+              const flightJson = await flightRes.json();
+              const flight = flightJson.data?.[0];
+              if (flight) {
+                const depDate = new Date(flight.dTimeUTC * 1000);
+                const arrDate = new Date(flight.aTimeUTC * 1000);
+                parsed.trip_plan.flight_details = {
+                  departure_city: originAirport.name,
+                  arrival_city: `${arrival.name} (${arrival.code})`,
+                  departure_date: depDate.toISOString().split("T")[0],
+                  departure_time: depDate.toISOString().split("T")[1].slice(0, 5),
+                  arrival_date: arrDate.toISOString().split("T")[0],
+                  arrival_time: arrDate.toISOString().split("T")[1].slice(0, 5),
+                  airline: flight.airlines?.[0] || "",
+                  flight_number:
+                    flight.route?.[0]?.flight_no
+                      ? `${flight.route[0].airline}${flight.route[0].flight_no}`
+                      : "",
+                  price: `${flight.price} ${flight.currency}`,
+                  booking_url: flight.deep_link,
+                };
+              }
+            }
+          } catch (e) {
+            console.error("flight fetch failed", e);
+          }
+        }
       }
 
       // Save the entire parsed response so downstream screens receive trip_plan
