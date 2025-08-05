@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Image, Linking, Alert, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, Image, Linking, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -218,19 +218,21 @@ const Discover = () => {
               <Text className="font-outfit text-gray-600">
                 Price: {parsedTripPlan.trip_plan.flight_details.price}
               </Text>
-              <CustomButton
-                title="Book Flight"
-                onPress={() => {
-                  const url =
-                    parsedTripPlan.trip_plan.flight_details.booking_url;
-                  if (url) {
-                    Linking.openURL(url);
-                  } else {
-                    Alert.alert("No flight offer available");
+              {parsedTripPlan.trip_plan.flight_details.booking_url ? (
+                <CustomButton
+                  title="Book Flight"
+                  onPress={() =>
+                    Linking.openURL(
+                      parsedTripPlan.trip_plan.flight_details.booking_url
+                    )
                   }
-                }}
-                className="mt-4"
-              />
+                  className="mt-4"
+                />
+              ) : (
+                <Text className="font-outfit text-gray-600 mt-4">
+                  No flight offer available.
+                </Text>
+              )}
             </View>
           </View>
         ) : (
@@ -251,7 +253,7 @@ const Discover = () => {
                 className="bg-gray-50 p-4 rounded-xl mb-4 border border-gray-100"
               >
                 <Image
-                  source={{ uri: hotel.image_url }}
+                  source={{ uri: hotel.image_url || DEFAULT_IMAGE_URL }}
                   className="w-full h-48 rounded-xl mb-4"
                 />
                 <Text className="font-outfit-bold text-lg">{hotel.name}</Text>
@@ -327,7 +329,7 @@ const Discover = () => {
               className="bg-gray-50 p-4 rounded-xl mb-4 border border-gray-100"
             >
               <Image
-                source={{ uri: place.image_url }}
+                source={{ uri: place.image_url || DEFAULT_IMAGE_URL }}
                 className="w-full h-48 rounded-xl mb-4"
               />
               <TouchableOpacity
