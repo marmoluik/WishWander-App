@@ -201,6 +201,12 @@ const SelectDates = () => {
             disabled={flexible ? selectedOption === null : !selectedEndDate}
             className="disabled:opacity-50"
           />
+          <CustomButton
+            title="Search Flexible Dates"
+            bgVariant="outline"
+            textVariant="primary"
+            onPress={() => router.push('/create-trip/flexible-dates')}
+          />
         </View>
       </View>
     </SafeAreaView>

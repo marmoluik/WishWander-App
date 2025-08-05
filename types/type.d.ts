@@ -35,3 +35,9 @@ declare interface GoogleInputProps {
     iconStyle?: string;
     className?: string;
   }
+
+declare interface FlexibleDateRange {
+  startDate: string;
+  endDate: string;
+  price: number;
+}

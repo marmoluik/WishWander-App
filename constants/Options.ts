@@ -52,6 +52,8 @@ export const budgetOptions = [
 
 export const AI_PROMPT = `Return only JSON. Generate a trip plan for Location "{location}" lasting {totalDays} day(s) and {totalNights} night(s) for {travelers} with a {budget} budget.
 
+For each place_to_visit include a \"categories\" array containing any of: Nature, Culture, Adventure, Relaxation, Food & Drink.
+
 Use this exact schema:
 {
   "trip_plan": {
@@ -91,7 +93,8 @@ Use this exact schema:
         "image_url": "",
         "geo_coordinates": { "latitude": 0, "longitude": 0 },
         "ticket_price": "",
-        "time_to_travel": ""
+        "time_to_travel": "",
+        "categories": []
       }
     ]
   }
