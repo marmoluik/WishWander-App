@@ -52,17 +52,42 @@ export default function GenerateTrip() {
         { role: "user", parts: [{ text: FINAL_PROMPT }] },
       ]);
 
-      // Send the prompt and await the response
-      const result = await session.sendMessage(FINAL_PROMPT);
-      const rawText = await result.response.text();
+      // Try multiple times to obtain a complete trip plan
+      const MAX_RETRIES = 3;
+      let attempt = 0;
+      let prompt = FINAL_PROMPT;
+      let parsed: any = null;
 
-      // Parse the AI response safely
-      let parsed: any;
-      try {
-        parsed = JSON.parse(rawText);
-      } catch (err) {
-        console.error("parse error", err);
-        throw new Error("Invalid response format");
+      while (attempt < MAX_RETRIES) {
+        const result = await session.sendMessage(prompt);
+        const rawText = await result.response.text();
+
+        try {
+          parsed = JSON.parse(rawText);
+        } catch (err) {
+          console.error("parse error", err);
+          throw new Error("Invalid response format");
+        }
+
+        const tripPlan = parsed?.trip_plan;
+        const missing: string[] = [];
+        if (!tripPlan?.flight_details) missing.push("flight details");
+        if (!tripPlan?.hotel?.options?.length) missing.push("hotel options");
+        if (!tripPlan?.places_to_visit?.length) missing.push("places to visit");
+
+        if (missing.length === 0) {
+          break; // complete plan obtained
+        }
+
+        attempt++;
+        if (attempt >= MAX_RETRIES) {
+          throw new Error(
+            `Incomplete trip plan received: missing ${missing.join(", ")}`
+          );
+        }
+
+        // Ask the AI again for the missing sections
+        prompt = `The previous response was missing ${missing.join(", ")}. Please resend the entire trip plan in valid JSON including flight_details, hotel options array, and places_to_visit array.`;
       }
 
       // Save the entire parsed response so downstream screens receive trip_plan
