@@ -25,6 +25,15 @@ const formatDate = (value: any) => {
   return "";
 };
 
+// Kiwi API expects dates as DD/MM/YYYY
+const formatDateForKiwi = (isoDate: string) => {
+  const d = new Date(isoDate);
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 export default function GenerateTrip() {
   const { tripData } = useContext(CreateTripContext);
   const [error, setError] = useState<string | null>(null);
@@ -47,6 +56,7 @@ export default function GenerateTrip() {
       const originAirport = tripData.find((item) => item.originAirport)?.originAirport;
 
       const startDateStr = formatDate(dates?.startDate);
+      const kiwiDate = startDateStr ? formatDateForKiwi(startDateStr) : "";
 
       // Compute totals
       const totalDays = dates?.totalNumberOfDays || 0;
@@ -210,7 +220,7 @@ export default function GenerateTrip() {
             const arrival = locJson.locations?.[0];
             if (arrival?.code) {
               const flightRes = await fetch(
-                `https://${rapidHost}/v2/search?fly_from=${originAirport.code}&fly_to=${arrival.code}&date_from=${startDateStr}&date_to=${startDateStr}&limit=1&sort=price`,
+                `https://${rapidHost}/v2/search?fly_from=${originAirport.code}&fly_to=${arrival.code}&date_from=${kiwiDate}&date_to=${kiwiDate}&limit=1&sort=price`,
                 {
                   headers: {
                     "X-RapidAPI-Key": rapidApiKey,
@@ -230,7 +240,8 @@ export default function GenerateTrip() {
                   departure_time: depDate.toISOString().split("T")[1].slice(0, 5),
                   arrival_date: arrDate.toISOString().split("T")[0],
                   arrival_time: arrDate.toISOString().split("T")[1].slice(0, 5),
-                  airline: flight.airlines?.[0] || "",
+                  airline:
+                    flight.airlines?.[0] || flight.route?.[0]?.airline || "",
                   flight_number:
                     flight.route?.[0]?.flight_no
                       ? `${flight.route[0].airline}${flight.route[0].flight_no}`
