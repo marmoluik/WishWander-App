@@ -96,6 +96,7 @@ export default function GenerateTrip() {
         const session = startChatSession([
           { role: "user", parts: [{ text: prompt }] },
         ]);
+
         const result = await session.sendMessage(prompt);
         const rawText = await result.response.text();
 
