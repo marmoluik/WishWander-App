@@ -109,9 +109,28 @@ export default function GenerateTrip() {
 
         const tripPlan = parsed?.trip_plan;
         const missing: string[] = [];
-        if (!tripPlan?.flight_details) missing.push("flight details");
-        if (!tripPlan?.hotel?.options?.length) missing.push("hotel options");
-        if (!tripPlan?.places_to_visit?.length) missing.push("places to visit");
+
+        const flight = tripPlan?.flight_details;
+        if (!flight?.departure_city || !flight?.arrival_city)
+          missing.push("flight details");
+
+        const hotelOpts = tripPlan?.hotel?.options;
+        if (
+          !Array.isArray(hotelOpts) ||
+          hotelOpts.length === 0 ||
+          hotelOpts.some((h: any) => !h?.name)
+        ) {
+          missing.push("hotel options");
+        }
+
+        const places = tripPlan?.places_to_visit;
+        if (
+          !Array.isArray(places) ||
+          places.length === 0 ||
+          places.some((p: any) => !p?.name)
+        ) {
+          missing.push("places to visit");
+        }
 
         if (missing.length === 0) {
           break; // complete plan obtained
@@ -143,11 +162,16 @@ export default function GenerateTrip() {
       }
     } catch (err) {
       console.error("Failed to generate trip", err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to generate trip. Please try again."
-      );
+
+      if (err instanceof Error && err.message.includes("503")) {
+        setError("AI service is overloaded. Please try again later.");
+      } else {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Failed to generate trip. Please try again."
+        );
+      }
     }
   };
 
