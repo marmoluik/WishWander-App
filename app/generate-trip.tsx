@@ -204,6 +204,7 @@ export default function GenerateTrip() {
       }
     } catch (err) {
       console.error("Failed to generate trip", err);
+
       if (err instanceof Error && err.message.includes("503")) {
         setError("AI service is overloaded. Please try again later.");
       } else {

@@ -142,11 +142,13 @@ const Discover = () => {
                   {parsedTripPlan.trip_plan.flight_details.departure_city}
                 </Text>
                 <Text className="font-outfit text-gray-600">
+
                   {
                     toDate(
                       parsedTripPlan.trip_plan.flight_details.departure_date
                     )?.toLocaleDateString() || ""
                   }{" "}
+
                   {parsedTripPlan.trip_plan.flight_details.departure_time}
                 </Text>
               </View>
@@ -161,6 +163,7 @@ const Discover = () => {
                       parsedTripPlan.trip_plan.flight_details.arrival_date
                     )?.toLocaleDateString() || ""
                   }{" "}
+
                   {parsedTripPlan.trip_plan.flight_details.arrival_time}
                 </Text>
               </View>
