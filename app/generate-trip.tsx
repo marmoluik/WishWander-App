@@ -112,14 +112,14 @@ export default function GenerateTrip() {
         const filledFlight = {
           departure_city: originAirport?.name || flight?.departure_city || "TBD",
           arrival_city: locationInfo?.name || flight?.arrival_city || "",
-          departure_date: startDateStr,
-          departure_time: "",
-          arrival_date: startDateStr,
-          arrival_time: "",
-          airline: "",
-          flight_number: "",
-          price: "",
-          booking_url: "",
+          departure_date: startDateStr || flight?.departure_date || "",
+          departure_time: flight?.departure_time || "",
+          arrival_date: startDateStr || flight?.arrival_date || "",
+          arrival_time: flight?.arrival_time || "",
+          airline: flight?.airline || "",
+          flight_number: flight?.flight_number || "",
+          price: flight?.price || "",
+          booking_url: flight?.booking_url || "",
         };
 
         return {
