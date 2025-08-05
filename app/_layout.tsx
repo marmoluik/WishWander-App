@@ -20,6 +20,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [tripData, setTripData] = useState<any[]>([]);
+  const [selectedPlaces, setSelectedPlaces] = useState<any[]>([]);
 
   const updateTripData = (newData: any) => {
     setTripData((prevData) => {
@@ -53,7 +54,9 @@ export default function RootLayout() {
 
   return (
     <>
-      <CreateTripContext.Provider value={{ tripData, setTripData }}>
+      <CreateTripContext.Provider
+        value={{ tripData, setTripData, selectedPlaces, setSelectedPlaces }}
+      >
         <StatusBar style="dark" />
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
@@ -61,6 +64,7 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="create-trip" />
           <Stack.Screen name="generate-trip" />
+          <Stack.Screen name="itinerary" />
         </Stack>
       </CreateTripContext.Provider>
     </>
