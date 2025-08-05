@@ -47,6 +47,47 @@ export default function GenerateTrip() {
         )
         .replace("{budget}", budget?.type || "");
 
+      // Helper to handle 503 overload errors with retries and model fallback
+      const getAIResponse = async (promptText: string) => {
+        const MODELS = ["gemini-1.5-flash", "gemini-1.5-pro"];
+        let lastError: any = null;
+
+        for (const modelName of MODELS) {
+          let tries = 0;
+          while (tries < 3) {
+            const session = startChatSession(
+              [{ role: "user", parts: [{ text: promptText }] }],
+              modelName
+            );
+            try {
+              const result = await session.sendMessage(promptText);
+              return await result.response.text();
+            } catch (err) {
+              lastError = err;
+              if (
+                err instanceof Error &&
+                err.message.includes("503") &&
+                tries < 2
+              ) {
+                // backoff and retry same model
+                await new Promise((r) => setTimeout(r, 1000 * (tries + 1)));
+                tries++;
+                continue;
+              }
+              if (
+                err instanceof Error && err.message.includes("503")
+              ) {
+                // move to next model
+                break;
+              }
+              throw err; // non-503 error
+            }
+          }
+        }
+
+        throw lastError || new Error("Service unavailable");
+      };
+
       // Helper to extract JSON from possible extra text
       const extractJSON = (text: string) => {
         const match = text.match(/\{[\s\S]*\}/);
@@ -93,12 +134,7 @@ export default function GenerateTrip() {
       let parsed: any = null;
 
       while (attempt < MAX_RETRIES) {
-        const session = startChatSession([
-          { role: "user", parts: [{ text: prompt }] },
-        ]);
-
-        const result = await session.sendMessage(prompt);
-        const rawText = await result.response.text();
+        const rawText = await getAIResponse(prompt);
 
         try {
           parsed = normalizeTripPlan(extractJSON(rawText));
