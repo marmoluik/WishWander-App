@@ -50,4 +50,49 @@ export const budgetOptions = [
   },
 ];
 
-export const AI_PROMPT = "Generate a trip plan for the following data: Location - {location}. {totalDays} Day(s) and {totalNights} Night(s), for a group size of {travelers}, with a {budget} Budget. Include Flight Details, Flight Price with Booking URL, a list of hotel options with Hotel Name, Hotel Address, Price, Hotel Image URL, Geo Coordinates, Rating, Description, and Places to visit nearby with Place Name, Place Details, Place Image URL, Geo Coordinates, Ticket Price, Time to Travel to each of the location. Make sure you give this plan in JSON format.";
+export const AI_PROMPT = `Return only JSON. Generate a trip plan for Location "{location}" lasting {totalDays} day(s) and {totalNights} night(s) for {travelers} with a {budget} budget.
+
+Use this exact schema:
+{
+  "trip_plan": {
+    "location": "{location}",
+    "duration": "{totalDays} days and {totalNights} nights",
+    "group_size": "{travelers}",
+    "budget": "{budget}",
+    "flight_details": {
+      "departure_city": "",
+      "arrival_city": "",
+      "departure_date": "",
+      "departure_time": "",
+      "arrival_date": "",
+      "arrival_time": "",
+      "airline": "",
+      "flight_number": "",
+      "price": "",
+      "booking_url": ""
+    },
+    "hotel": {
+      "options": [
+        {
+          "name": "",
+          "address": "",
+          "price": "",
+          "image_url": "",
+          "geo_coordinates": { "latitude": 0, "longitude": 0 },
+          "rating": "",
+          "description": ""
+        }
+      ]
+    },
+    "places_to_visit": [
+      {
+        "name": "",
+        "details": "",
+        "image_url": "",
+        "geo_coordinates": { "latitude": 0, "longitude": 0 },
+        "ticket_price": "",
+        "time_to_travel": ""
+      }
+    ]
+  }
+}`;

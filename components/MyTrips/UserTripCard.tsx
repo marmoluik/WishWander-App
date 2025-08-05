@@ -41,7 +41,7 @@ const UserTripCard = ({ trip }: { trip: any }) => {
           {moment(startDate).format("DD MMM yyyy")}
         </Text>
         <Text className="font-outfit-medium text-md text-gray-500 mt-1">
-          {trip?.tripPlan?.trip_plan?.group_size.split(" ")[0]}
+          {trip?.tripPlan?.trip_plan?.group_size?.split(" ")[0] ?? "N/A"}
         </Text>
       </View>
       <View className="flex-1">
