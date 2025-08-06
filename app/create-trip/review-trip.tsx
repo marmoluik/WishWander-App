@@ -40,7 +40,7 @@ const ReviewTrip = () => {
         onPress={() => router.push(editPath as any)}
         className="bg-primary p-2 rounded-full"
       >
-        <MaterialIcons name="edit" size={20} color="#3B82F6" />
+        <MaterialIcons name="edit" size={20} color="#F4C430" />
       </TouchableOpacity>
     </View>
   );
@@ -56,14 +56,14 @@ const ReviewTrip = () => {
         {renderReviewItem(
           "Destination",
           locationInfo?.name || "Not selected",
-          <Ionicons name="location-sharp" size={24} color="#3B82F6" />, 
+          <Ionicons name="location-sharp" size={24} color="#F4C430" />, 
           "/create-trip/search-place"
         )}
 
         {renderReviewItem(
           "Travelers",
           `${travelers?.type || "Not selected"} (${travelers?.count || "0"})`,
-          <MaterialIcons name="people" size={24} color="#3B82F6" />, 
+          <MaterialIcons name="people" size={24} color="#F4C430" />, 
           "/create-trip/select-traveler"
         )}
 
@@ -74,7 +74,7 @@ const ReviewTrip = () => {
                 dates.endDate
               ).format("MMM D, YYYY")} (${dates.totalNumberOfDays} days)`
             : "Not selected",
-          <FontAwesome5 name="calendar-alt" size={24} color="#3B82F6" />, 
+          <FontAwesome5 name="calendar-alt" size={24} color="#F4C430" />, 
           "/create-trip/select-dates"
         )}
 
@@ -84,7 +84,7 @@ const ReviewTrip = () => {
           <MaterialIcons
             name="account-balance-wallet"
             size={24}
-            color="#3B82F6"
+            color="#F4C430"
           />,
           "/create-trip/select-budget"
         )}
