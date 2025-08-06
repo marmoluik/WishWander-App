@@ -1,44 +1,16 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Linking,
-} from "react-native";
+import React, { useEffect, useState, useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import moment from "moment";
 import { startChatSession } from "@/config/GeminiConfig";
 import CustomButton from "@/components/CustomButton";
-import { Ionicons } from "@expo/vector-icons";
-
-interface DayPlan {
-  day: number;
-  date: string;
-  schedule: {
-    morning: string;
-    afternoon: string;
-    evening: string;
-    night: string;
-  };
-  food_recommendations: string;
-  stay_options: string;
-  optional_activities: { name: string; booking_url: string }[];
-  travel_tips: string;
-}
+import ItineraryDetails from "@/components/ItineraryDetails";
+import { ItineraryContext, DayPlan } from "@/context/ItineraryContext";
 
 const ItineraryScreen = () => {
   const router = useRouter();
   const { selectedPlaces, tripData } = useLocalSearchParams();
   const [plan, setPlan] = useState<DayPlan[]>([]);
-  const [collapsed, setCollapsed] = useState<Record<number, boolean>>({});
-  const slotIcon: Record<string, any> = {
-    morning: "sunny",
-    afternoon: "partly-sunny",
-    evening: "cloudy-night",
-    night: "moon",
-  };
+  const { setItinerary } = useContext(ItineraryContext);
 
   useEffect(() => {
     generateItinerary();
@@ -58,18 +30,12 @@ const ItineraryScreen = () => {
       const result = await session.sendMessage(prompt);
       const raw = await result.response.text();
       const json = JSON.parse(raw);
-      setPlan(json.itinerary || []);
+      const planData = json.itinerary || [];
+      setPlan(planData);
+      setItinerary(planData);
     } catch (e) {
       console.error("itinerary generation failed", e);
     }
-  };
-
-  const collapseAll = () => {
-    const newState: Record<number, boolean> = {};
-    plan.forEach((_, idx) => {
-      newState[idx] = true;
-    });
-    setCollapsed(newState);
   };
 
   return (
@@ -81,97 +47,7 @@ const ItineraryScreen = () => {
         textVariant="primary"
         className="mb-4"
       />
-      <ScrollView>
-        {plan.map((d, index) => (
-          <View key={index} className="mb-4 border border-gray-200 rounded-xl">
-            <TouchableOpacity
-              onPress={() =>
-                setCollapsed((prev) => ({ ...prev, [index]: !prev[index] }))
-              }
-              className="p-4 bg-purple-100 rounded-t-xl flex-row justify-between"
-            >
-              <Text className="font-outfit-bold">
-                Day {d.day} - {moment(d.date).format("MMM D, YYYY")}
-              </Text>
-              <Text>{collapsed[index] ? "+" : "-"}</Text>
-            </TouchableOpacity>
-            {!collapsed[index] && (
-              <View className="p-4 space-y-3">
-                {(["morning", "afternoon", "evening", "night"] as const).map(
-                  (slot) => (
-                    <View key={slot} className="mb-2 flex-row">
-                      <Ionicons
-                        name={slotIcon[slot] as any}
-                        size={20}
-                        color="#8b5cf6"
-                        style={{ marginRight: 8, marginTop: 2 }}
-                      />
-                      <View className="flex-1">
-                        <Text className="font-outfit-medium capitalize">
-                          {slot}
-                        </Text>
-                        <Text className="text-gray-700">
-                          {(d.schedule as any)[slot]}
-                        </Text>
-                      </View>
-                    </View>
-                  )
-                )}
-                {d.food_recommendations ? (
-                  <View>
-                    <Text className="font-outfit-medium">
-                      Food Recommendations
-                    </Text>
-                    <Text className="text-gray-700">
-                      {d.food_recommendations}
-                    </Text>
-                  </View>
-                ) : null}
-                {d.stay_options ? (
-                  <View>
-                    <Text className="font-outfit-medium">Stay Options</Text>
-                    <Text className="text-gray-700">{d.stay_options}</Text>
-                  </View>
-                ) : null}
-                {d.optional_activities?.length ? (
-                  <View>
-                    <Text className="font-outfit-medium">
-                      Optional Activities
-                    </Text>
-                    {d.optional_activities.map((act, i) => (
-                      <View key={i} className="mb-1">
-                        <Text className="text-gray-700">• {act.name}</Text>
-                        {act.booking_url ? (
-                          <CustomButton
-                            title="Book"
-                            onPress={() => Linking.openURL(act.booking_url)}
-                            bgVariant="outline"
-                            textVariant="primary"
-                            className="mt-1 w-32"
-                          />
-                        ) : null}
-                      </View>
-                    ))}
-                  </View>
-                ) : null}
-                {d.travel_tips ? (
-                  <View>
-                    <Text className="font-outfit-medium">Travel Tips</Text>
-                    <Text className="text-gray-700">{d.travel_tips}</Text>
-                  </View>
-                ) : null}
-              </View>
-            )}
-          </View>
-        ))}
-      </ScrollView>
-      <View className="mt-2">
-        <CustomButton
-          title="Collapse All Days"
-          onPress={collapseAll}
-          bgVariant="secondary"
-        />
-      </View>
+      <ItineraryDetails plan={plan} />
     </SafeAreaView>
   );
 };

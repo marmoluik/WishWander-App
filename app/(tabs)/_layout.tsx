@@ -1,7 +1,6 @@
 import { Tabs } from "expo-router";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "@/constants/Colors";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
@@ -38,6 +37,19 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => (
             <MaterialIcons
               name="travel-explore"
+              size={24}
+              color={focused ? "#8b5cf6" : "#64748b"}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="itineraries"
+        options={{
+          tabBarLabel: "Itineraries",
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name="calendar"
               size={24}
               color={focused ? "#8b5cf6" : "#64748b"}
             />
