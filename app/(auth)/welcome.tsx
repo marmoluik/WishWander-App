@@ -12,32 +12,32 @@ const Onboarding = () => {
   const isLastSlide = activeIndex === onboarding.length - 1;
 
   return (
-    <SafeAreaView className="flex h-full items-center justify-between bg-white">
+    <SafeAreaView className="flex h-full items-center justify-between bg-background">
       <TouchableOpacity
         onPress={() => {
           router.replace("/(auth)/sign-up");
         }}
         className="w-full flex justify-end items-end p-5"
       >
-        <Text className="text-purple-500 text-md font-outfit-bold">Skip</Text>
+        <Text className="text-primary text-md font-outfit-bold">Skip</Text>
       </TouchableOpacity>
 
       <Swiper
         ref={swiperRef}
         loop={false}
-        dot={<View className="w-8 h-1 mx-1 bg-slate-50 rounded-full" />}
-        activeDot={<View className="w-8 h-1 mx-1 bg-purple-500 rounded-full" />}
+        dot={<View className="w-8 h-1 mx-1 bg-background rounded-full" />}
+        activeDot={<View className="w-8 h-1 mx-1 bg-primary rounded-full" />}
         onIndexChanged={(index) => setActiveIndex(index)}
       >
         {onboarding.map((item) => (
           <View key={item.id} className="flex items-center justify-center p-5">
             <item.image width="100%" height={300} />
             <View className="flex flex-row items-center justify-center w-full mt-10">
-              <Text className="text-purple-500 font-outfit-bold text-3xl mx-10 text-center">
+              <Text className="text-primary font-outfit-bold text-3xl mx-10 text-center">
                 {item.title}
               </Text>
             </View>
-            <Text className="text-gray-500 text-center text-lg mt-3 mx-10 font-outfit font-semibold">
+            <Text className="text-text-primary text-center text-lg mt-3 mx-10 font-outfit font-semibold">
               {item.description}
             </Text>
           </View>

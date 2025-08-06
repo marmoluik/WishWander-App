@@ -95,24 +95,20 @@ const UserTripList = ({
                 { text: "Delete", style: "destructive", onPress: () => onDelete(sortedTrips[0].id) },
               ])
             }
-            className="absolute top-3 right-3 bg-white rounded-full"
+            className="absolute top-3 right-3 bg-background rounded-full"
           >
-            <Ionicons name="close" size={24} color="#ef4444" />
+            <Ionicons name="close" size={24} color="#FF6B6B" />
           </TouchableOpacity>
         </View>
         <View className="mt-3">
-          <Text
-            className={`font-outfit-medium text-xl ${
-              isPastTrip ? "text-gray-500" : ""
-            }`}
-          >
+          <Text className="font-outfit-medium text-xl text-text-primary">
             {sortedTrips[0]?.tripPlan?.trip_plan?.location}
           </Text>
           <View className="flex flex-row justify-between items-center mt-2">
-            <Text className="font-outfit text-lg text-gray-500">
+            <Text className="font-outfit text-lg text-text-primary">
               {startDate ? moment(startDate).format("DD MMM yyyy") : ""}
             </Text>
-            <Text className="font-outfit-medium mr-5 text-lg text-gray-500">
+            <Text className="font-outfit-medium mr-5 text-lg text-text-primary">
               🚌 {travelersType}
             </Text>
           </View>
@@ -124,7 +120,7 @@ const UserTripList = ({
           />
         </View>
 
-        <View className="h-0.5 bg-gray-200 mt-4 mb-2" />
+        <View className="h-0.5 bg-primary mt-4 mb-2" />
 
         {sortedTrips?.slice(1).map((trip, idx) => (
           <UserTripCard trip={trip} key={idx} onDelete={onDelete} />
