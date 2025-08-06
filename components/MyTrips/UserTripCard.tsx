@@ -42,31 +42,40 @@ const UserTripCard = ({
 
   const isPastTrip = endDate ? moment().isAfter(moment(endDate)) : false;
 
+  const openTrip = () => {
+    router.push({
+      pathname: "/trip-details",
+      params: { tripData: trip.tripData, tripPlan: JSON.stringify(trip.tripPlan) },
+    });
+  };
+
   return (
-    <View className="mt-5 flex flex-row gap-3 relative">
-      <View className="w-32 h-32">
-        <Image
-          source={{
-            uri: locationInfo?.photoRef
-              ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${locationInfo.photoRef}&key=${process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY}`
-              : DEFAULT_IMAGE_URL,
-          }}
-          className={`w-full h-full rounded-2xl ${
-            isPastTrip ? "grayscale" : ""
-          }`}
-        />
+    <View className="mt-5 flex flex-row gap-3">
+      <View className="w-32 h-32 relative">
+        <TouchableOpacity onPress={openTrip} className="w-full h-full">
+          <Image
+            source={{
+              uri: locationInfo?.photoRef
+                ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${locationInfo.photoRef}&key=${process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY}`
+                : DEFAULT_IMAGE_URL,
+            }}
+            className={`w-full h-full rounded-2xl ${
+              isPastTrip ? "grayscale" : ""
+            }`}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            Alert.alert("Delete Trip", "Are you sure you want to delete this trip?", [
+              { text: "Cancel", style: "cancel" },
+              { text: "Delete", style: "destructive", onPress: () => onDelete(trip.id) },
+            ])
+          }
+          className="absolute top-0 right-0 bg-white rounded-full"
+        >
+          <Ionicons name="close" size={20} color="#ef4444" />
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        onPress={() =>
-          Alert.alert("Delete Trip", "Are you sure you want to delete this trip?", [
-            { text: "Cancel", style: "cancel" },
-            { text: "Delete", style: "destructive", onPress: () => onDelete(trip.id) },
-          ])
-        }
-        className="absolute top-0 right-0 bg-white rounded-full"
-      >
-        <Ionicons name="close" size={20} color="#ef4444" />
-      </TouchableOpacity>
       <View className="flex-1">
         <Text
           className={`font-outfit-medium text-lg ${
@@ -86,15 +95,7 @@ const UserTripCard = ({
       <View className="flex-1">
         <CustomButton
           title="View Trip"
-          onPress={() =>
-            router.push({
-              pathname: "/trip-details",
-              params: {
-                tripData: trip.tripData,
-                tripPlan: JSON.stringify(trip.tripPlan),
-              },
-            })
-          }
+          onPress={openTrip}
           disabled={isPastTrip}
           className={`mt-2 py-0.5 ${isPastTrip ? "opacity-50" : ""}`}
         />
