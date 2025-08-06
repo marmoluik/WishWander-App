@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import moment from "moment";
 import CustomButton from "@/components/CustomButton";
 import { DayPlan } from "@/context/ItineraryContext";
+import { generateHotelLink, generatePoiLink } from "@/utils/travelpayouts";
 
 interface Props {
   plan: DayPlan[];
@@ -50,13 +51,8 @@ const linkifyText = (text: string) => {
   return <Text className="text-gray-700">{text}</Text>;
 };
 
-const generateBookingUrl = (name: string) => {
-  const affiliateId = process.env.EXPO_PUBLIC_BOOKING_AFFILIATE_ID;
-  const encodedName = encodeURIComponent(name);
-  return `https://www.booking.com/searchresults.html?ss=${encodedName}${
-    affiliateId ? `&aid=${affiliateId}` : ""
-  }`;
-};
+// Build affiliate links via Travelpayouts
+const generateStayLink = (name: string) => generateHotelLink(name);
 
 const ItineraryDetails: React.FC<Props> = ({ plan }) => {
   const [collapsed, setCollapsed] = useState<Record<number, boolean>>({});
@@ -139,7 +135,7 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                       <TouchableOpacity
                         className="mt-2 bg-purple-600 px-3 py-1 rounded-full w-24 items-center"
                         onPress={() =>
-                          Linking.openURL(generateBookingUrl(d.stay_options))
+                          Linking.openURL(generateStayLink(d.stay_options))
                         }
                       >
                         <Text className="font-outfit-bold text-white">Book</Text>
@@ -161,38 +157,7 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                       </Text>
                     </View>
                     {d.optional_activities.map((act, i) => {
-                      const buildUrl = (name: string, url?: string) => {
-                        const search = (provider: "getyourguide" | "viator") =>
-                          provider === "getyourguide"
-                            ? `https://www.getyourguide.com/s/?q=${encodeURIComponent(name)}`
-                            : `https://www.viator.com/search/?q=${encodeURIComponent(name)}`;
-                        if (!url) return search("getyourguide");
-                        try {
-                          const parsed = new URL(url);
-                          if (parsed.hostname.includes("getyourguide")) {
-                            if (
-                              parsed.pathname === "/" ||
-                              parsed.pathname.split("/").filter(Boolean).length < 2
-                            ) {
-                              return search("getyourguide");
-                            }
-                            return url;
-                          }
-                          if (parsed.hostname.includes("viator")) {
-                            if (
-                              parsed.pathname === "/" ||
-                              parsed.pathname.split("/").filter(Boolean).length < 2
-                            ) {
-                              return search("viator");
-                            }
-                            return url;
-                          }
-                        } catch {
-                          // fall through to default
-                        }
-                        return search("getyourguide");
-                      };
-                      const bookingUrl = buildUrl(act.name, act.booking_url);
+                      const bookingUrl = generatePoiLink(act.name);
                       return (
                         <View
                           key={i}

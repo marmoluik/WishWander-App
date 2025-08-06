@@ -11,6 +11,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
 import { interestCategories } from "@/constants/Options";
+import { generateHotelLink, generatePoiLink } from "@/utils/travelpayouts";
 
 const DEFAULT_IMAGE_URL =
   "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?q=80&w=2071&auto=format&fit=crop";
@@ -135,14 +136,6 @@ const Discover = () => {
       : `${latitude},${longitude}`;
     const url = `https://www.google.com/maps/search/?api=1&query=${query}`;
     Linking.openURL(url);
-  };
-
-  const generateBookingUrl = (hotelName: string) => {
-    const affiliateId = process.env.EXPO_PUBLIC_BOOKING_AFFILIATE_ID;
-    const encodedName = encodeURIComponent(hotelName);
-    return `https://www.booking.com/searchresults.html?ss=${encodedName}${
-      affiliateId ? `&aid=${affiliateId}` : ""
-    }`;
   };
 
   const toggleInterest = (interest: string) => {
@@ -298,7 +291,11 @@ const Discover = () => {
                 <CustomButton
                   title="Book Hotel"
                   onPress={() =>
-                    Linking.openURL(generateBookingUrl(hotel.name))
+                    Linking.openURL(
+                      generateHotelLink(
+                        `${hotel.name}, ${parsedTripPlan.trip_plan.location}`
+                      )
+                    )
                   }
                   className="mt-2"
                 />
@@ -396,6 +393,17 @@ const Discover = () => {
                     )
                   }
                   className="mt-4"
+                />
+                <CustomButton
+                  title="Book Tickets"
+                  onPress={() =>
+                    Linking.openURL(
+                      generatePoiLink(
+                        `${place.name}, ${parsedTripPlan.trip_plan.location}`
+                      )
+                    )
+                  }
+                  className="mt-2"
                 />
               </View>
             );
