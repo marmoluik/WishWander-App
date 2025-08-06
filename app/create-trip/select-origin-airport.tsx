@@ -114,7 +114,7 @@ export default function SelectOriginAirport() {
           <TextInput
             style={styles.input}
             placeholder="Search airport name or code"
-            placeholderTextColor="#2E2A1C"
+            placeholderTextColor="#1F2937"
             returnKeyType="search"
             value={term}
             onChangeText={setTerm}
@@ -143,14 +143,14 @@ export default function SelectOriginAirport() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFFBF0" },
+  container: { flex: 1, backgroundColor: "#F3F4F6" },
   header: { alignItems: "center", marginTop: 20, paddingHorizontal: 16 },
   title: { fontSize: 32, fontWeight: "700", textAlign: "center", marginBottom: 8 },
-  subtitle: { fontSize: 16, color: "#2E2A1C" },
+  subtitle: { fontSize: 16, color: "#1F2937" },
   autocomplete: { flex: 1, padding: 16 },
   input: {
     height: 54,
-    backgroundColor: "#FFFBF0",
+    backgroundColor: "#F3F4F6",
     borderRadius: 999,
     paddingHorizontal: 16,
     fontSize: 15,
@@ -159,11 +159,11 @@ const styles = StyleSheet.create({
   loading: { textAlign: "center", marginVertical: 8 },
   row: {
     padding: 13,
-    backgroundColor: "#FFFBF0",
+    backgroundColor: "#F3F4F6",
     borderBottomWidth: 0.5,
-    borderBottomColor: "#F4C430",
+    borderBottomColor: "#2563EB",
   },
   rowText: { fontSize: 15 },
-  noResults: { textAlign: "center", marginTop: 8, color: "#2E2A1C" },
+  noResults: { textAlign: "center", marginTop: 8, color: "#1F2937" },
 });
 
