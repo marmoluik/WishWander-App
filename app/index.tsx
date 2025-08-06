@@ -25,11 +25,7 @@ export default function HomeScreen() {
   if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center">
-<<<<<<< HEAD
         <ActivityIndicator size="large" color="#F4C430" />
-=======
-        <ActivityIndicator size="large" color="#8b5cf6" />
->>>>>>> parent of cd4cbf6 (feat: add custom color palette)
       </View>
     );
   }

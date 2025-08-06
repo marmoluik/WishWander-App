@@ -10,7 +10,6 @@ module.exports = {
         "outfit-medium": ["outfit-medium", "sans-serif"],
         "outfit-bold": ["outfit-bold", "sans-serif"],
       },
-<<<<<<< HEAD
       colors: {
         primary: "#F4C430",
         secondary: "#FFB347",
@@ -21,8 +20,6 @@ module.exports = {
         success: "#B3E283",
         alert: "#F76C5E",
       },
-=======
->>>>>>> parent of cd4cbf6 (feat: add custom color palette)
     },
   },
   plugins: [],

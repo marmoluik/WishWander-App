@@ -28,23 +28,19 @@ const ReviewTrip = () => {
     icon: React.ReactNode,
     editPath: string
   ) => (
-    <View className="flex-row items-center justify-between bg-white p-4 rounded-xl mb-4 shadow-sm border border-neutral-100">
+    <View className="flex-row items-center justify-between bg-background p-4 rounded-xl mb-4 shadow-sm border border-primary">
       <View className="flex-row items-center flex-1">
-        <View className="bg-purple-100 p-3 rounded-full">{icon}</View>
+        <View className="bg-secondary p-3 rounded-full">{icon}</View>
         <View className="ml-4 flex-1">
-          <Text className="text-gray-500 text-sm font-outfit">{title}</Text>
+          <Text className="text-text-primary text-sm font-outfit">{title}</Text>
           <Text className="text-lg font-outfit-bold">{value}</Text>
         </View>
       </View>
       <TouchableOpacity
         onPress={() => router.push(editPath as any)}
-        className="bg-purple-50 p-2 rounded-full"
+        className="bg-primary p-2 rounded-full"
       >
-<<<<<<< HEAD
         <MaterialIcons name="edit" size={20} color="#F4C430" />
-=======
-        <MaterialIcons name="edit" size={20} color="#8b5cf6" />
->>>>>>> parent of cd4cbf6 (feat: add custom color palette)
       </TouchableOpacity>
     </View>
   );
@@ -53,29 +49,21 @@ const ReviewTrip = () => {
     <SafeAreaView className="flex-1">
       <View className="p-6">
         <Text className="text-5xl font-outfit-bold mb-2">Review Your Trip</Text>
-        <Text className="text-gray-500 font-outfit-medium mb-8">
+        <Text className="text-text-primary font-outfit-medium mb-8">
           You can always edit your trip details
         </Text>
 
         {renderReviewItem(
           "Destination",
           locationInfo?.name || "Not selected",
-<<<<<<< HEAD
           <Ionicons name="location-sharp" size={24} color="#F4C430" />, 
-=======
-          <Ionicons name="location-sharp" size={24} color="#8b5cf6" />,
->>>>>>> parent of cd4cbf6 (feat: add custom color palette)
           "/create-trip/search-place"
         )}
 
         {renderReviewItem(
           "Travelers",
           `${travelers?.type || "Not selected"} (${travelers?.count || "0"})`,
-<<<<<<< HEAD
           <MaterialIcons name="people" size={24} color="#F4C430" />, 
-=======
-          <MaterialIcons name="people" size={24} color="#8b5cf6" />,
->>>>>>> parent of cd4cbf6 (feat: add custom color palette)
           "/create-trip/select-traveler"
         )}
 
@@ -86,11 +74,7 @@ const ReviewTrip = () => {
                 dates.endDate
               ).format("MMM D, YYYY")} (${dates.totalNumberOfDays} days)`
             : "Not selected",
-<<<<<<< HEAD
           <FontAwesome5 name="calendar-alt" size={24} color="#F4C430" />, 
-=======
-          <FontAwesome5 name="calendar-alt" size={24} color="#8b5cf6" />,
->>>>>>> parent of cd4cbf6 (feat: add custom color palette)
           "/create-trip/select-dates"
         )}
 
@@ -100,11 +84,7 @@ const ReviewTrip = () => {
           <MaterialIcons
             name="account-balance-wallet"
             size={24}
-<<<<<<< HEAD
             color="#F4C430"
-=======
-            color="#8b5cf6"
->>>>>>> parent of cd4cbf6 (feat: add custom color palette)
           />,
           "/create-trip/select-budget"
         )}

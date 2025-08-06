@@ -288,7 +288,7 @@ export default function GenerateTrip() {
   return (
     <SafeAreaView className="p-6 h-full flex flex-col items-center justify-center">
       {error ? (
-        <Text className="font-outfit-medium text-xl text-center text-red-500">
+        <Text className="font-outfit-medium text-xl text-center text-accent">
           {error}
         </Text>
       ) : (
@@ -305,7 +305,7 @@ export default function GenerateTrip() {
             className="w-96 h-96"
           />
 
-          <Text className="font-outfit text-gray-700 text-center mt-10">
+          <Text className="font-outfit text-text-primary text-center mt-10">
             This might take a while, please do not go back.
           </Text>
         </>

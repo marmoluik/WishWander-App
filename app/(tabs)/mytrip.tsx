@@ -72,25 +72,12 @@ export default function MyTrip() {
       showsVerticalScrollIndicator={false}
     >
       <View className="flex flex-row items-center justify-between">
-<<<<<<< HEAD
         <Text className="text-3xl font-outfit-bold text-primary">My Trips</Text>
         <TouchableOpacity onPress={() => router.push("/create-trip/search-place")}>
           <Ionicons name="add-circle" size={40} color="#F4C430" />
         </TouchableOpacity>
       </View>
       {loading && <ActivityIndicator size="large" color="#F4C430" />}
-=======
-        <Text className="text-3xl font-outfit-bold text-purple-700">
-          My Trips
-        </Text>
-        <TouchableOpacity
-          onPress={() => router.push("/create-trip/search-place")}
-        >
-          <Ionicons name="add-circle" size={40} color="#8b5cf6" />
-        </TouchableOpacity>
-      </View>
-      {loading && <ActivityIndicator size="large" color="#8b5cf6" />}
->>>>>>> parent of cd4cbf6 (feat: add custom color palette)
       {userTrips?.length == 0 ? (
         <StartNewTripCard />
       ) : (

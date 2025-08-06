@@ -22,11 +22,7 @@ export default function CreateTripLayout() {
         },
         headerLeft: () => (
           <TouchableOpacity className="ml-4" onPress={() => router.back()}>
-<<<<<<< HEAD
             <Ionicons name="arrow-back" size={24} color="#2E2A1C" />
-=======
-            <Ionicons name="arrow-back" size={24} color="#000" />
->>>>>>> parent of cd4cbf6 (feat: add custom color palette)
           </TouchableOpacity>
         ),
       }}

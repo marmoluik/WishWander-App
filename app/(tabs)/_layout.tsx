@@ -11,13 +11,8 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: true,
         headerTitle: () => <HeaderLogo />,
-<<<<<<< HEAD
         tabBarActiveTintColor: "#F4C430",
         tabBarInactiveTintColor: "#2E2A1C",
-=======
-        tabBarActiveTintColor: "#8b5cf6",
-        tabBarInactiveTintColor: "#64748b",
->>>>>>> parent of cd4cbf6 (feat: add custom color palette)
         tabBarLabelStyle: {
           fontFamily: "outfit-medium",
           fontSize: 12,
@@ -32,11 +27,7 @@ export default function TabLayout() {
             <Ionicons
               name="location-sharp"
               size={24}
-<<<<<<< HEAD
               color={focused ? "#F4C430" : "#2E2A1C"}
-=======
-              color={focused ? "#8b5cf6" : "#64748b"}
->>>>>>> parent of cd4cbf6 (feat: add custom color palette)
             />
           ),
         }}
@@ -49,11 +40,7 @@ export default function TabLayout() {
             <MaterialIcons
               name="travel-explore"
               size={24}
-<<<<<<< HEAD
               color={focused ? "#F4C430" : "#2E2A1C"}
-=======
-              color={focused ? "#8b5cf6" : "#64748b"}
->>>>>>> parent of cd4cbf6 (feat: add custom color palette)
             />
           ),
         }}
@@ -66,11 +53,7 @@ export default function TabLayout() {
             <Ionicons
               name="calendar"
               size={24}
-<<<<<<< HEAD
               color={focused ? "#F4C430" : "#2E2A1C"}
-=======
-              color={focused ? "#8b5cf6" : "#64748b"}
->>>>>>> parent of cd4cbf6 (feat: add custom color palette)
             />
           ),
         }}
@@ -83,11 +66,7 @@ export default function TabLayout() {
             <FontAwesome
               name="user-o"
               size={21}
-<<<<<<< HEAD
               color={focused ? "#F4C430" : "#2E2A1C"}
-=======
-              color={focused ? "#8b5cf6" : "#64748b"}
->>>>>>> parent of cd4cbf6 (feat: add custom color palette)
             />
           ),
         }}
