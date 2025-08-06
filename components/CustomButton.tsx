@@ -11,7 +11,7 @@ const getBgVariantStyle = (variant: ButtonProps["bgVariant"]) => {
     case "success":
       return "bg-success";
     case "outline":
-      return "bg-transparent border-text-primary border-[0.5px]";
+      return "bg-transparent border-primary border";
     default:
       return "bg-primary hover:bg-accent-hover";
   }

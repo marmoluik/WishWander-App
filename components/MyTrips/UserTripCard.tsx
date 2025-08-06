@@ -79,7 +79,7 @@ const UserTripCard = ({
           }
           className="absolute top-1 right-1 bg-background rounded-full"
         >
-          <Ionicons name="close" size={20} color="#F76C5E" />
+          <Ionicons name="close" size={20} color="#EF4444" />
         </TouchableOpacity>
       </View>
       <View className="flex-1">
@@ -101,6 +101,8 @@ const UserTripCard = ({
           title="View Trip"
           onPress={viewTrip}
           disabled={isPastTrip}
+          bgVariant="outline"
+          textVariant="primary"
           className={`mt-2 py-0.5 ${isPastTrip ? "opacity-50" : ""}`}
         />
       </View>
