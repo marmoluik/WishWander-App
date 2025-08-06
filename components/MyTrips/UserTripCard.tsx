@@ -1,8 +1,9 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, Alert, TouchableOpacity } from "react-native";
 import React from "react";
 import moment from "moment";
 import CustomButton from "../CustomButton";
 import { useRouter } from "expo-router";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const DEFAULT_IMAGE_URL =
   "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?q=80&w=2071&auto=format&fit=crop";
@@ -42,7 +43,7 @@ const UserTripCard = ({
   const isPastTrip = endDate ? moment().isAfter(moment(endDate)) : false;
 
   return (
-    <View className="mt-5 flex flex-row gap-3">
+    <View className="mt-5 flex flex-row gap-3 relative">
       <View className="w-32 h-32">
         <Image
           source={{
@@ -55,6 +56,17 @@ const UserTripCard = ({
           }`}
         />
       </View>
+      <TouchableOpacity
+        onPress={() =>
+          Alert.alert("Delete Trip", "Are you sure you want to delete this trip?", [
+            { text: "Cancel", style: "cancel" },
+            { text: "Delete", style: "destructive", onPress: () => onDelete(trip.id) },
+          ])
+        }
+        className="absolute top-0 right-0 bg-white rounded-full"
+      >
+        <Ionicons name="close" size={20} color="#ef4444" />
+      </TouchableOpacity>
       <View className="flex-1">
         <Text
           className={`font-outfit-medium text-lg ${
@@ -85,12 +97,6 @@ const UserTripCard = ({
           }
           disabled={isPastTrip}
           className={`mt-2 py-0.5 ${isPastTrip ? "opacity-50" : ""}`}
-        />
-        <CustomButton
-          title="Delete"
-          onPress={() => onDelete(trip.id)}
-          bgVariant="danger"
-          className="mt-2 py-0.5"
         />
       </View>
     </View>

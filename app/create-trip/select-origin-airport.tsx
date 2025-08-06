@@ -38,18 +38,58 @@ export default function SelectOriginAirport() {
   );
 
   const selectAirport = async (item: any) => {
-    const detail = await searchDetails(item.place_id);
-    const codeMatch = item.description.match(/\(([^)]+)\)/);
-    const code = codeMatch ? codeMatch[1] : "";
+    let name = item.description;
+    let code = "";
+    let coordinates: { lat: number; lng: number } | undefined;
+
+    if (item.types?.includes("airport")) {
+      const detail = await searchDetails(item.place_id);
+      const codeMatch = item.description.match(/\(([^)]+)\)/);
+      code = codeMatch ? codeMatch[1] : "";
+      coordinates = detail.geometry.location;
+    } else {
+      try {
+        const rapidApiKey = process.env.EXPO_PUBLIC_RAPIDAPI_KEY;
+        const rapidHost = "kiwi-com-cheap-flights.p.rapidapi.com";
+        if (rapidApiKey) {
+          const res = await fetch(
+            `https://${rapidHost}/locations?term=${encodeURIComponent(
+              item.description
+            )}&location_types=airport&limit=1`,
+            {
+              headers: {
+                "X-RapidAPI-Key": rapidApiKey,
+                "X-RapidAPI-Host": rapidHost,
+              },
+            }
+          );
+          const json = await res.json();
+          const airport = json.locations?.[0];
+          if (airport) {
+            name = `${airport.name} (${airport.code})`;
+            code = airport.code;
+            coordinates = {
+              lat: airport.location?.lat,
+              lng: airport.location?.lon,
+            };
+          }
+        }
+      } catch (e) {
+        console.error("airport lookup failed", e);
+      }
+    }
+
+    if (!code || !coordinates) return;
+
     setTripData((prev) => {
       const filtered = prev.filter((i) => !i.originAirport);
       return [
         ...filtered,
         {
           originAirport: {
-            name: item.description,
+            name,
             code,
-            coordinates: detail.geometry.location,
+            coordinates,
           },
         },
       ];
@@ -78,7 +118,9 @@ export default function SelectOriginAirport() {
           {isSearching && <Text style={styles.loading}>Loading…</Text>}
 
           <FlatList
-            data={locationResults.filter((i) => i.types?.includes("airport"))}
+            data={locationResults.filter(
+              (i) => i.types?.includes("airport") || i.types?.includes("locality")
+            )}
             keyExtractor={(item) => item.place_id}
             renderItem={({ item }) => (
               <TouchableOpacity style={styles.row} onPress={() => selectAirport(item)}>
