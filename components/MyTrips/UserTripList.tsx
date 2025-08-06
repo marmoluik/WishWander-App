@@ -63,20 +63,31 @@ const UserTripList = ({
 
   const isPastTrip = endDate ? moment().isAfter(moment(endDate)) : false;
 
+  const viewLatestTrip = () =>
+    router.push({
+      pathname: "/trip-details",
+      params: {
+        tripData: sortedTrips[0].tripData,
+        tripPlan: JSON.stringify(sortedTrips[0].tripPlan),
+      },
+    });
+
   return (
     <View className="mb-16">
       <View>
         <View className="relative">
-          <Image
-          source={{
-            uri: locationInfo?.photoRef
-              ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${locationInfo.photoRef}&key=${process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY}`
-              : DEFAULT_IMAGE_URL,
-          }}
-          className={`w-full h-60 rounded-2xl mt-5 ${
-            isPastTrip ? "grayscale" : ""
-          }`}
-        />
+          <TouchableOpacity onPress={viewLatestTrip}>
+            <Image
+              source={{
+                uri: locationInfo?.photoRef
+                  ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${locationInfo.photoRef}&key=${process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY}`
+                  : DEFAULT_IMAGE_URL,
+              }}
+              className={`w-full h-60 rounded-2xl mt-5 ${
+                isPastTrip ? "grayscale" : ""
+              }`}
+            />
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() =>
               Alert.alert("Delete Trip", "Are you sure you want to delete this trip?", [
@@ -108,15 +119,7 @@ const UserTripList = ({
 
           <CustomButton
             title="View Trip"
-            onPress={() =>
-              router.push({
-                pathname: "/trip-details",
-                params: {
-                  tripData: sortedTrips[0].tripData,
-                  tripPlan: JSON.stringify(sortedTrips[0].tripPlan),
-                },
-              })
-            }
+            onPress={viewLatestTrip}
             className={`mt-3 ${isPastTrip ? "opacity-50" : ""}`}
           />
         </View>

@@ -37,7 +37,7 @@ const linkifyText = (text: string) => {
           className="text-purple-600 underline"
           onPress={() =>
             Linking.openURL(
-              `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(loc)}`
+              `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc)}`
             )
           }
         >
@@ -48,6 +48,14 @@ const linkifyText = (text: string) => {
     );
   }
   return <Text className="text-gray-700">{text}</Text>;
+};
+
+const generateBookingUrl = (name: string) => {
+  const affiliateId = process.env.EXPO_PUBLIC_BOOKING_AFFILIATE_ID;
+  const encodedName = encodeURIComponent(name);
+  return `https://www.booking.com/searchresults.html?ss=${encodedName}${
+    affiliateId ? `&aid=${affiliateId}` : ""
+  }`;
 };
 
 const ItineraryDetails: React.FC<Props> = ({ plan }) => {
@@ -113,9 +121,7 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                       <Text className="font-outfit-medium">
                         Food Recommendations
                       </Text>
-                      <Text className="text-gray-700">
-                        {d.food_recommendations}
-                      </Text>
+                      {linkifyText(d.food_recommendations)}
                     </View>
                   </View>
                 ) : null}
@@ -129,7 +135,15 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                     />
                     <View className="flex-1">
                       <Text className="font-outfit-medium">Stay Options</Text>
-                      <Text className="text-gray-700">{d.stay_options}</Text>
+                      {linkifyText(d.stay_options)}
+                      <TouchableOpacity
+                        className="mt-1"
+                        onPress={() =>
+                          Linking.openURL(generateBookingUrl(d.stay_options))
+                        }
+                      >
+                        <Text className="text-purple-600 underline">Book</Text>
+                      </TouchableOpacity>
                     </View>
                   </View>
                 ) : null}
@@ -157,16 +171,13 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                           color="#8b5cf6"
                           style={{ marginRight: 6 }}
                         />
-                        <Text className="text-gray-700 flex-1">{act.name}</Text>
+                        <View className="flex-1">{linkifyText(act.name)}</View>
                         {act.booking_url ? (
                           <TouchableOpacity
                             onPress={() => Linking.openURL(act.booking_url)}
+                            className="ml-2"
                           >
-                            <Ionicons
-                              name="open-outline"
-                              size={20}
-                              color="#8b5cf6"
-                            />
+                            <Text className="text-purple-600 underline">Book</Text>
                           </TouchableOpacity>
                         ) : null}
                       </View>
@@ -183,7 +194,7 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                     />
                     <View className="flex-1">
                       <Text className="font-outfit-medium">Travel Tips</Text>
-                      <Text className="text-gray-700">{d.travel_tips}</Text>
+                      {linkifyText(d.travel_tips)}
                     </View>
                   </View>
                 ) : null}
