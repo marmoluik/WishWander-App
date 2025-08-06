@@ -70,7 +70,11 @@ export default function SearchPlace() {
           <TextInput
             style={styles.input}
             placeholder="Search for a place"
+<<<<<<< HEAD
             placeholderTextColor="#2E2A1C"
+=======
+            placeholderTextColor="#818181"
+>>>>>>> parent of cd4cbf6 (feat: add custom color palette)
             returnKeyType="search"
             value={term}
             onChangeText={setTerm}
@@ -102,6 +106,7 @@ export default function SearchPlace() {
 }
 
 const styles = StyleSheet.create({
+<<<<<<< HEAD
   container: { flex: 1, backgroundColor: "#FFFBF0" },
   header: { alignItems: "center", marginTop: 20, paddingHorizontal: 16 },
   title: { fontSize: 32, fontWeight: "700", textAlign: "center", marginBottom: 8 },
@@ -110,6 +115,16 @@ const styles = StyleSheet.create({
   input: {
     height: 54,
     backgroundColor: "#FFFBF0",
+=======
+  container: { flex: 1, backgroundColor: "white" },
+  header: { alignItems: "center", marginTop: 20, paddingHorizontal: 16 },
+  title: { fontSize: 32, fontWeight: "700", textAlign: "center", marginBottom: 8 },
+  subtitle: { fontSize: 16, color: "#666" },
+  autocomplete: { flex: 1, padding: 16 },
+  input: {
+    height: 54,
+    backgroundColor: "#e2e2e2",
+>>>>>>> parent of cd4cbf6 (feat: add custom color palette)
     borderRadius: 999,
     paddingHorizontal: 16,
     fontSize: 15,
@@ -118,10 +133,19 @@ const styles = StyleSheet.create({
   loading: { textAlign: "center", marginVertical: 8 },
   row: {
     padding: 13,
+<<<<<<< HEAD
     backgroundColor: "#FFFBF0",
     borderBottomWidth: 0.5,
     borderBottomColor: "#F4C430",
   },
   rowText: { fontSize: 15 },
   noResults: { textAlign: "center", marginTop: 8, color: "#2E2A1C" },
+=======
+    backgroundColor: "#fff",
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#c8c7cc",
+  },
+  rowText: { fontSize: 15 },
+  noResults: { textAlign: "center", marginTop: 8, color: "#666" },
+>>>>>>> parent of cd4cbf6 (feat: add custom color palette)
 });
