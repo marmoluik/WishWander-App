@@ -66,12 +66,14 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    GOOGLE_PLACES_API_KEY=your_google_places_api_key
    EXPO_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
    GEMINI_API_KEY=your_gemini_api_key
+
    EXPO_PUBLIC_TRAVELPAYOUTS_MARKER=your_travelpayouts_marker
    EXPO_PUBLIC_TRAVELPAYOUTS_TOKEN=your_travelpayouts_token
    ```
 
    The `GOOGLE_PLACES_API_KEY` and `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` should be the same key with the Places and Maps APIs enabled for search and photos.
    The `GEMINI_API_KEY` powers AI trip generation.
+
    The Travelpayouts marker and token enable affiliate links and API access for flights, hotels, and activities.
 
 3. Start the app
