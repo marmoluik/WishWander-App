@@ -70,7 +70,7 @@ export default function SearchPlace() {
           <TextInput
             style={styles.input}
             placeholder="Search for a place"
-            placeholderTextColor="#818181"
+            placeholderTextColor="#1F2D3D"
             returnKeyType="search"
             value={term}
             onChangeText={setTerm}
@@ -102,14 +102,14 @@ export default function SearchPlace() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "white" },
+  container: { flex: 1, backgroundColor: "#FAFAFA" },
   header: { alignItems: "center", marginTop: 20, paddingHorizontal: 16 },
   title: { fontSize: 32, fontWeight: "700", textAlign: "center", marginBottom: 8 },
-  subtitle: { fontSize: 16, color: "#666" },
+  subtitle: { fontSize: 16, color: "#1F2D3D" },
   autocomplete: { flex: 1, padding: 16 },
   input: {
     height: 54,
-    backgroundColor: "#e2e2e2",
+    backgroundColor: "#FAFAFA",
     borderRadius: 999,
     paddingHorizontal: 16,
     fontSize: 15,
@@ -118,10 +118,10 @@ const styles = StyleSheet.create({
   loading: { textAlign: "center", marginVertical: 8 },
   row: {
     padding: 13,
-    backgroundColor: "#fff",
+    backgroundColor: "#FAFAFA",
     borderBottomWidth: 0.5,
-    borderBottomColor: "#c8c7cc",
+    borderBottomColor: "#4BBFD9",
   },
   rowText: { fontSize: 15 },
-  noResults: { textAlign: "center", marginTop: 8, color: "#666" },
+  noResults: { textAlign: "center", marginTop: 8, color: "#1F2D3D" },
 });
