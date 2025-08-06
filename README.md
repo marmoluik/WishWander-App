@@ -74,7 +74,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    The `GOOGLE_PLACES_API_KEY` and `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` should be the same key with the Places and Maps APIs enabled for search and photos.
    The `GEMINI_API_KEY` powers AI trip generation.
 
-   The Travelpayouts marker and token enable affiliate links and API access for flights, hotels, and activities.
+   The Travelpayouts marker and token enable affiliate links and API access for flights, hotels, and activities. Affiliate links are generated with program-specific `tp.media` URLs (Aviasales for flights, Hotellook for hotels, Welcome Pickups for tours and transfers, and Searadar for cruises) to avoid 404 errors.
 
 3. Start the app
 
