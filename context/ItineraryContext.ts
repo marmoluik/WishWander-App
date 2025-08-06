@@ -15,12 +15,18 @@ export interface DayPlan {
   travel_tips: string;
 }
 
+export interface StoredItinerary {
+  id: string;
+  title: string;
+  plan: DayPlan[];
+}
+
 interface ItineraryContextType {
-  itinerary: DayPlan[] | null;
-  setItinerary: React.Dispatch<React.SetStateAction<DayPlan[] | null>>;
+  itineraries: StoredItinerary[];
+  addItinerary: (it: StoredItinerary) => void;
 }
 
 export const ItineraryContext = createContext<ItineraryContextType>({
-  itinerary: null,
-  setItinerary: () => {},
+  itineraries: [],
+  addItinerary: () => {},
 });

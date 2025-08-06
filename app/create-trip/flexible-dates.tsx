@@ -32,8 +32,8 @@ const FlexibleDates = () => {
   const [selectedDuration, setSelectedDuration] = useState(durationOptions[0]);
   const [results, setResults] = useState<FlexibleResult[]>([]);
   const [loading, setLoading] = useState(false);
-  const [customStart, setCustomStart] = useState("");
-  const [customEnd, setCustomEnd] = useState("");
+  const [minDays, setMinDays] = useState("");
+  const [maxDays, setMaxDays] = useState("");
 
   const locationInfo = tripData.find((item) => item.locationInfo)?.locationInfo;
   const originAirport = tripData.find((item) => item.originAirport)?.originAirport;
@@ -70,24 +70,21 @@ const FlexibleDates = () => {
         return;
       }
 
-      let dateFrom = moment().format("DD/MM/YYYY");
-      let dateTo = moment().add(6, "months").format("DD/MM/YYYY");
+      const dateFrom = moment().format("DD/MM/YYYY");
+      const dateTo = moment().add(6, "months").format("DD/MM/YYYY");
       let nightsFrom = selectedDuration.from;
       let nightsTo = selectedDuration.to;
 
-      if (customStart && customEnd) {
-        const start = moment(customStart, "DD-MM-YYYY");
-        const end = moment(customEnd, "DD-MM-YYYY");
-        if (!start.isValid() || !end.isValid()) {
-          Alert.alert("Invalid date format. Use DD-MM-YYYY");
+      if (minDays && maxDays) {
+        const fromNum = parseInt(minDays, 10);
+        const toNum = parseInt(maxDays, 10);
+        if (isNaN(fromNum) || isNaN(toNum)) {
+          Alert.alert("Please enter valid numbers for day range");
           setLoading(false);
           return;
         }
-        dateFrom = start.format("DD/MM/YYYY");
-        dateTo = end.format("DD/MM/YYYY");
-        const diff = end.diff(start, "days");
-        nightsFrom = diff;
-        nightsTo = diff;
+        nightsFrom = fromNum;
+        nightsTo = toNum;
       }
 
       const searchUrl = `https://${rapidHost}/v2/search?fly_from=${originAirport.code}&fly_to=${arrival.code}&date_from=${dateFrom}&date_to=${dateTo}&nights_in_dst_from=${nightsFrom}&nights_in_dst_to=${nightsTo}&limit=10&sort=price`;
@@ -160,20 +157,24 @@ const FlexibleDates = () => {
       </View>
       <View className="mb-4">
         <Text className="font-outfit text-gray-600 mb-1">
-          Or enter dates manually (DD-MM-YYYY)
+          Or enter custom duration (days)
         </Text>
-        <TextInput
-          value={customStart}
-          onChangeText={setCustomStart}
-          placeholder="Start date"
-          className="border border-gray-300 rounded-full px-4 py-2 mb-2"
-        />
-        <TextInput
-          value={customEnd}
-          onChangeText={setCustomEnd}
-          placeholder="End date"
-          className="border border-gray-300 rounded-full px-4 py-2"
-        />
+        <View className="flex-row space-x-2">
+          <TextInput
+            value={minDays}
+            onChangeText={setMinDays}
+            placeholder="Min days"
+            keyboardType="numeric"
+            className="flex-1 border border-gray-300 rounded-full px-4 py-2 mb-2"
+          />
+          <TextInput
+            value={maxDays}
+            onChangeText={setMaxDays}
+            placeholder="Max days"
+            keyboardType="numeric"
+            className="flex-1 border border-gray-300 rounded-full px-4 py-2 mb-2"
+          />
+        </View>
       </View>
       <CustomButton title="Search" onPress={searchFlexible} disabled={loading} />
       {loading && <ActivityIndicator className="mt-4" color="#8b5cf6" />}

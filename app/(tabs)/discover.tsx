@@ -6,12 +6,11 @@ import {
   Linking,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
 import { interestCategories } from "@/constants/Options";
-import { ItineraryContext } from "@/context/ItineraryContext";
 
 const DEFAULT_IMAGE_URL =
   "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?q=80&w=2071&auto=format&fit=crop";
@@ -37,7 +36,6 @@ const Discover = () => {
   const [parsedTripPlan, setParsedTripPlan] = useState<any>(null);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [selectedPlaces, setSelectedPlaces] = useState<any[]>([]);
-  const { itinerary } = useContext(ItineraryContext);
 
   const fetchPlaceImage = async (placeName: string) => {
     try {
@@ -401,13 +399,13 @@ const Discover = () => {
         )}
       </View>
     </ScrollView>
-    {selectedPlaces.length > 0 && !itinerary && (
+    {selectedPlaces.length > 0 && (
       <View className="absolute bottom-4 left-0 right-0 px-6">
         <CustomButton
           title="Generate Itinerary"
           onPress={() =>
             router.push({
-              pathname: "/itinerary",
+              pathname: "/(tabs)/itineraries",
               params: {
                 selectedPlaces: JSON.stringify(selectedPlaces),
                 tripData,

@@ -14,14 +14,22 @@ import { StatusBar } from "expo-status-bar";
 import "../global.css";
 import "react-native-get-random-values";
 import { CreateTripContext } from "@/context/CreateTripContext";
-import { ItineraryContext, DayPlan } from "@/context/ItineraryContext";
+import {
+  ItineraryContext,
+  DayPlan,
+  StoredItinerary,
+} from "@/context/ItineraryContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [tripData, setTripData] = useState<any[]>([]);
-  const [itinerary, setItinerary] = useState<DayPlan[] | null>(null);
+  const [itineraries, setItineraries] = useState<StoredItinerary[]>([]);
+
+  const addItinerary = (it: StoredItinerary) => {
+    setItineraries((prev) => [...prev, it]);
+  };
 
   const updateTripData = (newData: any) => {
     setTripData((prevData) => {
@@ -56,7 +64,7 @@ export default function RootLayout() {
   return (
     <>
       <CreateTripContext.Provider value={{ tripData, setTripData }}>
-        <ItineraryContext.Provider value={{ itinerary, setItinerary }}>
+        <ItineraryContext.Provider value={{ itineraries, addItinerary }}>
           <StatusBar style="dark" />
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" />
@@ -64,7 +72,6 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="create-trip" />
             <Stack.Screen name="generate-trip" />
-            <Stack.Screen name="itinerary/index" />
           </Stack>
         </ItineraryContext.Provider>
       </CreateTripContext.Provider>
