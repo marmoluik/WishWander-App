@@ -1,9 +1,10 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, Alert, TouchableOpacity } from "react-native";
 import React from "react";
 import moment from "moment";
 import CustomButton from "../CustomButton";
 import UserTripCard from "./UserTripCard";
 import { useRouter } from "expo-router";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const DEFAULT_IMAGE_URL =
   "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?q=80&w=2071&auto=format&fit=crop";
@@ -65,7 +66,8 @@ const UserTripList = ({
   return (
     <View className="mb-16">
       <View>
-        <Image
+        <View className="relative">
+          <Image
           source={{
             uri: locationInfo?.photoRef
               ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${locationInfo.photoRef}&key=${process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY}`
@@ -75,6 +77,18 @@ const UserTripList = ({
             isPastTrip ? "grayscale" : ""
           }`}
         />
+          <TouchableOpacity
+            onPress={() =>
+              Alert.alert("Delete Trip", "Are you sure you want to delete this trip?", [
+                { text: "Cancel", style: "cancel" },
+                { text: "Delete", style: "destructive", onPress: () => onDelete(sortedTrips[0].id) },
+              ])
+            }
+            className="absolute top-3 right-3 bg-white rounded-full"
+          >
+            <Ionicons name="close" size={24} color="#ef4444" />
+          </TouchableOpacity>
+        </View>
         <View className="mt-3">
           <Text
             className={`font-outfit-medium text-xl ${
@@ -104,12 +118,6 @@ const UserTripList = ({
               })
             }
             className={`mt-3 ${isPastTrip ? "opacity-50" : ""}`}
-          />
-          <CustomButton
-            title="Delete Trip"
-            onPress={() => onDelete(sortedTrips[0].id)}
-            bgVariant="danger"
-            className="mt-2"
           />
         </View>
 

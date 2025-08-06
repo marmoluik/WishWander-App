@@ -16,6 +16,40 @@ const slotIcon: Record<string, any> = {
   night: "moon",
 };
 
+const activityIcon = (name: string) => {
+  const lower = name.toLowerCase();
+  if (lower.includes("boat") || lower.includes("sail")) return "boat";
+  if (lower.includes("hike")) return "walk";
+  if (lower.includes("tour")) return "map";
+  return "pricetag";
+};
+
+const linkifyText = (text: string) => {
+  const match = text.match(/\b(?:at|in|on|along)\s+([A-Z][^.,]+)/);
+  if (match) {
+    const loc = match[1].trim();
+    const before = text.slice(0, match.index! + match[0].indexOf(loc));
+    const after = text.slice(match.index! + match[0].length);
+    return (
+      <Text className="text-gray-700">
+        {before}
+        <Text
+          className="text-purple-600 underline"
+          onPress={() =>
+            Linking.openURL(
+              `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(loc)}`
+            )
+          }
+        >
+          {loc}
+        </Text>
+        {after}
+      </Text>
+    );
+  }
+  return <Text className="text-gray-700">{text}</Text>;
+};
+
 const ItineraryDetails: React.FC<Props> = ({ plan }) => {
   const [collapsed, setCollapsed] = useState<Record<number, boolean>>({});
 
@@ -61,7 +95,7 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                           <Text className="font-outfit-medium capitalize">
                             {slot}
                           </Text>
-                          <Text className="text-gray-700">{text}</Text>
+                          {linkifyText(text)}
                         </View>
                       </View>
                     );
@@ -113,16 +147,27 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                       </Text>
                     </View>
                     {d.optional_activities.map((act, i) => (
-                      <View key={i} className="mb-1 ml-6">
-                        <Text className="text-gray-700">• {act.name}</Text>
+                      <View
+                        key={i}
+                        className="mb-2 ml-6 flex-row items-center"
+                      >
+                        <Ionicons
+                          name={activityIcon(act.name) as any}
+                          size={20}
+                          color="#8b5cf6"
+                          style={{ marginRight: 6 }}
+                        />
+                        <Text className="text-gray-700 flex-1">{act.name}</Text>
                         {act.booking_url ? (
-                          <CustomButton
-                            title="Book"
+                          <TouchableOpacity
                             onPress={() => Linking.openURL(act.booking_url)}
-                            bgVariant="outline"
-                            textVariant="primary"
-                            className="mt-1 w-32"
-                          />
+                          >
+                            <Ionicons
+                              name="open-outline"
+                              size={20}
+                              color="#8b5cf6"
+                            />
+                          </TouchableOpacity>
                         ) : null}
                       </View>
                     ))}

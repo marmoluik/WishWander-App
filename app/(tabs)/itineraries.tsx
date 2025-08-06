@@ -1,9 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  ActivityIndicator,
+  Animated,
+  Easing,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
@@ -21,6 +22,7 @@ const Itineraries = () => {
   const { selectedPlaces, tripData } = useLocalSearchParams();
   const [loading, setLoading] = useState(false);
   const [currentId, setCurrentId] = useState<string | null>(null);
+  const spinValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (selectedPlaces) {
@@ -28,6 +30,19 @@ const Itineraries = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPlaces]);
+
+  useEffect(() => {
+    if (loading) {
+      Animated.loop(
+        Animated.timing(spinValue, {
+          toValue: 1,
+          duration: 2000,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        })
+      ).start();
+    }
+  }, [loading, spinValue]);
 
   const generateItinerary = async () => {
     try {
@@ -59,9 +74,15 @@ const Itineraries = () => {
   const selectedItinerary = itineraries.find((i) => i.id === currentId);
 
   if (loading) {
+    const spin = spinValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["0deg", "360deg"],
+    });
     return (
       <SafeAreaView className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#8b5cf6" />
+        <Animated.View style={{ transform: [{ rotate: spin }] }}>
+          <Ionicons name="airplane" size={64} color="#8b5cf6" />
+        </Animated.View>
         <Text className="font-outfit-medium mt-2">Generating itinerary...</Text>
       </SafeAreaView>
     );
