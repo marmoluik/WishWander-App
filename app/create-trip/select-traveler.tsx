@@ -35,9 +35,9 @@ const SelectTraveler = () => {
     >
       <View className="bg-secondary p-3 rounded-full">
         {item.icon === "person" || item.icon === "people-circle" ? (
-          <Ionicons name={item.icon as any} size={24} color="#F59E0B" />
+          <Ionicons name={item.icon as any} size={24} color="#7C3AED" />
         ) : (
-          <MaterialIcons name={item.icon as any} size={24} color="#F59E0B" />
+          <MaterialIcons name={item.icon as any} size={24} color="#7C3AED" />
         )}
       </View>
       <View className="flex-1 ml-4">
