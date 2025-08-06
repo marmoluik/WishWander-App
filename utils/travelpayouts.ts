@@ -7,7 +7,7 @@ export const generateFlightLink = (
   returnDate?: string
 ) => {
   const marker = getTravelpayoutsMarker();
-  const params = [`origin=${origin}`, `destination=${destination}`];
+  const params = [`origin=${origin}`, `destination=${destination}`, `marker=${marker}`];
   if (departDate) params.push(`depart_date=${departDate}`);
   if (returnDate) params.push(`return_date=${returnDate}`);
   const baseSearch = `https://www.aviasales.com/search?${params.join("&")}`;
