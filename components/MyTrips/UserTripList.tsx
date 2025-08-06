@@ -97,7 +97,7 @@ const UserTripList = ({
             }
             className="absolute top-3 right-3 bg-background rounded-full"
           >
-            <Ionicons name="close" size={24} color="#EF4444" />
+            <Ionicons name="close" size={24} color="#F76C5E" />
           </TouchableOpacity>
         </View>
         <View className="mt-3">
@@ -117,8 +117,6 @@ const UserTripList = ({
             title="View Trip"
             onPress={viewLatestTrip}
             className={`mt-3 ${isPastTrip ? "opacity-50" : ""}`}
-            bgVariant="outline"
-            textVariant="primary"
           />
         </View>
 

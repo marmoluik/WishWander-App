@@ -23,14 +23,14 @@ A smart travel planning mobile application that leverages AI to create personali
 
 | Usage | Tailwind name | HEX |
 |-------|---------------|-----|
-| Primary | `primary` | #2563EB |
-| Secondary | `secondary` | #14B8A6 |
-| Background | `background` | #F9FAFB |
-| Text (dark) | `text-primary` | #111827 |
-| Accent | `accent` | #8B5CF6 |
-| Hover | `accent-hover` | #7C3AED |
-| Success | `success` | #22C55E |
-| Alert | `alert` | #EF4444 |
+| Primary | `primary` | #F4C430 |
+| Secondary | `secondary` | #FFB347 |
+| Background | `background` | #FFFBF0 |
+| Text (dark) | `text-primary` | #2E2A1C |
+| Accent | `accent` | #4A90E2 |
+| Hover | `accent-hover` | #D19C1D |
+| Success | `success` | #B3E283 |
+| Alert | `alert` | #F76C5E |
 
 ## Video Demo
 - Because deploying is hard :(

@@ -222,7 +222,7 @@ const Discover = () => {
                   {parsedTripPlan.trip_plan.flight_details.departure_time}
                 </Text>
               </View>
-              <Ionicons name="airplane" size={24} color="#2563EB" />
+              <Ionicons name="airplane" size={24} color="#F4C430" />
               <View className="flex-1 pl-2 items-end">
                 <Text
                   className="font-outfit-bold text-lg text-right"
@@ -293,7 +293,7 @@ const Discover = () => {
                   <Ionicons
                     name="chevron-back"
                     size={24}
-                    color="#2563EB"
+                    color="#F4C430"
                   />
                 </TouchableOpacity>
               )}
@@ -325,8 +325,6 @@ const Discover = () => {
                       title="View on Map"
                       onPress={() => handleOpenMap(item.address)}
                       className="mt-4"
-                      bgVariant="outline"
-                      textVariant="primary"
                     />
                     <CustomButton
                       title="Book Hotel"
@@ -348,7 +346,7 @@ const Discover = () => {
                   <Ionicons
                     name="chevron-forward"
                     size={24}
-                    color="#2563EB"
+                    color="#F4C430"
                   />
                 </TouchableOpacity>
               )}
@@ -433,7 +431,7 @@ const Discover = () => {
                   <Ionicons
                     name={isSelected ? "checkmark" : "add"}
                     size={20}
-                    color={isSelected ? "#ffffff" : "#2563EB"}
+                    color={isSelected ? "#ffffff" : "#F4C430"}
                   />
                 </TouchableOpacity>
                 <Text className="font-outfit-bold text-lg">{place.name}</Text>
@@ -454,8 +452,6 @@ const Discover = () => {
                     )
                   }
                   className="mt-4"
-                  bgVariant="outline"
-                  textVariant="primary"
                 />
                 <CustomButton
                   title="Book Tickets"
