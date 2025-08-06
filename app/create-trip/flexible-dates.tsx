@@ -171,7 +171,7 @@ const FlexibleDates = () => {
         </View>
       </View>
       <CustomButton title="Search" onPress={searchFlexible} disabled={loading} />
-      {loading && <ActivityIndicator className="mt-4" color="#F59E0B" />}
+      {loading && <ActivityIndicator className="mt-4" color="#7C3AED" />}
       <FlatList
         data={results}
         keyExtractor={(_, index) => index.toString()}

@@ -63,22 +63,22 @@ const SelectDates = () => {
             allowRangeSelection={true}
             minDate={new Date()}
             onDateChange={onDateChange}
-            selectedDayColor="#F59E0B"
+            selectedDayColor="#7C3AED"
             selectedDayTextColor="#ffffff"
             todayBackgroundColor="#22C55E"
-            todayTextStyle={{ color: "#F59E0B" }}
+            todayTextStyle={{ color: "#7C3AED" }}
             textStyle={{
               fontFamily: "outfit",
-              color: "#1F2937",
+              color: "#1E1B4B",
             }}
             selectedRangeStartStyle={{
-              backgroundColor: "#F59E0B",
+              backgroundColor: "#7C3AED",
             }}
             selectedRangeEndStyle={{
-              backgroundColor: "#F59E0B",
+              backgroundColor: "#7C3AED",
             }}
             selectedRangeStyle={{
-              backgroundColor: "#F59E0B",
+              backgroundColor: "#7C3AED",
             }}
           />
         </View>
