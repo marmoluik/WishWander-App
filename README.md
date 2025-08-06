@@ -64,12 +64,15 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
    FIREBASE_APP_ID=your_firebase_app_id
    GOOGLE_PLACES_API_KEY=your_google_places_api_key
-   EXPO_PUBLIC_BOOKING_AFFILIATE_ID=your_booking_affiliate_id
-   EXPO_PUBLIC_RAPIDAPI_KEY=your_rapidapi_key
+   EXPO_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+   GEMINI_API_KEY=your_gemini_api_key
+   EXPO_PUBLIC_TRAVELPAYOUTS_MARKER=your_travelpayouts_marker
+   EXPO_PUBLIC_TRAVELPAYOUTS_TOKEN=your_travelpayouts_token
    ```
 
-   The `GOOGLE_PLACES_API_KEY` must have the Places API enabled for city and airport autocomplete.
-   The `EXPO_PUBLIC_RAPIDAPI_KEY` should be a valid key for the [Kiwi.com Cheap Flights API](https://rapidapi.com/emir12/api/kiwi-com-cheap-flights).
+   The `GOOGLE_PLACES_API_KEY` and `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` should be the same key with the Places and Maps APIs enabled for search and photos.
+   The `GEMINI_API_KEY` powers AI trip generation.
+   The Travelpayouts marker and token enable affiliate links and API access for flights, hotels, and activities.
 
 3. Start the app
 

@@ -43,35 +43,26 @@ const FlexibleDates = () => {
       Alert.alert("Select an origin and destination first");
       return;
     }
-    const rapidApiKey = process.env.EXPO_PUBLIC_RAPIDAPI_KEY;
-    const rapidHost = "kiwi-com-cheap-flights.p.rapidapi.com";
-    if (!rapidApiKey) {
-      Alert.alert("Missing API key");
+    const tpToken = process.env.EXPO_PUBLIC_TRAVELPAYOUTS_TOKEN;
+    if (!tpToken) {
+      Alert.alert("Missing Travelpayouts token");
       return;
     }
 
     setLoading(true);
     try {
       const locRes = await fetch(
-        `https://${rapidHost}/locations?term=${encodeURIComponent(
+        `https://autocomplete.travelpayouts.com/places2?term=${encodeURIComponent(
           locationInfo.name
-        )}&location_types=airport&limit=1`,
-        {
-          headers: {
-            "X-RapidAPI-Key": rapidApiKey,
-            "X-RapidAPI-Host": rapidHost,
-          },
-        }
+        )}&locale=en&types[]=airport&limit=1`
       );
       const locJson = await locRes.json();
-      const arrival = locJson.locations?.[0];
+      const arrival = locJson?.[0];
       if (!arrival?.code) {
         setLoading(false);
         return;
       }
 
-      const dateFrom = moment().format("DD/MM/YYYY");
-      const dateTo = moment().add(6, "months").format("DD/MM/YYYY");
       let nightsFrom = selectedDuration.from;
       let nightsTo = selectedDuration.to;
 
@@ -87,20 +78,23 @@ const FlexibleDates = () => {
         nightsTo = toNum;
       }
 
-      const searchUrl = `https://${rapidHost}/v2/search?fly_from=${originAirport.code}&fly_to=${arrival.code}&date_from=${dateFrom}&date_to=${dateTo}&nights_in_dst_from=${nightsFrom}&nights_in_dst_to=${nightsTo}&limit=10&sort=price`;
-      const flightRes = await fetch(searchUrl, {
-        headers: {
-          "X-RapidAPI-Key": rapidApiKey,
-          "X-RapidAPI-Host": rapidHost,
-        },
-      });
+      const searchUrl = `https://api.travelpayouts.com/v2/prices/month-matrix?origin=${originAirport.code}&destination=${arrival.code}&token=${tpToken}&currency=usd`;
+      const flightRes = await fetch(searchUrl);
       const flightJson = await flightRes.json();
-      const flights = flightJson.data || [];
-      const parsed: FlexibleResult[] = flights.map((f: any) => ({
-        start: moment(f.route?.[0]?.dTimeUTC * 1000).format("YYYY-MM-DD"),
-        end: moment(f.route?.[1]?.aTimeUTC * 1000).format("YYYY-MM-DD"),
-        price: `${f.price} ${f.currency}`,
-      }));
+      const flights = Array.isArray(flightJson.data)
+        ? flightJson.data
+        : Object.values(flightJson.data || {});
+      const parsed: FlexibleResult[] = (flights as any[])
+        .map((f: any) => ({
+          start: f.depart_date,
+          end: f.return_date,
+          price: `${f.value} ${flightJson.currency || "USD"}`,
+        }))
+        .filter((r: any) => {
+          const diff = moment(r.end).diff(moment(r.start), "days");
+          return diff >= nightsFrom && diff <= nightsTo;
+        })
+        .slice(0, 10);
       setResults(parsed);
     } catch (e) {
       console.error("flexible search failed", e);

@@ -52,44 +52,20 @@ export default function SelectOriginAirport() {
       const detail = await searchDetails(item.place_id);
       const { lat, lng } = detail.geometry.location;
       try {
-        const rapidApiKey = process.env.EXPO_PUBLIC_RAPIDAPI_KEY;
-        const rapidHost = "kiwi-com-cheap-flights.p.rapidapi.com";
-        if (rapidApiKey) {
-          let airport;
-          let res = await fetch(
-            `https://${rapidHost}/locations?location_types=airport&limit=1&lat=${lat}&lon=${lng}`,
-            {
-              headers: {
-                "X-RapidAPI-Key": rapidApiKey,
-                "X-RapidAPI-Host": rapidHost,
-              },
-            }
-          );
-          let json = await res.json();
-          airport = json.locations?.[0];
-          if (!airport) {
-            res = await fetch(
-              `https://${rapidHost}/locations?term=${encodeURIComponent(
-                item.description
-              )}&location_types=airport&limit=1`,
-              {
-                headers: {
-                  "X-RapidAPI-Key": rapidApiKey,
-                  "X-RapidAPI-Host": rapidHost,
-                },
-              }
-            );
-            json = await res.json();
-            airport = json.locations?.[0];
-          }
-          if (airport) {
-            name = `${airport.name} (${airport.code})`;
-            code = airport.code;
-            coordinates = {
-              lat: airport.location?.lat,
-              lng: airport.location?.lon,
-            };
-          }
+        const res = await fetch(
+          `https://autocomplete.travelpayouts.com/places2?term=${encodeURIComponent(
+            item.description
+          )}&locale=en&types[]=airport&limit=1`
+        );
+        const json = await res.json();
+        const airport = json?.[0];
+        if (airport) {
+          name = `${airport.name} (${airport.code})`;
+          code = airport.code;
+          coordinates = {
+            lat: airport.coordinates?.lat,
+            lng: airport.coordinates?.lon,
+          };
         }
       } catch (e) {
         console.error("airport lookup failed", e);
