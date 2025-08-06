@@ -28,7 +28,7 @@ const SelectBudget = () => {
       onPress={() => handleSelectBudget(item)}
       className="flex-row items-center p-4 bg-white rounded-xl mb-4 shadow-sm border border-neutral-100"
     >
-      <View className="bg-purple-100 p-3 rounded-full">
+      <View className="bg-pink-100 p-3 rounded-full">
         <Text className="text-2xl">{item.icon}</Text>
       </View>
       <View className="flex-1 ml-4">

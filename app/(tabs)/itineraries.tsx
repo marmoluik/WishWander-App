@@ -89,7 +89,7 @@ const Itineraries = () => {
     return (
       <SafeAreaView className="flex-1 justify-center items-center">
         <Animated.View style={{ transform: [{ rotate: spin }] }}>
-          <Ionicons name="document-text" size={64} color="#8b5cf6" />
+          <Ionicons name="document-text" size={64} color="#FF4698" />
         </Animated.View>
         <Text className="font-outfit-medium mt-2">Generating itinerary...</Text>
       </SafeAreaView>
@@ -129,11 +129,11 @@ const Itineraries = () => {
               <Ionicons
                 name="map"
                 size={24}
-                color="#8b5cf6"
+                color="#FF4698"
                 style={{ marginRight: 12 }}
               />
               <Text className="font-outfit-bold flex-1">{it.title}</Text>
-              <Ionicons name="chevron-forward" size={20} color="#8b5cf6" />
+              <Ionicons name="chevron-forward" size={20} color="#FF4698" />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => handleDelete(it.id)} className="ml-4">
               <Ionicons name="trash" size={20} color="#ef4444" />

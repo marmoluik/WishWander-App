@@ -108,7 +108,7 @@ export default function SignUp() {
             className="text-lg text-center mt-10 font-outfit-medium"
           >
             <Text className="">Already have an account? </Text>
-            <Text className="text-purple-500">Sign In</Text>
+            <Text className="text-pink-500">Sign In</Text>
           </Link>
         </View>
       </View>
