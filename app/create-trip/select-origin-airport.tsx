@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     padding: 13,
     backgroundColor: "#F8FAFC",
     borderBottomWidth: 0.5,
-    borderBottomColor: "#3B82F6",
+    borderBottomColor: "#F59E0B",
   },
   rowText: { fontSize: 15 },
   noResults: { textAlign: "center", marginTop: 8, color: "#1F2937" },

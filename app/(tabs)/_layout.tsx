@@ -11,7 +11,7 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: true,
         headerTitle: () => <HeaderLogo />,
-        tabBarActiveTintColor: "#3B82F6",
+        tabBarActiveTintColor: "#F59E0B",
         tabBarInactiveTintColor: "#1F2937",
         tabBarLabelStyle: {
           fontFamily: "outfit-medium",
@@ -27,7 +27,7 @@ export default function TabLayout() {
             <Ionicons
               name="location-sharp"
               size={24}
-              color={focused ? "#3B82F6" : "#1F2937"}
+              color={focused ? "#F59E0B" : "#1F2937"}
             />
           ),
         }}
@@ -40,7 +40,7 @@ export default function TabLayout() {
             <MaterialIcons
               name="travel-explore"
               size={24}
-              color={focused ? "#3B82F6" : "#1F2937"}
+              color={focused ? "#F59E0B" : "#1F2937"}
             />
           ),
         }}
@@ -53,7 +53,7 @@ export default function TabLayout() {
             <Ionicons
               name="calendar"
               size={24}
-              color={focused ? "#3B82F6" : "#1F2937"}
+              color={focused ? "#F59E0B" : "#1F2937"}
             />
           ),
         }}
@@ -66,7 +66,7 @@ export default function TabLayout() {
             <FontAwesome
               name="user-o"
               size={21}
-              color={focused ? "#3B82F6" : "#1F2937"}
+              color={focused ? "#F59E0B" : "#1F2937"}
             />
           ),
         }}

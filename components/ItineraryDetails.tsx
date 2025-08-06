@@ -92,7 +92,7 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                         <Ionicons
                           name={slotIcon[slot] as any}
                           size={20}
-                          color="#3B82F6"
+                          color="#F59E0B"
                           style={{ marginRight: 8, marginTop: 2 }}
                         />
                         <View className="flex-1">
@@ -110,7 +110,7 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                     <Ionicons
                       name="restaurant"
                       size={20}
-                      color="#3B82F6"
+                      color="#F59E0B"
                       style={{ marginRight: 8, marginTop: 2 }}
                     />
                     <View className="flex-1">
@@ -126,7 +126,7 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                     <Ionicons
                       name="bed"
                       size={20}
-                      color="#3B82F6"
+                      color="#F59E0B"
                       style={{ marginRight: 8, marginTop: 2 }}
                     />
                     <View className="flex-1">
@@ -149,7 +149,7 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                       <Ionicons
                         name="bicycle"
                         size={20}
-                        color="#3B82F6"
+                        color="#F59E0B"
                         style={{ marginRight: 8, marginTop: 2 }}
                       />
                       <Text className="font-outfit-medium">
@@ -166,7 +166,7 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                           <Ionicons
                             name={activityIcon(act.name) as any}
                             size={20}
-                            color="#3B82F6"
+                            color="#F59E0B"
                             style={{ marginRight: 6 }}
                           />
                           <View className="flex-1">{linkifyText(act.name)}</View>
@@ -188,7 +188,7 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                     <Ionicons
                       name="bulb"
                       size={20}
-                      color="#3B82F6"
+                      color="#F59E0B"
                       style={{ marginRight: 8, marginTop: 2 }}
                     />
                     <View className="flex-1">
@@ -207,7 +207,8 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
           <CustomButton
             title="Collapse All Days"
             onPress={collapseAll}
-            bgVariant="secondary"
+            bgVariant="outline"
+            textVariant="primary"
           />
         </View>
       )}
