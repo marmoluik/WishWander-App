@@ -6,6 +6,7 @@ import {
 import { Stack, useRouter } from "expo-router";
 import { TouchableOpacity } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import HeaderLogo from "@/components/HeaderLogo";
 
 export default function TripDetailsLayout() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function TripDetailsLayout() {
       screenOptions={{
         headerShown: true,
         headerBackTitle: "",
-        headerTitle: "",
+        headerTitle: () => <HeaderLogo />,
         headerStyle: {
           backgroundColor: "transparent",
         },

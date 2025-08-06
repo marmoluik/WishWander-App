@@ -6,7 +6,6 @@ import {
   ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import StartNewTripCard from "@/components/MyTrips/StartNewTripCard";
 import {
@@ -69,7 +68,7 @@ export default function MyTrip() {
 
   return (
     <ScrollView
-      className="p-6 h-full mt-10"
+      className="p-6 h-full"
       showsVerticalScrollIndicator={false}
     >
       <View className="flex flex-row items-center justify-between">

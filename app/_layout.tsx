@@ -19,6 +19,7 @@ import {
   DayPlan,
   StoredItinerary,
 } from "@/context/ItineraryContext";
+import HeaderLogo from "@/components/HeaderLogo";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -75,7 +76,10 @@ export default function RootLayout() {
             <Stack.Screen name="(auth)" />
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="create-trip" />
-            <Stack.Screen name="generate-trip" />
+            <Stack.Screen
+              name="generate-trip"
+              options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
+            />
           </Stack>
         </ItineraryContext.Provider>
       </CreateTripContext.Provider>
