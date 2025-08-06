@@ -35,7 +35,7 @@ const linkifyText = (text: string) => {
       <Text className="text-gray-700">
         {before}
         <Text
-          className="text-pink-600 underline"
+          className="text-purple-600 underline"
           onPress={() =>
             Linking.openURL(
               `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc)}`
@@ -74,7 +74,7 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
               onPress={() =>
                 setCollapsed((prev) => ({ ...prev, [index]: !prev[index] }))
               }
-              className="p-4 bg-pink-100 rounded-t-xl flex-row justify-between"
+              className="p-4 bg-purple-100 rounded-t-xl flex-row justify-between"
             >
               <Text className="font-outfit-bold">
                 Day {d.day} - {moment(d.date).format("MMM D, YYYY")}
@@ -92,7 +92,7 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                         <Ionicons
                           name={slotIcon[slot] as any}
                           size={20}
-                          color="#FF4698"
+                          color="#8b5cf6"
                           style={{ marginRight: 8, marginTop: 2 }}
                         />
                         <View className="flex-1">
@@ -110,7 +110,7 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                     <Ionicons
                       name="restaurant"
                       size={20}
-                      color="#FF4698"
+                      color="#8b5cf6"
                       style={{ marginRight: 8, marginTop: 2 }}
                     />
                     <View className="flex-1">
@@ -126,14 +126,14 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                     <Ionicons
                       name="bed"
                       size={20}
-                      color="#FF4698"
+                      color="#8b5cf6"
                       style={{ marginRight: 8, marginTop: 2 }}
                     />
                     <View className="flex-1">
                       <Text className="font-outfit-medium">Stay Options</Text>
                       {linkifyText(d.stay_options)}
                       <TouchableOpacity
-                        className="mt-2 bg-pink-600 px-3 py-1 rounded-full w-24 items-center"
+                        className="mt-2 bg-purple-600 px-3 py-1 rounded-full w-24 items-center"
                         onPress={() =>
                           Linking.openURL(generateStayLink(d.stay_options))
                         }
@@ -149,7 +149,7 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                       <Ionicons
                         name="bicycle"
                         size={20}
-                        color="#FF4698"
+                        color="#8b5cf6"
                         style={{ marginRight: 8, marginTop: 2 }}
                       />
                       <Text className="font-outfit-medium">
@@ -166,13 +166,13 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                           <Ionicons
                             name={activityIcon(act.name) as any}
                             size={20}
-                            color="#FF4698"
+                            color="#8b5cf6"
                             style={{ marginRight: 6 }}
                           />
                           <View className="flex-1">{linkifyText(act.name)}</View>
                           <TouchableOpacity
                             onPress={() => Linking.openURL(bookingUrl)}
-                            className="ml-2 bg-pink-600 px-3 py-1 rounded-full"
+                            className="ml-2 bg-purple-600 px-3 py-1 rounded-full"
                           >
                             <Text className="font-outfit-bold text-white text-sm">
                               Book
@@ -188,7 +188,7 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                     <Ionicons
                       name="bulb"
                       size={20}
-                      color="#FF4698"
+                      color="#8b5cf6"
                       style={{ marginRight: 8, marginTop: 2 }}
                     />
                     <View className="flex-1">

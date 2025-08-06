@@ -19,21 +19,21 @@ const Onboarding = () => {
         }}
         className="w-full flex justify-end items-end p-5"
       >
-        <Text className="text-pink-500 text-md font-outfit-bold">Skip</Text>
+        <Text className="text-purple-500 text-md font-outfit-bold">Skip</Text>
       </TouchableOpacity>
 
       <Swiper
         ref={swiperRef}
         loop={false}
         dot={<View className="w-8 h-1 mx-1 bg-slate-50 rounded-full" />}
-        activeDot={<View className="w-8 h-1 mx-1 bg-pink-500 rounded-full" />}
+        activeDot={<View className="w-8 h-1 mx-1 bg-purple-500 rounded-full" />}
         onIndexChanged={(index) => setActiveIndex(index)}
       >
         {onboarding.map((item) => (
           <View key={item.id} className="flex items-center justify-center p-5">
             <item.image width="100%" height={300} />
             <View className="flex flex-row items-center justify-center w-full mt-10">
-              <Text className="text-pink-500 font-outfit-bold text-3xl mx-10 text-center">
+              <Text className="text-purple-500 font-outfit-bold text-3xl mx-10 text-center">
                 {item.title}
               </Text>
             </View>

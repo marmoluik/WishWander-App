@@ -135,7 +135,7 @@ const FlexibleDates = () => {
             onPress={() => setSelectedDuration(opt)}
             className={`px-4 py-2 mr-2 rounded-full border ${
               selectedDuration.label === opt.label
-                ? "bg-pink-600 border-pink-600"
+                ? "bg-purple-600 border-purple-600"
                 : "border-gray-300"
             }`}
           >
@@ -171,7 +171,7 @@ const FlexibleDates = () => {
         </View>
       </View>
       <CustomButton title="Search" onPress={searchFlexible} disabled={loading} />
-      {loading && <ActivityIndicator className="mt-4" color="#FF4698" />}
+      {loading && <ActivityIndicator className="mt-4" color="#8b5cf6" />}
       <FlatList
         data={results}
         keyExtractor={(_, index) => index.toString()}
