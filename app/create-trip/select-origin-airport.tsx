@@ -16,6 +16,7 @@ import { useRouter } from "expo-router";
 import { useGoogleAutocomplete } from "@appandflow/react-native-google-autocomplete";
 import Constants from "expo-constants";
 import { CreateTripContext } from "@/context/CreateTripContext";
+import { getNearestAirport } from "@/utils/getNearestAirport";
 
 export default function SelectOriginAirport() {
   const router = useRouter();
@@ -48,14 +49,15 @@ export default function SelectOriginAirport() {
       code = codeMatch ? codeMatch[1] : "";
       coordinates = detail.geometry.location;
     } else {
+      const detail = await searchDetails(item.place_id);
+      const { lat, lng } = detail.geometry.location;
       try {
         const rapidApiKey = process.env.EXPO_PUBLIC_RAPIDAPI_KEY;
         const rapidHost = "kiwi-com-cheap-flights.p.rapidapi.com";
         if (rapidApiKey) {
-          const res = await fetch(
-            `https://${rapidHost}/locations?term=${encodeURIComponent(
-              item.description
-            )}&location_types=airport&limit=1`,
+          let airport;
+          let res = await fetch(
+            `https://${rapidHost}/locations?location_types=airport&limit=1&lat=${lat}&lon=${lng}`,
             {
               headers: {
                 "X-RapidAPI-Key": rapidApiKey,
@@ -63,8 +65,23 @@ export default function SelectOriginAirport() {
               },
             }
           );
-          const json = await res.json();
-          const airport = json.locations?.[0];
+          let json = await res.json();
+          airport = json.locations?.[0];
+          if (!airport) {
+            res = await fetch(
+              `https://${rapidHost}/locations?term=${encodeURIComponent(
+                item.description
+              )}&location_types=airport&limit=1`,
+              {
+                headers: {
+                  "X-RapidAPI-Key": rapidApiKey,
+                  "X-RapidAPI-Host": rapidHost,
+                },
+              }
+            );
+            json = await res.json();
+            airport = json.locations?.[0];
+          }
           if (airport) {
             name = `${airport.name} (${airport.code})`;
             code = airport.code;
@@ -76,6 +93,15 @@ export default function SelectOriginAirport() {
         }
       } catch (e) {
         console.error("airport lookup failed", e);
+      }
+      // Fallback to local dataset when API isn't available
+      if (!code || !coordinates) {
+        const nearest = getNearestAirport(lat, lng);
+        if (nearest) {
+          name = `${nearest.name} (${nearest.code})`;
+          code = nearest.code;
+          coordinates = { lat: nearest.lat, lng: nearest.lng };
+        }
       }
     }
 
