@@ -79,7 +79,7 @@ const UserTripCard = ({
           }
           className="absolute top-1 right-1 bg-background rounded-full"
         >
-          <Ionicons name="close" size={20} color="#EF4444" />
+          <Ionicons name="close" size={20} color="#F76C5E" />
         </TouchableOpacity>
       </View>
       <View className="flex-1">
