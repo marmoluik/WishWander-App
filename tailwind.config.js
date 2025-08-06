@@ -12,14 +12,14 @@ module.exports = {
       },
 <<<<<<< HEAD
       colors: {
-        primary: "#F4C430",
-        secondary: "#FFB347",
-        background: "#FFFBF0",
-        "text-primary": "#2E2A1C",
-        accent: "#4A90E2",
-        "accent-hover": "#D19C1D",
-        success: "#B3E283",
-        alert: "#F76C5E",
+        primary: "#3B82F6",
+        secondary: "#6366F1",
+        background: "#F9FAFB",
+        "text-primary": "#111827",
+        accent: "#10B981",
+        "accent-hover": "#059669",
+        success: "#22C55E",
+        alert: "#EF4444",
       },
 =======
 >>>>>>> parent of cd4cbf6 (feat: add custom color palette)
