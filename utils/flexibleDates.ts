@@ -8,7 +8,7 @@ export interface FlexibleDateRange {
 
 /**
  * Search for the cheapest date ranges between two airports within a duration window.
- * This uses the Kiwi.com API via RapidAPI if a key is available. When the key is
+ * This uses the Travelpayouts API when a token is available. When the token is
  * missing the function returns mocked prices so the rest of the app can be tested
  * without network access.
  */
@@ -18,8 +18,7 @@ export async function searchCheapestDateRanges(
   durationRange: [number, number]
 ): Promise<FlexibleDateRange[]> {
   const [minDays, maxDays] = durationRange;
-  const rapidKey = process.env.EXPO_PUBLIC_RAPIDAPI_KEY;
-  const rapidHost = 'kiwi-com-cheap-flights.p.rapidapi.com';
+  const tpToken = process.env.EXPO_PUBLIC_TRAVELPAYOUTS_TOKEN;
   const today = new Date();
   const results: FlexibleDateRange[] = [];
 
@@ -30,22 +29,16 @@ export async function searchCheapestDateRanges(
       const end = new Date(start.getTime() + len * 86400000);
       let price = Number.POSITIVE_INFINITY;
 
-      if (rapidKey) {
+      if (tpToken) {
         try {
-          const dateFrom = format(start, 'dd/MM/yyyy');
-          const returnFrom = format(end, 'dd/MM/yyyy');
+          const depart = format(start, 'yyyy-MM-dd');
+          const ret = format(end, 'yyyy-MM-dd');
           const res = await fetch(
-            `https://${rapidHost}/v2/search?fly_from=${origin}&fly_to=${destination}&date_from=${dateFrom}&date_to=${dateFrom}&return_from=${returnFrom}&return_to=${returnFrom}&limit=1&sort=price`,
-            {
-              headers: {
-                'X-RapidAPI-Key': rapidKey,
-                'X-RapidAPI-Host': rapidHost,
-              },
-            }
+            `https://api.travelpayouts.com/v2/prices/latest?origin=${origin}&destination=${destination}&depart_date=${depart}&return_date=${ret}&token=${tpToken}&currency=usd`
           );
           const json = await res.json();
           const flight = json.data?.[0];
-          if (flight) price = flight.price;
+          if (flight?.value) price = flight.value;
         } catch (e) {
           console.error('flexible date search failed', e);
         }
