@@ -31,7 +31,7 @@ export default function SelectOriginAirport() {
     Constants.expoConfig?.extra?.googlePlacesApiKey!,
     {
       debounce: 300,
-      minLength: 2,
+      minLength: 1,
       // Allow searching by country name as well as specific airports
       queryTypes: "geocode|establishment",
     }
@@ -78,15 +78,22 @@ export default function SelectOriginAirport() {
           {isSearching && <Text style={styles.loading}>Loading…</Text>}
 
           <FlatList
-            data={locationResults.filter((i) => i.types?.includes("airport"))}
+            data={locationResults.filter(
+              (i) =>
+                i.types?.includes("airport") ||
+                i.description.toLowerCase().includes("airport")
+            )}
             keyExtractor={(item) => item.place_id}
             renderItem={({ item }) => (
-              <TouchableOpacity style={styles.row} onPress={() => selectAirport(item)}>
+              <TouchableOpacity
+                style={styles.row}
+                onPress={() => selectAirport(item)}
+              >
                 <Text style={styles.rowText}>{item.description}</Text>
               </TouchableOpacity>
             )}
             ListEmptyComponent={
-              !isSearching && term.length >= 2 ? (
+              !isSearching && term.length >= 1 ? (
                 <Text style={styles.noResults}>No results</Text>
               ) : null
             }
