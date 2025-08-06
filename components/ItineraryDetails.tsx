@@ -137,12 +137,12 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                       <Text className="font-outfit-medium">Stay Options</Text>
                       {linkifyText(d.stay_options)}
                       <TouchableOpacity
-                        className="mt-1"
+                        className="mt-2 bg-purple-600 px-3 py-1 rounded-full w-24 items-center"
                         onPress={() =>
                           Linking.openURL(generateBookingUrl(d.stay_options))
                         }
                       >
-                        <Text className="text-purple-600 underline">Book</Text>
+                        <Text className="font-outfit-bold text-white">Book</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -175,9 +175,11 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                         {act.booking_url ? (
                           <TouchableOpacity
                             onPress={() => Linking.openURL(act.booking_url)}
-                            className="ml-2"
+                            className="ml-2 bg-purple-600 px-3 py-1 rounded-full"
                           >
-                            <Text className="text-purple-600 underline">Book</Text>
+                            <Text className="font-outfit-bold text-white text-sm">
+                              Book
+                            </Text>
                           </TouchableOpacity>
                         ) : null}
                       </View>

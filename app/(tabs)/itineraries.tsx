@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Animated,
   Easing,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
@@ -18,7 +19,7 @@ import {
 } from "@/context/ItineraryContext";
 
 const Itineraries = () => {
-  const { itineraries, addItinerary } = useContext(ItineraryContext);
+  const { itineraries, addItinerary, removeItinerary } = useContext(ItineraryContext);
   const { selectedPlaces, tripData } = useLocalSearchParams();
   const [loading, setLoading] = useState(false);
   const [currentId, setCurrentId] = useState<string | null>(null);
@@ -73,6 +74,13 @@ const Itineraries = () => {
 
   const selectedItinerary = itineraries.find((i) => i.id === currentId);
 
+  const handleDelete = (id: string) => {
+    Alert.alert("Delete Itinerary", "Are you sure you want to remove this itinerary?", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Delete", style: "destructive", onPress: () => removeItinerary(id) },
+    ]);
+  };
+
   if (loading) {
     const spin = spinValue.interpolate({
       inputRange: [0, 1],
@@ -110,20 +118,27 @@ const Itineraries = () => {
         </View>
       ) : (
         itineraries.map((it) => (
-          <TouchableOpacity
+          <View
             key={it.id}
             className="flex-row items-center p-4 mb-3 bg-gray-50 rounded-xl border border-gray-100"
-            onPress={() => setCurrentId(it.id)}
           >
-            <Ionicons
-              name="map"
-              size={24}
-              color="#8b5cf6"
-              style={{ marginRight: 12 }}
-            />
-            <Text className="font-outfit-bold flex-1">{it.title}</Text>
-            <Ionicons name="chevron-forward" size={20} color="#8b5cf6" />
-          </TouchableOpacity>
+            <TouchableOpacity
+              className="flex-row items-center flex-1"
+              onPress={() => setCurrentId(it.id)}
+            >
+              <Ionicons
+                name="map"
+                size={24}
+                color="#8b5cf6"
+                style={{ marginRight: 12 }}
+              />
+              <Text className="font-outfit-bold flex-1">{it.title}</Text>
+              <Ionicons name="chevron-forward" size={20} color="#8b5cf6" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleDelete(it.id)} className="ml-4">
+              <Ionicons name="trash" size={20} color="#ef4444" />
+            </TouchableOpacity>
+          </View>
         ))
       )}
     </SafeAreaView>

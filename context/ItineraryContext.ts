@@ -24,9 +24,11 @@ export interface StoredItinerary {
 interface ItineraryContextType {
   itineraries: StoredItinerary[];
   addItinerary: (it: StoredItinerary) => void;
+  removeItinerary: (id: string) => void;
 }
 
 export const ItineraryContext = createContext<ItineraryContextType>({
   itineraries: [],
   addItinerary: () => {},
+  removeItinerary: () => {},
 });

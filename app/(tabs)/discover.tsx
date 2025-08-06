@@ -125,8 +125,14 @@ const Discover = () => {
     );
   }
 
-  const handleOpenMap = (latitude: number, longitude: number) => {
-    const query = `${latitude},${longitude}`;
+  const handleOpenMap = (
+    address?: string,
+    latitude?: number,
+    longitude?: number
+  ) => {
+    const query = address
+      ? encodeURIComponent(address)
+      : `${latitude},${longitude}`;
     const url = `https://www.google.com/maps/search/?api=1&query=${query}`;
     Linking.openURL(url);
   };
@@ -286,12 +292,7 @@ const Discover = () => {
                 </Text>
                 <CustomButton
                   title="View on Map"
-                  onPress={() =>
-                    handleOpenMap(
-                      hotel.geo_coordinates.latitude,
-                      hotel.geo_coordinates.longitude
-                    )
-                  }
+                  onPress={() => handleOpenMap(hotel.address)}
                   className="mt-4"
                 />
                 <CustomButton
@@ -391,6 +392,7 @@ const Discover = () => {
                   title="View on Map"
                   onPress={() =>
                     handleOpenMap(
+                      undefined,
                       place.geo_coordinates.latitude,
                       place.geo_coordinates.longitude
                     )

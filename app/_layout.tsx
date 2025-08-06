@@ -31,6 +31,10 @@ export default function RootLayout() {
     setItineraries((prev) => [...prev, it]);
   };
 
+  const removeItinerary = (id: string) => {
+    setItineraries((prev) => prev.filter((it) => it.id !== id));
+  };
+
   const updateTripData = (newData: any) => {
     setTripData((prevData) => {
       // Find the key of the new data (locationInfo, travelers, dates, or budget)
@@ -64,7 +68,7 @@ export default function RootLayout() {
   return (
     <>
       <CreateTripContext.Provider value={{ tripData, setTripData }}>
-        <ItineraryContext.Provider value={{ itineraries, addItinerary }}>
+        <ItineraryContext.Provider value={{ itineraries, addItinerary, removeItinerary }}>
           <StatusBar style="dark" />
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" />
