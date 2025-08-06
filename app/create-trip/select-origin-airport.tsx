@@ -32,7 +32,8 @@ export default function SelectOriginAirport() {
     {
       debounce: 300,
       minLength: 2,
-      queryTypes: "establishment",
+      // Allow searching by country name as well as specific airports
+      queryTypes: "geocode|establishment",
     }
   );
 

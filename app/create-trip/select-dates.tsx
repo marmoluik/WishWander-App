@@ -95,7 +95,8 @@ const SelectDates = () => {
             onPress={() => router.push("/create-trip/flexible-dates")}
             bgVariant="outline"
             textVariant="primary"
-            className="mt-4 bg-gray-200"
+            // Make the button stand out with a purple border
+            className="mt-4 border-2 border-purple-600"
           />
         </View>
       </View>
