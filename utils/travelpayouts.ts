@@ -7,11 +7,10 @@ export const generateFlightLink = (
   returnDate?: string
 ) => {
   const marker = getTravelpayoutsMarker();
-  const params = [`origin=${origin}`, `destination=${destination}`];
+  const params = [`origin=${origin}`, `destination=${destination}`, `marker=${marker}`];
   if (departDate) params.push(`depart_date=${departDate}`);
   if (returnDate) params.push(`return_date=${returnDate}`);
-  const baseSearch = `https://www.aviasales.com/search?${params.join("&")}`;
-  return `https://www.travelpayouts.com/redirect?marker=${marker}&url=${encodeURIComponent(baseSearch)}`;
+  return `https://www.aviasales.com/search?${params.join("&")}`;
 };
 
 export const generateHotelLink = (
@@ -23,13 +22,24 @@ export const generateHotelLink = (
   const baseSearch = `https://search.hotellook.com/hotels?destination=${query}${
     checkIn ? `&checkIn=${checkIn}` : ""
   }${checkOut ? `&checkOut=${checkOut}` : ""}`;
-  return `https://www.travelpayouts.com/redirect?marker=${marker}&url=${encodeURIComponent(baseSearch)}`;
+  return `https://tp.media/r?campaign_id=101&marker=${marker}&p=4115&sub_id=ww&trs=446474&u=${encodeURIComponent(
+    baseSearch
+  )}`;
 };
 
 export const generatePoiLink = (query: string) => {
   const marker = getTravelpayoutsMarker();
-  const baseSearch = `https://www.viator.com/search-results?query=${query}`;
-  return `https://www.travelpayouts.com/redirect?marker=${marker}&url=${encodeURIComponent(baseSearch)}`;
+  const lower = query.toLowerCase();
+  if (lower.includes("cruise") || lower.includes("boat") || lower.includes("sail")) {
+    const base = "https://searadar.com";
+    return `https://tp.media/r?campaign_id=258&marker=${marker}&p=5907&sub_id=ww&trs=446474&u=${encodeURIComponent(
+      base
+    )}`;
+  }
+  const base = "https://welcomepickups.com";
+  return `https://tp.media/r?campaign_id=627&marker=${marker}&p=8919&sub_id=ww&trs=446474&u=${encodeURIComponent(
+    base
+  )}`;
 };
 
 export default {
