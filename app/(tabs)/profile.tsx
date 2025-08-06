@@ -21,18 +21,18 @@ export default function Profile() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white p-6">
+    <SafeAreaView className="flex-1 bg-background p-6">
       <Text className="text-3xl font-outfit-bold mb-8">Profile</Text>
 
       {/* User Info Section */}
-      <View className="bg-purple-50 p-6 rounded-xl mb-8">
+      <View className="bg-secondary p-6 rounded-xl mb-8">
         <View className="flex-row items-center mb-4">
-          <View className="bg-purple-200 p-4 rounded-full">
-            <Ionicons name="person" size={32} color="#8b5cf6" />
+          <View className="bg-primary p-4 rounded-full">
+            <Ionicons name="person" size={32} color="#F59E0B" />
           </View>
           <View className="ml-4">
             <Text className="text-xl font-outfit-bold">{user?.email}</Text>
-            <Text className="text-gray-600 font-outfit">
+            <Text className="text-text-primary font-outfit">
               Member since{" "}
               {user?.metadata?.creationTime
                 ? new Date(user.metadata.creationTime).getFullYear()
@@ -46,20 +46,20 @@ export default function Profile() {
       <View className="mb-8">
         <Text className="text-xl font-outfit-bold mb-4">Account Settings</Text>
 
-        <TouchableOpacity className="flex-row items-center justify-between bg-gray-50 p-4 rounded-xl mb-3">
+        <TouchableOpacity className="flex-row items-center justify-between bg-background p-4 rounded-xl mb-3">
           <View className="flex-row items-center">
-            <Ionicons name="mail-outline" size={24} color="#8b5cf6" />
+            <Ionicons name="mail-outline" size={24} color="#F59E0B" />
             <Text className="ml-3 font-outfit">Email</Text>
           </View>
-          <Text className="text-gray-500 font-outfit">{user?.email}</Text>
+          <Text className="text-text-primary font-outfit">{user?.email}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity className="flex-row items-center justify-between bg-gray-50 p-4 rounded-xl">
+        <TouchableOpacity className="flex-row items-center justify-between bg-background p-4 rounded-xl">
           <View className="flex-row items-center">
-            <Ionicons name="time-outline" size={24} color="#8b5cf6" />
+            <Ionicons name="time-outline" size={24} color="#F59E0B" />
             <Text className="ml-3 font-outfit">Last Sign In</Text>
           </View>
-          <Text className="text-gray-500 font-outfit">
+          <Text className="text-text-primary font-outfit">
             {user?.metadata?.lastSignInTime
               ? new Date(user.metadata.lastSignInTime).toLocaleDateString()
               : ""}

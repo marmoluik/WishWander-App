@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import React, { useContext } from "react";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import CustomButton from "@/components/CustomButton";
@@ -16,11 +16,11 @@ const StartNewTripCard = () => {
 
   return (
     <View className="p-5 flex items-center justify-center gap-5 h-full">
-      <FontAwesome6 name="map-location-dot" size={50} color="#8b5cf6" />
-      <Text className="font-outfit-bold text-purple-700 text-xl">
+      <FontAwesome6 name="map-location-dot" size={50} color="#F59E0B" />
+      <Text className="font-outfit-bold text-text-primary text-xl">
         No Trips planned yet
       </Text>
-      <Text className="font-outfit-medium text-gray-500 text-center w-4/5">
+      <Text className="font-outfit-medium text-text-primary text-center w-4/5">
         Plan your next trip by clicking on the button below
       </Text>
       <CustomButton
