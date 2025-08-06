@@ -63,22 +63,22 @@ const SelectDates = () => {
             allowRangeSelection={true}
             minDate={new Date()}
             onDateChange={onDateChange}
-            selectedDayColor="#8b5cf6"
+            selectedDayColor="#FF4698"
             selectedDayTextColor="#ffffff"
-            todayBackgroundColor="#f2e6ff"
-            todayTextStyle={{ color: "#8b5cf6" }}
+            todayBackgroundColor="#FFE9F2"
+            todayTextStyle={{ color: "#FF4698" }}
             textStyle={{
               fontFamily: "outfit",
               color: "#000000",
             }}
             selectedRangeStartStyle={{
-              backgroundColor: "#7f6eac",
+              backgroundColor: "#FF75B2",
             }}
             selectedRangeEndStyle={{
-              backgroundColor: "#7f6eac",
+              backgroundColor: "#FF75B2",
             }}
             selectedRangeStyle={{
-              backgroundColor: "#8b5cf6",
+              backgroundColor: "#FF4698",
             }}
           />
         </View>
@@ -95,8 +95,8 @@ const SelectDates = () => {
             onPress={() => router.push("/create-trip/flexible-dates")}
             bgVariant="outline"
             textVariant="primary"
-            // Make the button stand out with a purple border
-            className="mt-4 border-2 border-purple-600"
+            // Make the button stand out with a pink border
+            className="mt-4 border-2 border-pink-600"
           />
         </View>
       </View>

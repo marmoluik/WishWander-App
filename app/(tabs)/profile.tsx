@@ -25,10 +25,10 @@ export default function Profile() {
       <Text className="text-3xl font-outfit-bold mb-8">Profile</Text>
 
       {/* User Info Section */}
-      <View className="bg-purple-50 p-6 rounded-xl mb-8">
+      <View className="bg-pink-50 p-6 rounded-xl mb-8">
         <View className="flex-row items-center mb-4">
-          <View className="bg-purple-200 p-4 rounded-full">
-            <Ionicons name="person" size={32} color="#8b5cf6" />
+          <View className="bg-pink-200 p-4 rounded-full">
+            <Ionicons name="person" size={32} color="#FF4698" />
           </View>
           <View className="ml-4">
             <Text className="text-xl font-outfit-bold">{user?.email}</Text>
@@ -48,7 +48,7 @@ export default function Profile() {
 
         <TouchableOpacity className="flex-row items-center justify-between bg-gray-50 p-4 rounded-xl mb-3">
           <View className="flex-row items-center">
-            <Ionicons name="mail-outline" size={24} color="#8b5cf6" />
+            <Ionicons name="mail-outline" size={24} color="#FF4698" />
             <Text className="ml-3 font-outfit">Email</Text>
           </View>
           <Text className="text-gray-500 font-outfit">{user?.email}</Text>
@@ -56,7 +56,7 @@ export default function Profile() {
 
         <TouchableOpacity className="flex-row items-center justify-between bg-gray-50 p-4 rounded-xl">
           <View className="flex-row items-center">
-            <Ionicons name="time-outline" size={24} color="#8b5cf6" />
+            <Ionicons name="time-outline" size={24} color="#FF4698" />
             <Text className="ml-3 font-outfit">Last Sign In</Text>
           </View>
           <Text className="text-gray-500 font-outfit">

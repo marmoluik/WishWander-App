@@ -16,8 +16,8 @@ const StartNewTripCard = () => {
 
   return (
     <View className="p-5 flex items-center justify-center gap-5 h-full">
-      <FontAwesome6 name="map-location-dot" size={50} color="#8b5cf6" />
-      <Text className="font-outfit-bold text-purple-700 text-xl">
+      <FontAwesome6 name="map-location-dot" size={50} color="#FF4698" />
+      <Text className="font-outfit-bold text-pink-700 text-xl">
         No Trips planned yet
       </Text>
       <Text className="font-outfit-medium text-gray-500 text-center w-4/5">

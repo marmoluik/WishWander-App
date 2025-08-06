@@ -104,7 +104,7 @@ export default function SignIn() {
             className="text-lg text-center mt-10 font-outfit-medium"
           >
             <Text className="">New to Avent? </Text>
-            <Text className="text-purple-500">Sign Up</Text>
+            <Text className="text-pink-500">Sign Up</Text>
           </Link>
         </View>
       </View>

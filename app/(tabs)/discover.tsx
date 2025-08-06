@@ -187,7 +187,7 @@ const Discover = () => {
       <Text className="text-3xl font-outfit-bold mb-6">Trip Details</Text>
 
       {/* Trip Overview */}
-      <View className="bg-purple-50 p-4 rounded-xl mb-6">
+      <View className="bg-pink-50 p-4 rounded-xl mb-6">
         <Text className="font-outfit-bold text-lg mb-2">Trip Overview</Text>
         <Text className="font-outfit text-gray-600">
           Duration: {parsedTripPlan?.trip_plan?.duration ?? "N/A"}
@@ -222,7 +222,7 @@ const Discover = () => {
                   {parsedTripPlan.trip_plan.flight_details.departure_time}
                 </Text>
               </View>
-              <Ionicons name="airplane" size={24} color="#8b5cf6" />
+              <Ionicons name="airplane" size={24} color="#FF4698" />
               <View className="flex-1 pl-2 items-end">
                 <Text
                   className="font-outfit-bold text-lg text-right"
@@ -293,7 +293,7 @@ const Discover = () => {
                   <Ionicons
                     name="chevron-back"
                     size={24}
-                    color="#8b5cf6"
+                    color="#FF4698"
                   />
                 </TouchableOpacity>
               )}
@@ -349,7 +349,7 @@ const Discover = () => {
                   <Ionicons
                     name="chevron-forward"
                     size={24}
-                    color="#8b5cf6"
+                    color="#FF4698"
                   />
                 </TouchableOpacity>
               )}
@@ -384,7 +384,7 @@ const Discover = () => {
                   onPress={() => toggleInterest(cat)}
                   className={`px-3 py-1 m-1 rounded-full border ${
                     selectedInterests.includes(cat)
-                      ? "bg-purple-600 border-purple-600"
+                      ? "bg-pink-600 border-pink-600"
                       : "border-gray-300"
                   }`}
                 >
@@ -415,7 +415,7 @@ const Discover = () => {
                 key={index}
                 className={`p-4 rounded-xl mb-4 border ${
                   isSelected
-                    ? "bg-purple-50 border-purple-500"
+                    ? "bg-pink-50 border-pink-500"
                     : "bg-gray-50 border-gray-100"
                 }`}
               >
@@ -427,14 +427,14 @@ const Discover = () => {
                   onPress={() => togglePlace(place)}
                   className={`absolute top-3 right-3 w-8 h-8 rounded-md items-center justify-center ${
                     isSelected
-                      ? "bg-purple-600"
-                      : "bg-white border border-purple-600"
+                      ? "bg-pink-600"
+                      : "bg-white border border-pink-600"
                   }`}
                 >
                   <Ionicons
                     name={isSelected ? "checkmark" : "add"}
                     size={20}
-                    color={isSelected ? "#ffffff" : "#8b5cf6"}
+                    color={isSelected ? "#ffffff" : "#FF4698"}
                   />
                 </TouchableOpacity>
                 <Text className="font-outfit-bold text-lg">{place.name}</Text>
