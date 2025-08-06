@@ -93,6 +93,14 @@ export default function GenerateTrip() {
           data.hotel?.options ||
           data.hotel_options ||
           data.hotels;
+
+        const cleanedHotels = (hotels || [])
+          .filter(
+            (h: any) =>
+              h?.name && !/accommodation|option/i.test(h.name)
+          )
+          .slice(0, 10);
+
         const places =
           root.places_to_visit ||
           root.places ||
@@ -100,6 +108,16 @@ export default function GenerateTrip() {
           data.places_to_visit ||
           data.places ||
           data.sightseeing;
+
+        const cleanedPlaces = (places || [])
+          .filter(
+            (p: any) =>
+              p?.name &&
+              !p.name
+                .toLowerCase()
+                .includes((locationInfo?.name || "").toLowerCase())
+          )
+          .slice(0, 10);
 
         const filledFlight = {
           departure_city: originAirport?.name || flight?.departure_city || "TBD",
@@ -118,8 +136,8 @@ export default function GenerateTrip() {
           trip_plan: {
             ...root,
             flight_details: filledFlight,
-            hotel: { options: hotels || [] },
-            places_to_visit: places || [],
+            hotel: { options: cleanedHotels },
+            places_to_visit: cleanedPlaces,
           },
         };
       };
@@ -162,7 +180,7 @@ export default function GenerateTrip() {
         const hotelOpts = tripPlan?.hotel?.options;
         if (
           !Array.isArray(hotelOpts) ||
-          hotelOpts.length === 0 ||
+          hotelOpts.length < 10 ||
           hotelOpts.some((h: any) => !h?.name)
         ) {
           missing.push("hotel options");
@@ -171,7 +189,7 @@ export default function GenerateTrip() {
         const places = tripPlan?.places_to_visit;
         if (
           !Array.isArray(places) ||
-          places.length === 0 ||
+          places.length < 10 ||
           places.some((p: any) => !p?.name)
         ) {
           missing.push("places to visit");
