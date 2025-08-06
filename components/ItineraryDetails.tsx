@@ -25,12 +25,11 @@ const activityIcon = (name: string) => {
 };
 
 const linkifyText = (text: string) => {
-  const parts = text.split(/\b(?:at|in|on|along)\s+/i);
-  if (parts.length > 1) {
-    const loc = parts[parts.length - 1].replace(/[.,]*$/, "").trim();
-    const idx = text.toLowerCase().lastIndexOf(loc.toLowerCase());
-    const before = text.slice(0, idx);
-    const after = text.slice(idx + loc.length);
+  const match = text.match(/\b(?:at|in|on|along)\s+([A-Z][^.,]+)/);
+  if (match) {
+    const loc = match[1].trim();
+    const before = text.slice(0, match.index! + match[0].indexOf(loc));
+    const after = text.slice(match.index! + match[0].length);
     return (
       <Text className="text-gray-700">
         {before}
@@ -38,7 +37,7 @@ const linkifyText = (text: string) => {
           className="text-purple-600 underline"
           onPress={() =>
             Linking.openURL(
-              `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc)}`
+              `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(loc)}`
             )
           }
         >

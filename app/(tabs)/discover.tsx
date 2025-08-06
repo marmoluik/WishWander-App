@@ -124,10 +124,7 @@ const Discover = () => {
     longitude: number,
     name?: string
   ) => {
-    const coords = `${latitude},${longitude}`;
-    const query = name
-      ? `${coords}%20(${encodeURIComponent(name)})`
-      : coords;
+    const query = name ? encodeURIComponent(name) : `${latitude},${longitude}`;
     const url = `https://www.google.com/maps/search/?api=1&query=${query}`;
     Linking.openURL(url);
   };
@@ -157,12 +154,6 @@ const Discover = () => {
       return [...prev, place];
     });
   };
-
-  const availableCategories = interestCategories.filter((cat) =>
-    parsedTripPlan?.trip_plan?.places_to_visit?.some((p: any) =>
-      p.categories?.includes(cat)
-    )
-  );
 
   return (
     <View className="flex-1 bg-white">
@@ -303,11 +294,9 @@ const Discover = () => {
                   className="mt-4"
                 />
                 <CustomButton
-                  title={`Book ${hotel.name}`}
+                  title="Book Hotel"
                   onPress={() =>
-                    Linking.openURL(
-                      hotel.booking_url || generateBookingUrl(hotel.name)
-                    )
+                    Linking.openURL(generateBookingUrl(hotel.name))
                   }
                   className="mt-2"
                 />
@@ -324,34 +313,30 @@ const Discover = () => {
       {/* Places to Visit */}
       <View className="mb-8">
         <Text className="text-2xl font-outfit-bold mb-4">Places to Visit</Text>
-        {availableCategories.length > 0 && (
-          <>
-            <Text className="font-outfit mb-2">Filter by:</Text>
-            <View className="flex-row flex-wrap mb-2">
-              {availableCategories.map((cat) => (
-                <TouchableOpacity
-                  key={cat}
-                  onPress={() => toggleInterest(cat)}
-                  className={`px-3 py-1 m-1 rounded-full border ${
-                    selectedInterests.includes(cat)
-                      ? "bg-purple-600 border-purple-600"
-                      : "border-gray-300"
-                  }`}
-                >
-                  <Text
-                    className={`font-outfit ${
-                      selectedInterests.includes(cat)
-                        ? "text-white"
-                        : "text-gray-600"
-                    }`}
-                  >
-                    {cat}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </>
-        )}
+        <Text className="font-outfit mb-2">Filter by:</Text>
+        <View className="flex-row flex-wrap mb-2">
+          {interestCategories.map((cat) => (
+            <TouchableOpacity
+              key={cat}
+              onPress={() => toggleInterest(cat)}
+              className={`px-3 py-1 m-1 rounded-full border ${
+                selectedInterests.includes(cat)
+                  ? "bg-purple-600 border-purple-600"
+                  : "border-gray-300"
+              }`}
+            >
+              <Text
+                className={`font-outfit ${
+                  selectedInterests.includes(cat)
+                    ? "text-white"
+                    : "text-gray-600"
+                }`}
+              >
+                {cat}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
         <Text className="font-outfit text-gray-500 mb-4">
           Tap the + to add a place to your itinerary.
         </Text>

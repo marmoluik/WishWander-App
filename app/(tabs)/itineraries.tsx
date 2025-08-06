@@ -81,7 +81,7 @@ const Itineraries = () => {
     return (
       <SafeAreaView className="flex-1 justify-center items-center">
         <Animated.View style={{ transform: [{ rotate: spin }] }}>
-          <Ionicons name="calendar" size={64} color="#8b5cf6" />
+          <Ionicons name="airplane" size={64} color="#8b5cf6" />
         </Animated.View>
         <Text className="font-outfit-medium mt-2">Generating itinerary...</Text>
       </SafeAreaView>
@@ -112,15 +112,9 @@ const Itineraries = () => {
         itineraries.map((it) => (
           <TouchableOpacity
             key={it.id}
-            className="p-4 mb-3 bg-gray-50 rounded-xl border border-gray-100 flex-row items-center"
+            className="p-4 mb-3 bg-gray-50 rounded-xl border border-gray-100"
             onPress={() => setCurrentId(it.id)}
           >
-            <Ionicons
-              name="calendar"
-              size={24}
-              color="#8b5cf6"
-              style={{ marginRight: 8 }}
-            />
             <Text className="font-outfit-bold">{it.title}</Text>
           </TouchableOpacity>
         ))
