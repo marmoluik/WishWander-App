@@ -1,5 +1,12 @@
 import React, { useContext, useState } from "react";
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  TextInput,
+  ActivityIndicator,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CreateTripContext } from "@/context/CreateTripContext";
 import CustomButton from "@/components/CustomButton";
@@ -24,6 +31,8 @@ const FlexibleDates = () => {
   const [selectedDuration, setSelectedDuration] = useState(durationOptions[0]);
   const [results, setResults] = useState<FlexibleResult[]>([]);
   const [loading, setLoading] = useState(false);
+  const [customStart, setCustomStart] = useState("");
+  const [customEnd, setCustomEnd] = useState("");
 
   const locationInfo = tripData.find((item) => item.locationInfo)?.locationInfo;
   const originAirport = tripData.find((item) => item.originAirport)?.originAirport;
@@ -54,10 +63,20 @@ const FlexibleDates = () => {
         return;
       }
 
-      const today = moment().format("DD/MM/YYYY");
-      const inSixMonths = moment().add(6, "months").format("DD/MM/YYYY");
+      let dateFrom = moment().format("DD/MM/YYYY");
+      let dateTo = moment().add(6, "months").format("DD/MM/YYYY");
+      let nightsFrom = selectedDuration.from;
+      let nightsTo = selectedDuration.to;
 
-      const searchUrl = `https://${rapidHost}/v2/search?fly_from=${originAirport.code}&fly_to=${arrival.code}&date_from=${today}&date_to=${inSixMonths}&nights_in_dst_from=${selectedDuration.from}&nights_in_dst_to=${selectedDuration.to}&limit=5&sort=price`;
+      if (customStart && customEnd) {
+        dateFrom = moment(customStart).format("DD/MM/YYYY");
+        dateTo = moment(customEnd).format("DD/MM/YYYY");
+        const diff = moment(customEnd).diff(moment(customStart), "days");
+        nightsFrom = diff;
+        nightsTo = diff;
+      }
+
+      const searchUrl = `https://${rapidHost}/v2/search?fly_from=${originAirport.code}&fly_to=${arrival.code}&date_from=${dateFrom}&date_to=${dateTo}&nights_in_dst_from=${nightsFrom}&nights_in_dst_to=${nightsTo}&limit=10&sort=price`;
       const flightRes = await fetch(searchUrl, {
         headers: {
           "X-RapidAPI-Key": rapidApiKey,
@@ -124,7 +143,25 @@ const FlexibleDates = () => {
           </TouchableOpacity>
         ))}
       </View>
+      <View className="mb-4">
+        <Text className="font-outfit text-gray-600 mb-1">
+          Or enter dates manually (YYYY-MM-DD)
+        </Text>
+        <TextInput
+          value={customStart}
+          onChangeText={setCustomStart}
+          placeholder="Start date"
+          className="border border-gray-300 rounded-full px-4 py-2 mb-2"
+        />
+        <TextInput
+          value={customEnd}
+          onChangeText={setCustomEnd}
+          placeholder="End date"
+          className="border border-gray-300 rounded-full px-4 py-2"
+        />
+      </View>
       <CustomButton title="Search" onPress={searchFlexible} disabled={loading} />
+      {loading && <ActivityIndicator className="mt-4" color="#8b5cf6" />}
       <FlatList
         data={results}
         keyExtractor={(_, index) => index.toString()}

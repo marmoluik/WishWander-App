@@ -33,7 +33,8 @@ export default function SearchPlace() {
     {
       debounce: 300,
       minLength: 2,
-      queryTypes: "(cities)",
+      // Allow searching for both cities and countries
+      queryTypes: "geocode",
     }
   );
 

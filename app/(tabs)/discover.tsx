@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, Image, Linking, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  Linking,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -112,8 +119,13 @@ const Discover = () => {
     );
   }
 
-  const handleOpenMap = (latitude: number, longitude: number) => {
-    const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+  const handleOpenMap = (
+    latitude: number,
+    longitude: number,
+    name?: string
+  ) => {
+    const query = name ? encodeURIComponent(name) : `${latitude},${longitude}`;
+    const url = `https://www.google.com/maps/search/?api=1&query=${query}`;
     Linking.openURL(url);
   };
 
@@ -144,14 +156,15 @@ const Discover = () => {
   };
 
   return (
-    <ScrollView
-      className="flex-1 bg-white"
-      contentContainerStyle={{
-        padding: 24,
-        paddingTop: 80,
-        paddingBottom: 20,
-      }}
-    >
+    <View className="flex-1 bg-white">
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{
+          padding: 24,
+          paddingTop: 80,
+          paddingBottom: selectedPlaces.length > 0 ? 100 : 20,
+        }}
+      >
       <Text className="text-3xl font-outfit-bold mb-6">Trip Details</Text>
 
       {/* Trip Overview */}
@@ -274,7 +287,8 @@ const Discover = () => {
                   onPress={() =>
                     handleOpenMap(
                       hotel.geo_coordinates.latitude,
-                      hotel.geo_coordinates.longitude
+                      hotel.geo_coordinates.longitude,
+                      hotel.name
                     )
                   }
                   className="mt-4"
@@ -323,73 +337,85 @@ const Discover = () => {
           ))}
         </View>
         {filteredPlaces.length ? (
-          filteredPlaces.map((place: any, index: number) => (
-            <View
-              key={index}
-              className="bg-gray-50 p-4 rounded-xl mb-4 border border-gray-100"
-            >
-              <Image
-                source={{ uri: place.image_url || DEFAULT_IMAGE_URL }}
-                className="w-full h-48 rounded-xl mb-4"
-              />
-              <TouchableOpacity
-                onPress={() => togglePlace(place)}
-                className="absolute top-2 right-2"
+          filteredPlaces.map((place: any, index: number) => {
+            const isSelected = selectedPlaces.find(
+              (p) => p.name === place.name
+            );
+            return (
+              <View
+                key={index}
+                className={`p-4 rounded-xl mb-4 border ${
+                  isSelected
+                    ? "bg-purple-50 border-purple-500"
+                    : "bg-gray-50 border-gray-100"
+                }`}
               >
-                <Ionicons
-                  name={
-                    selectedPlaces.find((p) => p.name === place.name)
-                      ? "checkbox"
-                      : "square-outline"
-                  }
-                  size={24}
-                  color="#8b5cf6"
+                <Image
+                  source={{ uri: place.image_url || DEFAULT_IMAGE_URL }}
+                  className="w-full h-48 rounded-xl mb-4"
                 />
-              </TouchableOpacity>
-              <Text className="font-outfit-bold text-lg">{place.name}</Text>
-              <Text className="font-outfit text-gray-600 mb-2">
-                {place.details}
-              </Text>
-              <Text className="font-outfit text-gray-600">
-                Ticket Price: {place.ticket_price}
-              </Text>
-              <Text className="font-outfit text-gray-600">
-                Time to Travel: {place.time_to_travel}
-              </Text>
-              <CustomButton
-                title="View on Map"
-                onPress={() =>
-                  handleOpenMap(
-                    place.geo_coordinates.latitude,
-                    place.geo_coordinates.longitude
-                  )
-                }
-                className="mt-4"
-              />
-            </View>
-          ))
+                <TouchableOpacity
+                  onPress={() => togglePlace(place)}
+                  className={`absolute top-3 right-3 w-8 h-8 rounded-md items-center justify-center ${
+                    isSelected
+                      ? "bg-purple-600"
+                      : "bg-white border border-purple-600"
+                  }`}
+                >
+                  <Ionicons
+                    name={isSelected ? "checkmark" : "add"}
+                    size={20}
+                    color={isSelected ? "#ffffff" : "#8b5cf6"}
+                  />
+                </TouchableOpacity>
+                <Text className="font-outfit-bold text-lg">{place.name}</Text>
+                <Text className="font-outfit text-gray-600 mb-2">
+                  {place.details}
+                </Text>
+                <Text className="font-outfit text-gray-600">
+                  Ticket Price: {place.ticket_price}
+                </Text>
+                <Text className="font-outfit text-gray-600">
+                  Time to Travel: {place.time_to_travel}
+                </Text>
+                <CustomButton
+                  title="View on Map"
+                  onPress={() =>
+                    handleOpenMap(
+                      place.geo_coordinates.latitude,
+                      place.geo_coordinates.longitude,
+                      place.name
+                    )
+                  }
+                  className="mt-4"
+                />
+              </View>
+            );
+          })
         ) : (
           <Text className="font-outfit text-gray-600">
             No places to visit available.
           </Text>
         )}
-        {selectedPlaces.length > 0 && (
-          <CustomButton
-            title="Generate Itinerary"
-            onPress={() =>
-              router.push({
-                pathname: "/itinerary",
-                params: {
-                  selectedPlaces: JSON.stringify(selectedPlaces),
-                  tripData,
-                },
-              })
-            }
-            className="mt-4"
-          />
-        )}
       </View>
     </ScrollView>
+    {selectedPlaces.length > 0 && (
+      <View className="absolute bottom-4 left-0 right-0 px-6">
+        <CustomButton
+          title="Generate Itinerary"
+          onPress={() =>
+            router.push({
+              pathname: "/itinerary",
+              params: {
+                selectedPlaces: JSON.stringify(selectedPlaces),
+                tripData,
+              },
+            })
+          }
+        />
+      </View>
+    )}
+  </View>
   );
 };
 

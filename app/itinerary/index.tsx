@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Linking,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import moment from "moment";
 import { startChatSession } from "@/config/GeminiConfig";
 import CustomButton from "@/components/CustomButton";
+import { Ionicons } from "@expo/vector-icons";
 
 interface DayPlan {
   day: number;
@@ -22,9 +29,16 @@ interface DayPlan {
 }
 
 const ItineraryScreen = () => {
+  const router = useRouter();
   const { selectedPlaces, tripData } = useLocalSearchParams();
   const [plan, setPlan] = useState<DayPlan[]>([]);
   const [collapsed, setCollapsed] = useState<Record<number, boolean>>({});
+  const slotIcon: Record<string, any> = {
+    morning: "sunny",
+    afternoon: "partly-sunny",
+    evening: "cloudy-night",
+    night: "moon",
+  };
 
   useEffect(() => {
     generateItinerary();
@@ -60,6 +74,13 @@ const ItineraryScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 p-4">
+      <CustomButton
+        title="Back"
+        onPress={() => router.back()}
+        bgVariant="outline"
+        textVariant="primary"
+        className="mb-4"
+      />
       <ScrollView>
         {plan.map((d, index) => (
           <View key={index} className="mb-4 border border-gray-200 rounded-xl">
@@ -78,13 +99,21 @@ const ItineraryScreen = () => {
               <View className="p-4 space-y-3">
                 {(["morning", "afternoon", "evening", "night"] as const).map(
                   (slot) => (
-                    <View key={slot} className="mb-2">
-                      <Text className="font-outfit-medium capitalize">
-                        {slot}
-                      </Text>
-                      <Text className="text-gray-700">
-                        {(d.schedule as any)[slot]}
-                      </Text>
+                    <View key={slot} className="mb-2 flex-row">
+                      <Ionicons
+                        name={slotIcon[slot] as any}
+                        size={20}
+                        color="#8b5cf6"
+                        style={{ marginRight: 8, marginTop: 2 }}
+                      />
+                      <View className="flex-1">
+                        <Text className="font-outfit-medium capitalize">
+                          {slot}
+                        </Text>
+                        <Text className="text-gray-700">
+                          {(d.schedule as any)[slot]}
+                        </Text>
+                      </View>
                     </View>
                   )
                 )}
@@ -110,9 +139,18 @@ const ItineraryScreen = () => {
                       Optional Activities
                     </Text>
                     {d.optional_activities.map((act, i) => (
-                      <Text key={i} className="text-gray-700">
-                        • {act.name}
-                      </Text>
+                      <View key={i} className="mb-1">
+                        <Text className="text-gray-700">• {act.name}</Text>
+                        {act.booking_url ? (
+                          <CustomButton
+                            title="Book"
+                            onPress={() => Linking.openURL(act.booking_url)}
+                            bgVariant="outline"
+                            textVariant="primary"
+                            className="mt-1 w-32"
+                          />
+                        ) : null}
+                      </View>
                     ))}
                   </View>
                 ) : null}

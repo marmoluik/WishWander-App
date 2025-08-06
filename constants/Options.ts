@@ -18,7 +18,8 @@ export const travelerOptions = [
     title: "Family",
     description: "Create memories with your loved ones",
     icon: "family-restroom",
-    people: "3-5 people"
+    // Accommodate larger families
+    people: "3-8 people",
   },
   {
     id: 4,
