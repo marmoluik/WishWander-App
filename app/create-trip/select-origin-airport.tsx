@@ -33,8 +33,8 @@ export default function SelectOriginAirport() {
     {
       debounce: 300,
       minLength: 2,
-      // Allow searching by country name as well as specific airports
-      queryTypes: "geocode|establishment",
+      // Restrict results to airport establishments only
+      queryTypes: "establishment",
     }
   );
 
@@ -127,14 +127,17 @@ export default function SelectOriginAirport() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.title}>Where are you flying from?</Text>
-          <Text style={styles.subtitle}>Search for your departure airport</Text>
+          <Text style={styles.title}>Which airport are you flying from?</Text>
+          <Text style={styles.subtitle}>
+            Enter the name or code of your departure airport (no cities or
+            countries)
+          </Text>
         </View>
 
         <View style={styles.autocomplete}>
           <TextInput
             style={styles.input}
-            placeholder="Search for an airport"
+            placeholder="Search airport name or code"
             placeholderTextColor="#818181"
             returnKeyType="search"
             value={term}
@@ -144,9 +147,7 @@ export default function SelectOriginAirport() {
           {isSearching && <Text style={styles.loading}>Loading…</Text>}
 
           <FlatList
-            data={locationResults.filter(
-              (i) => i.types?.includes("airport") || i.types?.includes("locality")
-            )}
+            data={locationResults.filter((i) => i.types?.includes("airport"))}
             keyExtractor={(item) => item.place_id}
             renderItem={({ item }) => (
               <TouchableOpacity style={styles.row} onPress={() => selectAirport(item)}>
