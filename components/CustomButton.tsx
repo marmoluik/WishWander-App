@@ -11,13 +11,19 @@ const getBgVariantStyle = (variant: ButtonProps["bgVariant"]) => {
     case "success":
       return "bg-success";
     case "outline":
-      return "bg-transparent border-text-primary border-[0.5px]";
+      return "bg-transparent border-primary border";
     default:
-      return "bg-primary hover:bg-accent-hover";
+      return "bg-primary";
   }
 };
 
-const getTextVariantStyle = (variant: ButtonProps["textVariant"]) => {
+const getTextVariantStyle = (
+  variant: ButtonProps["textVariant"],
+  bgVariant: ButtonProps["bgVariant"]
+) => {
+  if (bgVariant === "outline") {
+    return "text-primary";
+  }
   switch (variant) {
     case "primary":
       return "text-text-primary";
@@ -53,7 +59,8 @@ const CustomButton = ({
       {IconLeft && <IconLeft />}
       <Text
         className={`text-lg font-outfit-bold ${getTextVariantStyle(
-          textVariant
+          textVariant,
+          bgVariant
         )}`}
       >
         {title}
