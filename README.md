@@ -24,14 +24,14 @@ A smart travel planning mobile application that leverages AI to create personali
 
 | Usage | Tailwind name | HEX |
 |-------|---------------|-----|
-| Primary | `primary` | #3B82F6 |
-| Secondary | `secondary` | #6366F1 |
-| Background | `background` | #F9FAFB |
-| Text (dark) | `text-primary` | #111827 |
-| Accent | `accent` | #10B981 |
-| Hover | `accent-hover` | #059669 |
-| Success | `success` | #22C55E |
-| Alert | `alert` | #EF4444 |
+| Primary | `primary` | #F4C430 |
+| Secondary | `secondary` | #FFB347 |
+| Background | `background` | #FFFBF0 |
+| Text (dark) | `text-primary` | #2E2A1C |
+| Accent | `accent` | #4A90E2 |
+| Hover | `accent-hover` | #D19C1D |
+| Success | `success` | #B3E283 |
+| Alert | `alert` | #F76C5E |
 
 =======
 >>>>>>> parent of cd4cbf6 (feat: add custom color palette)
