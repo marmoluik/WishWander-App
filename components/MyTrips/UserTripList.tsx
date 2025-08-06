@@ -97,7 +97,7 @@ const UserTripList = ({
             }
             className="absolute top-3 right-3 bg-background rounded-full"
           >
-            <Ionicons name="close" size={24} color="#F76C5E" />
+            <Ionicons name="close" size={24} color="#EF4444" />
           </TouchableOpacity>
         </View>
         <View className="mt-3">
