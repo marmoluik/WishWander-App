@@ -52,10 +52,11 @@ export default function SelectOriginAirport() {
         const rapidApiKey = process.env.EXPO_PUBLIC_RAPIDAPI_KEY;
         const rapidHost = "kiwi-com-cheap-flights.p.rapidapi.com";
         if (rapidApiKey) {
-          const res = await fetch(
-            `https://${rapidHost}/locations?term=${encodeURIComponent(
-              item.description
-            )}&location_types=airport&limit=1`,
+          const detail = await searchDetails(item.place_id);
+          const { lat, lng } = detail.geometry.location;
+          let airport;
+          let res = await fetch(
+            `https://${rapidHost}/locations?location_types=airport&limit=1&lat=${lat}&lon=${lng}`,
             {
               headers: {
                 "X-RapidAPI-Key": rapidApiKey,
@@ -63,8 +64,23 @@ export default function SelectOriginAirport() {
               },
             }
           );
-          const json = await res.json();
-          const airport = json.locations?.[0];
+          let json = await res.json();
+          airport = json.locations?.[0];
+          if (!airport) {
+            res = await fetch(
+              `https://${rapidHost}/locations?term=${encodeURIComponent(
+                item.description
+              )}&location_types=airport&limit=1`,
+              {
+                headers: {
+                  "X-RapidAPI-Key": rapidApiKey,
+                  "X-RapidAPI-Host": rapidHost,
+                },
+              }
+            );
+            json = await res.json();
+            airport = json.locations?.[0];
+          }
           if (airport) {
             name = `${airport.name} (${airport.code})`;
             code = airport.code;
