@@ -160,30 +160,62 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                         Optional Activities
                       </Text>
                     </View>
-                    {d.optional_activities.map((act, i) => (
-                      <View
-                        key={i}
-                        className="mb-2 ml-6 flex-row items-center"
-                      >
-                        <Ionicons
-                          name={activityIcon(act.name) as any}
-                          size={20}
-                          color="#8b5cf6"
-                          style={{ marginRight: 6 }}
-                        />
-                        <View className="flex-1">{linkifyText(act.name)}</View>
-                        {act.booking_url ? (
+                    {d.optional_activities.map((act, i) => {
+                      const buildUrl = (name: string, url?: string) => {
+                        const search = (provider: "getyourguide" | "viator") =>
+                          provider === "getyourguide"
+                            ? `https://www.getyourguide.com/s/?q=${encodeURIComponent(name)}`
+                            : `https://www.viator.com/search/?q=${encodeURIComponent(name)}`;
+                        if (!url) return search("getyourguide");
+                        try {
+                          const parsed = new URL(url);
+                          if (parsed.hostname.includes("getyourguide")) {
+                            if (
+                              parsed.pathname === "/" ||
+                              parsed.pathname.split("/").filter(Boolean).length < 2
+                            ) {
+                              return search("getyourguide");
+                            }
+                            return url;
+                          }
+                          if (parsed.hostname.includes("viator")) {
+                            if (
+                              parsed.pathname === "/" ||
+                              parsed.pathname.split("/").filter(Boolean).length < 2
+                            ) {
+                              return search("viator");
+                            }
+                            return url;
+                          }
+                        } catch {
+                          // fall through to default
+                        }
+                        return search("getyourguide");
+                      };
+                      const bookingUrl = buildUrl(act.name, act.booking_url);
+                      return (
+                        <View
+                          key={i}
+                          className="mb-2 ml-6 flex-row items-center"
+                        >
+                          <Ionicons
+                            name={activityIcon(act.name) as any}
+                            size={20}
+                            color="#8b5cf6"
+                            style={{ marginRight: 6 }}
+                          />
+                          <View className="flex-1">{linkifyText(act.name)}</View>
                           <TouchableOpacity
-                            onPress={() => Linking.openURL(act.booking_url)}
+                            onPress={() => Linking.openURL(bookingUrl)}
                             className="ml-2 bg-purple-600 px-3 py-1 rounded-full"
                           >
                             <Text className="font-outfit-bold text-white text-sm">
                               Book
                             </Text>
                           </TouchableOpacity>
-                        ) : null}
-                      </View>
-                    ))}
+                        </View>
+                      );
+                    })}
                   </View>
                 ) : null}
                 {d.travel_tips ? (
