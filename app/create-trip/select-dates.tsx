@@ -53,32 +53,32 @@ const SelectDates = () => {
         <Text className="text-5xl font-outfit-bold mb-2 px-4">
           When are you traveling?
         </Text>
-        <Text className="text-gray-500 font-outfit-medium mb-6 px-5">
+        <Text className="text-text-primary font-outfit-medium mb-6 px-5">
           Select your travel dates
         </Text>
 
-        <View className="bg-white rounded-xl shadow-sm border border-neutral-100 p-4">
+        <View className="bg-background rounded-xl shadow-sm border border-primary p-4">
           <CalendarPicker
             startFromMonday={true}
             allowRangeSelection={true}
             minDate={new Date()}
             onDateChange={onDateChange}
-            selectedDayColor="#8b5cf6"
+            selectedDayColor="#F4C430"
             selectedDayTextColor="#ffffff"
-            todayBackgroundColor="#f2e6ff"
-            todayTextStyle={{ color: "#8b5cf6" }}
+            todayBackgroundColor="#B3E283"
+            todayTextStyle={{ color: "#F4C430" }}
             textStyle={{
               fontFamily: "outfit",
-              color: "#000000",
+              color: "#2E2A1C",
             }}
             selectedRangeStartStyle={{
-              backgroundColor: "#7f6eac",
+              backgroundColor: "#F4C430",
             }}
             selectedRangeEndStyle={{
-              backgroundColor: "#7f6eac",
+              backgroundColor: "#F4C430",
             }}
             selectedRangeStyle={{
-              backgroundColor: "#8b5cf6",
+              backgroundColor: "#F4C430",
             }}
           />
         </View>
@@ -95,8 +95,8 @@ const SelectDates = () => {
             onPress={() => router.push("/create-trip/flexible-dates")}
             bgVariant="outline"
             textVariant="primary"
-            // Make the button stand out with a purple border
-            className="mt-4 border-2 border-purple-600"
+            // Make the button stand out with a primary border
+            className="mt-4 border-2 border-primary"
           />
         </View>
       </View>

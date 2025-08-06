@@ -19,6 +19,19 @@ A smart travel planning mobile application that leverages AI to create personali
 - Database is Firebase's Firestore DB
 - Google Maps API for mapping features
 
+## Custom Color Palette
+
+| Usage | Tailwind name | HEX |
+|-------|---------------|-----|
+| Primary | `primary` | #F4C430 |
+| Secondary | `secondary` | #FFB347 |
+| Background | `background` | #FFFBF0 |
+| Text (dark) | `text-primary` | #2E2A1C |
+| Accent | `accent` | #4A90E2 |
+| Hover | `accent-hover` | #D19C1D |
+| Success | `success` | #B3E283 |
+| Alert | `alert` | #F76C5E |
+
 ## Video Demo
 - Because deploying is hard :(
 https://drive.google.com/file/d/1UbQjPsd1CdqOqducUJLfNspNC3GU2N6Z/view?usp=sharing

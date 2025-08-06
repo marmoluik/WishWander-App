@@ -60,8 +60,8 @@ export default function SignUp() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-white">
-      <View className="flex-1 bg-white">
+    <ScrollView className="flex-1 bg-background">
+      <View className="flex-1 bg-background">
         <View className="relative w-full h-72">
           <Image
             source={require("@/assets/images/avent-sign.jpg")}
@@ -108,7 +108,7 @@ export default function SignUp() {
             className="text-lg text-center mt-10 font-outfit-medium"
           >
             <Text className="">Already have an account? </Text>
-            <Text className="text-purple-500">Sign In</Text>
+            <Text className="text-primary">Sign In</Text>
           </Link>
         </View>
       </View>
