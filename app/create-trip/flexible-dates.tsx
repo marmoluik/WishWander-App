@@ -6,6 +6,7 @@ import {
   FlatList,
   TextInput,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CreateTripContext } from "@/context/CreateTripContext";
@@ -38,10 +39,16 @@ const FlexibleDates = () => {
   const originAirport = tripData.find((item) => item.originAirport)?.originAirport;
 
   const searchFlexible = async () => {
-    if (!originAirport || !locationInfo?.name) return;
+    if (!originAirport || !locationInfo?.name) {
+      Alert.alert("Select an origin and destination first");
+      return;
+    }
     const rapidApiKey = process.env.EXPO_PUBLIC_RAPIDAPI_KEY;
     const rapidHost = "kiwi-com-cheap-flights.p.rapidapi.com";
-    if (!rapidApiKey) return;
+    if (!rapidApiKey) {
+      Alert.alert("Missing API key");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -69,9 +76,16 @@ const FlexibleDates = () => {
       let nightsTo = selectedDuration.to;
 
       if (customStart && customEnd) {
-        dateFrom = moment(customStart).format("DD/MM/YYYY");
-        dateTo = moment(customEnd).format("DD/MM/YYYY");
-        const diff = moment(customEnd).diff(moment(customStart), "days");
+        const start = moment(customStart, "DD-MM-YYYY");
+        const end = moment(customEnd, "DD-MM-YYYY");
+        if (!start.isValid() || !end.isValid()) {
+          Alert.alert("Invalid date format. Use DD-MM-YYYY");
+          setLoading(false);
+          return;
+        }
+        dateFrom = start.format("DD/MM/YYYY");
+        dateTo = end.format("DD/MM/YYYY");
+        const diff = end.diff(start, "days");
         nightsFrom = diff;
         nightsTo = diff;
       }
@@ -93,6 +107,7 @@ const FlexibleDates = () => {
       setResults(parsed);
     } catch (e) {
       console.error("flexible search failed", e);
+      Alert.alert("Search failed. Please try again");
     }
     setLoading(false);
   };
@@ -145,7 +160,7 @@ const FlexibleDates = () => {
       </View>
       <View className="mb-4">
         <Text className="font-outfit text-gray-600 mb-1">
-          Or enter dates manually (YYYY-MM-DD)
+          Or enter dates manually (DD-MM-YYYY)
         </Text>
         <TextInput
           value={customStart}
