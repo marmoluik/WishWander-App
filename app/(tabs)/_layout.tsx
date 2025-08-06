@@ -3,12 +3,14 @@ import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import HeaderLogo from "@/components/HeaderLogo";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
+        headerTitle: () => <HeaderLogo />,
         tabBarActiveTintColor: "#8b5cf6",
         tabBarInactiveTintColor: "#64748b",
         tabBarLabelStyle: {
