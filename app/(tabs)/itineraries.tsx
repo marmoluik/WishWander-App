@@ -1,11 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { startChatSession } from "@/config/GeminiConfig";
 import ItineraryDetails from "@/components/ItineraryDetails";
-import LoadingAnimation from "@/components/LoadingAnimation";
 import {
   ItineraryContext,
   StoredItinerary,
@@ -57,7 +61,7 @@ const Itineraries = () => {
   if (loading) {
     return (
       <SafeAreaView className="flex-1 justify-center items-center">
-        <LoadingAnimation />
+        <ActivityIndicator size="large" color="#8b5cf6" />
         <Text className="font-outfit-medium mt-2">Generating itinerary...</Text>
       </SafeAreaView>
     );

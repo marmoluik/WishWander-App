@@ -16,24 +16,8 @@ const slotIcon: Record<string, any> = {
   night: "moon",
 };
 
-const getActivityIcon = (name: string) => {
-  const n = name.toLowerCase();
-  if (n.includes("boat")) return "boat";
-  if (n.includes("sail")) return "sailboat";
-  if (n.includes("hike")) return "walk";
-  if (n.includes("tour")) return "map";
-  return "ticket";
-};
-
 const ItineraryDetails: React.FC<Props> = ({ plan }) => {
   const [collapsed, setCollapsed] = useState<Record<number, boolean>>({});
-
-  const openMap = (query: string) => {
-    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-      query
-    )}`;
-    Linking.openURL(url);
-  };
 
   const collapseAll = () => {
     const newState: Record<number, boolean> = {};
@@ -74,18 +58,9 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                           style={{ marginRight: 8, marginTop: 2 }}
                         />
                         <View className="flex-1">
-                          <View className="flex-row justify-between">
-                            <Text className="font-outfit-medium capitalize">
-                              {slot}
-                            </Text>
-                            <TouchableOpacity onPress={() => openMap(text)}>
-                              <Ionicons
-                                name="location-outline"
-                                size={18}
-                                color="#8b5cf6"
-                              />
-                            </TouchableOpacity>
-                          </View>
+                          <Text className="font-outfit-medium capitalize">
+                            {slot}
+                          </Text>
                           <Text className="text-gray-700">{text}</Text>
                         </View>
                       </View>
@@ -138,32 +113,16 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                       </Text>
                     </View>
                     {d.optional_activities.map((act, i) => (
-                      <View
-                        key={i}
-                        className="mb-1 ml-6 flex-row items-center justify-between"
-                      >
-                        <View className="flex-row items-center flex-1 mr-2">
-                          <Ionicons
-                            name={getActivityIcon(act.name) as any}
-                            size={16}
-                            color="#8b5cf6"
-                            style={{ marginRight: 6 }}
-                          />
-                          <Text className="text-gray-700 flex-1">
-                            {act.name}
-                          </Text>
-                        </View>
+                      <View key={i} className="mb-1 ml-6">
+                        <Text className="text-gray-700">• {act.name}</Text>
                         {act.booking_url ? (
-                          <TouchableOpacity
+                          <CustomButton
+                            title="Book"
                             onPress={() => Linking.openURL(act.booking_url)}
-                            className="p-1"
-                          >
-                            <Ionicons
-                              name="open-outline"
-                              size={20}
-                              color="#8b5cf6"
-                            />
-                          </TouchableOpacity>
+                            bgVariant="outline"
+                            textVariant="primary"
+                            className="mt-1 w-32"
+                          />
                         ) : null}
                       </View>
                     ))}

@@ -313,8 +313,7 @@ const Discover = () => {
       {/* Places to Visit */}
       <View className="mb-8">
         <Text className="text-2xl font-outfit-bold mb-4">Places to Visit</Text>
-        <Text className="font-outfit mb-2 text-gray-700">Filter by:</Text>
-        <View className="flex-row flex-wrap mb-2">
+        <View className="flex-row flex-wrap mb-4">
           {interestCategories.map((cat) => (
             <TouchableOpacity
               key={cat}
@@ -337,9 +336,6 @@ const Discover = () => {
             </TouchableOpacity>
           ))}
         </View>
-        <Text className="font-outfit text-gray-600 mb-4">
-          Tap + to add a place to your itinerary.
-        </Text>
         {filteredPlaces.length ? (
           filteredPlaces.map((place: any, index: number) => {
             const isSelected = selectedPlaces.find(
