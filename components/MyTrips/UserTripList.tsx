@@ -1,9 +1,10 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, Alert, TouchableOpacity } from "react-native";
 import React from "react";
 import moment from "moment";
 import CustomButton from "../CustomButton";
 import UserTripCard from "./UserTripCard";
 import { useRouter } from "expo-router";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const DEFAULT_IMAGE_URL =
   "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?q=80&w=2071&auto=format&fit=crop";
@@ -62,6 +63,13 @@ const UserTripList = ({
 
   const isPastTrip = endDate ? moment().isAfter(moment(endDate)) : false;
 
+  const confirmDelete = (id: string) => {
+    Alert.alert("Delete Trip", "Are you sure you want to delete this trip?", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Delete", style: "destructive", onPress: () => onDelete(id) },
+    ]);
+  };
+
   return (
     <View className="mb-16">
       <View>
@@ -76,13 +84,21 @@ const UserTripList = ({
           }`}
         />
         <View className="mt-3">
-          <Text
-            className={`font-outfit-medium text-xl ${
-              isPastTrip ? "text-gray-500" : ""
-            }`}
-          >
-            {sortedTrips[0]?.tripPlan?.trip_plan?.location}
-          </Text>
+          <View className="flex flex-row justify-between items-center">
+            <Text
+              className={`font-outfit-medium text-xl ${
+                isPastTrip ? "text-gray-500" : ""
+              }`}
+            >
+              {sortedTrips[0]?.tripPlan?.trip_plan?.location}
+            </Text>
+            <TouchableOpacity
+              onPress={() => confirmDelete(sortedTrips[0].id)}
+              className="p-1"
+            >
+              <Ionicons name="close" size={24} color="#ef4444" />
+            </TouchableOpacity>
+          </View>
           <View className="flex flex-row justify-between items-center mt-2">
             <Text className="font-outfit text-lg text-gray-500">
               {startDate ? moment(startDate).format("DD MMM yyyy") : ""}
@@ -104,12 +120,6 @@ const UserTripList = ({
               })
             }
             className={`mt-3 ${isPastTrip ? "opacity-50" : ""}`}
-          />
-          <CustomButton
-            title="Delete Trip"
-            onPress={() => onDelete(sortedTrips[0].id)}
-            bgVariant="danger"
-            className="mt-2"
           />
         </View>
 

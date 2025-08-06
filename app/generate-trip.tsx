@@ -1,6 +1,6 @@
 // app/generate-trip.tsx
 
-import { Text, Image } from "react-native";
+import { Text } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CreateTripContext } from "@/context/CreateTripContext";
@@ -9,6 +9,7 @@ import { startChatSession } from "@/config/GeminiConfig";
 import { useRouter } from "expo-router";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/config/FirebaseConfig";
+import LoadingAnimation from "@/components/LoadingAnimation";
 
 const formatDate = (value: any) => {
   if (!value) return "";
@@ -300,10 +301,7 @@ export default function GenerateTrip() {
             Generating your itinerary...
           </Text>
 
-          <Image
-            source={require("@/assets/images/loading.gif")}
-            className="w-96 h-96"
-          />
+          <LoadingAnimation />
 
           <Text className="font-outfit text-gray-700 text-center mt-10">
             This might take a while, please do not go back.
