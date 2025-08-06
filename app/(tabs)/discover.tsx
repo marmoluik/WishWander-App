@@ -392,9 +392,7 @@ const Discover = () => {
                   title="View on Map"
                   onPress={() =>
                     handleOpenMap(
-                      undefined,
-                      place.geo_coordinates.latitude,
-                      place.geo_coordinates.longitude
+                      `${place.name}, ${parsedTripPlan.trip_plan.location}`
                     )
                   }
                   className="mt-4"
