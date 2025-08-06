@@ -9,7 +9,12 @@ import { startChatSession } from "@/config/GeminiConfig";
 import { useRouter } from "expo-router";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/config/FirebaseConfig";
-import { generateFlightLink } from "@/utils/travelpayouts";
+import {
+  generateFlightLink,
+  generateHotelLink,
+  generatePoiLink,
+  fetchFlightInfo,
+} from "@/utils/travelpayouts";
 
 const formatDate = (value: any) => {
   if (!value) return "";
@@ -99,7 +104,11 @@ export default function GenerateTrip() {
             (h: any) =>
               h?.name && !/accommodation|option/i.test(h.name)
           )
-          .slice(0, 10);
+          .slice(0, 10)
+          .map((h: any) => ({
+            ...h,
+            booking_url: generateHotelLink(`${h.name} ${locationInfo?.name || ""}`),
+          }));
 
         const places =
           root.places_to_visit ||
@@ -117,7 +126,11 @@ export default function GenerateTrip() {
                 .toLowerCase()
                 .includes((locationInfo?.name || "").toLowerCase())
           )
-          .slice(0, 10);
+          .slice(0, 10)
+          .map((p: any) => ({
+            ...p,
+            booking_url: generatePoiLink(`${p.name} ${locationInfo?.name || ""}`),
+          }));
 
         const filledFlight = {
           departure_city: originAirport?.name || flight?.departure_city || "TBD",
@@ -225,6 +238,19 @@ export default function GenerateTrip() {
               arrival.code,
               startDateStr || ""
             );
+            const info = await fetchFlightInfo(
+              originAirport.code,
+              arrival.code,
+              startDateStr || ""
+            );
+            if (info) {
+              parsed.trip_plan.flight_details.airline =
+                info.airline || parsed.trip_plan.flight_details.airline;
+              parsed.trip_plan.flight_details.flight_number =
+                info.flight_number || parsed.trip_plan.flight_details.flight_number;
+              if (info.price)
+                parsed.trip_plan.flight_details.price = `$${info.price}`;
+            }
           }
         } catch (e) {
           console.error("flight link failed", e);
