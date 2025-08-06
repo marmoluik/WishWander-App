@@ -26,14 +26,14 @@ const SelectBudget = () => {
   const renderItem = ({ item }: { item: any }) => (
     <TouchableOpacity
       onPress={() => handleSelectBudget(item)}
-      className="flex-row items-center p-4 bg-white rounded-xl mb-4 shadow-sm border border-neutral-100"
+      className="flex-row items-center p-4 bg-background rounded-xl mb-4 shadow-sm border border-primary"
     >
-      <View className="bg-purple-100 p-3 rounded-full">
+      <View className="bg-secondary p-3 rounded-full">
         <Text className="text-2xl">{item.icon}</Text>
       </View>
       <View className="flex-1 ml-4">
         <Text className="text-lg font-outfit-bold">{item.title}</Text>
-        <Text className="text-gray-500 text-sm font-outfit">
+        <Text className="text-text-primary text-sm font-outfit">
           {item.description}
         </Text>
       </View>
@@ -46,7 +46,7 @@ const SelectBudget = () => {
         <Text className="text-5xl font-outfit-bold mb-2">
           Define your budget
         </Text>
-        <Text className="text-gray-500 font-outfit-medium mb-12">
+        <Text className="text-text-primary font-outfit-medium mb-12">
           Pick a category that best fits you
         </Text>
 
