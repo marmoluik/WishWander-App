@@ -124,7 +124,7 @@ const FlexibleDates = () => {
   return (
     <SafeAreaView className="flex-1 p-6">
       <Text className="text-3xl font-outfit-bold mb-4">Flexible Dates</Text>
-      <Text className="font-outfit text-text-primary mb-4">
+      <Text className="font-outfit text-gray-600 mb-4">
         Select a duration range and search for the most affordable date
         combinations.
       </Text>
@@ -135,13 +135,13 @@ const FlexibleDates = () => {
             onPress={() => setSelectedDuration(opt)}
             className={`px-4 py-2 mr-2 rounded-full border ${
               selectedDuration.label === opt.label
-                ? "bg-primary border-primary"
-                : "border-secondary"
+                ? "bg-purple-600 border-purple-600"
+                : "border-gray-300"
             }`}
           >
             <Text
               className={`font-outfit-medium ${
-                selectedDuration.label === opt.label ? "text-white" : "text-text-primary"
+                selectedDuration.label === opt.label ? "text-white" : "text-gray-600"
               }`}
             >
               {opt.label}
@@ -150,7 +150,7 @@ const FlexibleDates = () => {
         ))}
       </View>
       <View className="mb-4">
-        <Text className="font-outfit text-text-primary mb-1">
+        <Text className="font-outfit text-gray-600 mb-1">
           Or enter custom duration (days)
         </Text>
         <View className="flex-row space-x-2">
@@ -159,19 +159,19 @@ const FlexibleDates = () => {
             onChangeText={setMinDays}
             placeholder="Min days"
             keyboardType="numeric"
-            className="flex-1 border border-primary rounded-full px-4 py-2 mb-2"
+            className="flex-1 border border-gray-300 rounded-full px-4 py-2 mb-2"
           />
           <TextInput
             value={maxDays}
             onChangeText={setMaxDays}
             placeholder="Max days"
             keyboardType="numeric"
-            className="flex-1 border border-primary rounded-full px-4 py-2 mb-2"
+            className="flex-1 border border-gray-300 rounded-full px-4 py-2 mb-2"
           />
         </View>
       </View>
       <CustomButton title="Search" onPress={searchFlexible} disabled={loading} />
-      {loading && <ActivityIndicator className="mt-4" color="#4BBFD9" />}
+      {loading && <ActivityIndicator className="mt-4" color="#8b5cf6" />}
       <FlatList
         data={results}
         keyExtractor={(_, index) => index.toString()}
@@ -179,12 +179,12 @@ const FlexibleDates = () => {
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => selectRange(item)}
-            className="p-4 mb-3 bg-background rounded-xl border border-primary"
+            className="p-4 mb-3 bg-gray-50 rounded-xl border border-gray-100"
           >
             <Text className="font-outfit-bold">
               {item.start} - {item.end}
             </Text>
-            <Text className="font-outfit text-text-primary">{item.price}</Text>
+            <Text className="font-outfit text-gray-600">{item.price}</Text>
           </TouchableOpacity>
         )}
       />

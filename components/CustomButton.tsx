@@ -5,28 +5,28 @@ import { ButtonProps } from "@/types/type";
 const getBgVariantStyle = (variant: ButtonProps["bgVariant"]) => {
   switch (variant) {
     case "secondary":
-      return "bg-secondary";
+      return "bg-gray-500";
     case "danger":
-      return "bg-accent";
+      return "bg-red-500";
     case "success":
-      return "bg-success";
+      return "bg-green-500";
     case "outline":
-      return "bg-transparent border-text-primary border-[0.5px]";
+      return "bg-transparent border-neutral-300 border-[0.5px]";
     default:
-      return "bg-primary hover:bg-accent-hover";
+      return "bg-purple-500";
   }
 };
 
 const getTextVariantStyle = (variant: ButtonProps["textVariant"]) => {
   switch (variant) {
     case "primary":
-      return "text-text-primary";
+      return "text-black";
     case "secondary":
-      return "text-secondary";
+      return "text-gray-100";
     case "danger":
-      return "text-accent";
+      return "text-red-100";
     case "success":
-      return "text-success";
+      return "text-green-100";
     default:
       return "text-white";
   }

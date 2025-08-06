@@ -137,7 +137,7 @@ const Discover = () => {
   if (!parsedTripPlan || !parsedTripData) {
     return (
       <View className="flex-1 items-center justify-center">
-        <Text className="text-xl font-outfit-medium text-text-primary">
+        <Text className="text-xl font-outfit-medium text-gray-600">
           Select a trip to view details
         </Text>
       </View>
@@ -175,7 +175,7 @@ const Discover = () => {
   };
 
   return (
-    <View className="flex-1 bg-background">
+    <View className="flex-1 bg-white">
       <ScrollView
         className="flex-1"
         contentContainerStyle={{
@@ -187,15 +187,15 @@ const Discover = () => {
       <Text className="text-3xl font-outfit-bold mb-6">Trip Details</Text>
 
       {/* Trip Overview */}
-      <View className="bg-secondary p-4 rounded-xl mb-6">
+      <View className="bg-purple-50 p-4 rounded-xl mb-6">
         <Text className="font-outfit-bold text-lg mb-2">Trip Overview</Text>
-        <Text className="font-outfit text-text-primary">
+        <Text className="font-outfit text-gray-600">
           Duration: {parsedTripPlan?.trip_plan?.duration ?? "N/A"}
         </Text>
-        <Text className="font-outfit text-text-primary">
+        <Text className="font-outfit text-gray-600">
           Budget: {parsedTripPlan?.trip_plan?.budget ?? "N/A"}
         </Text>
-        {/* <Text className="font-outfit text-text-primary">
+        {/* <Text className="font-outfit text-gray-600">
           Group Size: {parsedTripPlan.group_size}
         </Text> */}
       </View>
@@ -204,7 +204,7 @@ const Discover = () => {
       <View className="mb-8">
         <Text className="text-2xl font-outfit-bold mb-4">Flight Details</Text>
         {parsedTripPlan?.trip_plan?.flight_details ? (
-          <View className="bg-background p-4 rounded-xl border border-primary">
+          <View className="bg-gray-50 p-4 rounded-xl border border-gray-100">
             <View className="flex-row items-center mb-4">
               <View className="flex-1 pr-2">
                 <Text
@@ -213,7 +213,7 @@ const Discover = () => {
                 >
                   {parsedTripPlan.trip_plan.flight_details.departure_city}
                 </Text>
-                <Text className="font-outfit text-text-primary">
+                <Text className="font-outfit text-gray-600">
                   {
                     toDate(
                       parsedTripPlan.trip_plan.flight_details.departure_date
@@ -222,7 +222,7 @@ const Discover = () => {
                   {parsedTripPlan.trip_plan.flight_details.departure_time}
                 </Text>
               </View>
-              <Ionicons name="airplane" size={24} color="#4BBFD9" />
+              <Ionicons name="airplane" size={24} color="#8b5cf6" />
               <View className="flex-1 pl-2 items-end">
                 <Text
                   className="font-outfit-bold text-lg text-right"
@@ -230,7 +230,7 @@ const Discover = () => {
                 >
                   {parsedTripPlan.trip_plan.flight_details.arrival_city}
                 </Text>
-                <Text className="font-outfit text-text-primary text-right">
+                <Text className="font-outfit text-gray-600 text-right">
                   {
                     toDate(
                       parsedTripPlan.trip_plan.flight_details.arrival_date
@@ -240,16 +240,16 @@ const Discover = () => {
                 </Text>
               </View>
             </View>
-            <View className="border-t border-secondary pt-4">
-              <Text className="font-outfit text-text-primary">
+            <View className="border-t border-gray-200 pt-4">
+              <Text className="font-outfit text-gray-600">
                 Airline:{" "}
                 {parsedTripPlan.trip_plan.flight_details.airline || "N/A"}
               </Text>
-              <Text className="font-outfit text-text-primary">
+              <Text className="font-outfit text-gray-600">
                 Flight:{" "}
                 {parsedTripPlan.trip_plan.flight_details.flight_number || "N/A"}
               </Text>
-              <Text className="font-outfit text-text-primary">
+              <Text className="font-outfit text-gray-600">
                 Price:{" "}
                 {parsedTripPlan.trip_plan.flight_details.price || "N/A"}
               </Text>
@@ -266,14 +266,14 @@ const Discover = () => {
                   className="mt-4"
                 />
               ) : (
-                <Text className="font-outfit text-text-primary mt-4">
+                <Text className="font-outfit text-gray-600 mt-4">
                   No flight offer available.
                 </Text>
               )}
             </View>
           </View>
         ) : (
-          <Text className="font-outfit text-text-primary">
+          <Text className="font-outfit text-gray-600">
             No flight details available.
           </Text>
         )}
@@ -293,7 +293,7 @@ const Discover = () => {
                   <Ionicons
                     name="chevron-back"
                     size={24}
-                    color="#4BBFD9"
+                    color="#8b5cf6"
                   />
                 </TouchableOpacity>
               )}
@@ -303,22 +303,22 @@ const Discover = () => {
                 horizontal
                 keyExtractor={(_, i) => i.toString()}
                 renderItem={({ item }) => (
-                  <View className="w-72 mr-4 bg-background p-4 rounded-xl border border-primary">
+                  <View className="w-72 mr-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
                     <Image
                       source={{ uri: item.image_url || DEFAULT_IMAGE_URL }}
                       className="w-full h-48 rounded-xl mb-4"
                     />
                     <Text className="font-outfit-bold text-lg">{item.name}</Text>
-                    <Text className="font-outfit text-text-primary mb-2">
+                    <Text className="font-outfit text-gray-600 mb-2">
                       {item.address}
                     </Text>
-                    <Text className="font-outfit text-text-primary">
+                    <Text className="font-outfit text-gray-600">
                       Price: {item.price}
                     </Text>
-                    <Text className="font-outfit text-text-primary">
+                    <Text className="font-outfit text-gray-600">
                       Rating: {item.rating} ⭐
                     </Text>
-                    <Text className="font-outfit text-text-primary mt-2">
+                    <Text className="font-outfit text-gray-600 mt-2">
                       {item.description}
                     </Text>
                     <CustomButton
@@ -342,11 +342,14 @@ const Discover = () => {
                 showsHorizontalScrollIndicator={false}
               />
               {hotelIndex < hotelOptions.length - 1 && (
-                <TouchableOpacity onPress={() => scrollHotels(1)} className="ml-2">
+                <TouchableOpacity
+                  onPress={() => scrollHotels(1)}
+                  className="ml-2"
+                >
                   <Ionicons
                     name="chevron-forward"
                     size={24}
-                    color="#4BBFD9"
+                    color="#8b5cf6"
                   />
                 </TouchableOpacity>
               )}
@@ -362,7 +365,7 @@ const Discover = () => {
             />
           </>
         ) : (
-          <Text className="font-outfit text-text-primary">
+          <Text className="font-outfit text-gray-600">
             No hotel options available.
           </Text>
         )}
@@ -381,15 +384,15 @@ const Discover = () => {
                   onPress={() => toggleInterest(cat)}
                   className={`px-3 py-1 m-1 rounded-full border ${
                     selectedInterests.includes(cat)
-                      ? "bg-primary border-primary"
-                      : "border-secondary"
+                      ? "bg-purple-600 border-purple-600"
+                      : "border-gray-300"
                   }`}
                 >
                   <Text
                     className={`font-outfit ${
                       selectedInterests.includes(cat)
                         ? "text-white"
-                        : "text-text-primary"
+                        : "text-gray-600"
                     }`}
                   >
                     {cat}
@@ -399,7 +402,7 @@ const Discover = () => {
             </View>
           </>
         )}
-        <Text className="font-outfit text-text-primary mb-4">
+        <Text className="font-outfit text-gray-500 mb-4">
           Tap the + to add a place to your itinerary.
         </Text>
         {filteredPlaces.length ? (
@@ -412,8 +415,8 @@ const Discover = () => {
                 key={index}
                 className={`p-4 rounded-xl mb-4 border ${
                   isSelected
-                    ? "bg-primary border-primary"
-                    : "bg-background border-primary"
+                    ? "bg-purple-50 border-purple-500"
+                    : "bg-gray-50 border-gray-100"
                 }`}
               >
                 <Image
@@ -424,24 +427,24 @@ const Discover = () => {
                   onPress={() => togglePlace(place)}
                   className={`absolute top-3 right-3 w-8 h-8 rounded-md items-center justify-center ${
                     isSelected
-                      ? "bg-primary"
-                      : "bg-background border border-primary"
+                      ? "bg-purple-600"
+                      : "bg-white border border-purple-600"
                   }`}
                 >
                   <Ionicons
                     name={isSelected ? "checkmark" : "add"}
                     size={20}
-                    color={isSelected ? "#ffffff" : "#4BBFD9"}
+                    color={isSelected ? "#ffffff" : "#8b5cf6"}
                   />
                 </TouchableOpacity>
                 <Text className="font-outfit-bold text-lg">{place.name}</Text>
-                <Text className="font-outfit text-text-primary mb-2">
+                <Text className="font-outfit text-gray-600 mb-2">
                   {place.details}
                 </Text>
-                <Text className="font-outfit text-text-primary">
+                <Text className="font-outfit text-gray-600">
                   Ticket Price: {place.ticket_price}
                 </Text>
-                <Text className="font-outfit text-text-primary">
+                <Text className="font-outfit text-gray-600">
                   Time to Travel: {place.time_to_travel}
                 </Text>
                 <CustomButton
@@ -468,7 +471,7 @@ const Discover = () => {
             );
           })
         ) : (
-          <Text className="font-outfit text-text-primary">
+          <Text className="font-outfit text-gray-600">
             No places to visit available.
           </Text>
         )}

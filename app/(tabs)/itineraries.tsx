@@ -89,9 +89,9 @@ const Itineraries = () => {
     return (
       <SafeAreaView className="flex-1 justify-center items-center">
         <Animated.View style={{ transform: [{ rotate: spin }] }}>
-          <Ionicons name="document-text" size={64} color="#4BBFD9" />
+          <Ionicons name="document-text" size={64} color="#8b5cf6" />
         </Animated.View>
-        <Text className="font-outfit-medium mt-2 text-text-primary">Generating itinerary...</Text>
+        <Text className="font-outfit-medium mt-2">Generating itinerary...</Text>
       </SafeAreaView>
     );
   }
@@ -99,8 +99,11 @@ const Itineraries = () => {
   if (selectedItinerary) {
     return (
       <SafeAreaView className="flex-1 p-4">
-        <TouchableOpacity className="mb-4" onPress={() => setCurrentId(null)}>
-          <Ionicons name="arrow-back" size={24} color="#1F2D3D" />
+        <TouchableOpacity
+          className="mb-4"
+          onPress={() => setCurrentId(null)}
+        >
+          <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
         <ItineraryDetails plan={selectedItinerary.plan} />
       </SafeAreaView>
@@ -111,13 +114,13 @@ const Itineraries = () => {
     <SafeAreaView className="flex-1 p-4">
       {itineraries.length === 0 ? (
         <View className="flex-1 justify-center items-center">
-          <Text className="font-outfit text-text-primary">No itinerary saved.</Text>
+          <Text className="font-outfit text-gray-600">No itinerary saved.</Text>
         </View>
       ) : (
         itineraries.map((it) => (
           <View
             key={it.id}
-            className="flex-row items-center p-4 mb-3 bg-background rounded-xl border border-primary"
+            className="flex-row items-center p-4 mb-3 bg-gray-50 rounded-xl border border-gray-100"
           >
             <TouchableOpacity
               className="flex-row items-center flex-1"
@@ -126,14 +129,14 @@ const Itineraries = () => {
               <Ionicons
                 name="map"
                 size={24}
-                color="#4BBFD9"
+                color="#8b5cf6"
                 style={{ marginRight: 12 }}
               />
               <Text className="font-outfit-bold flex-1">{it.title}</Text>
-              <Ionicons name="chevron-forward" size={20} color="#4BBFD9" />
+              <Ionicons name="chevron-forward" size={20} color="#8b5cf6" />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => handleDelete(it.id)} className="ml-4">
-              <Ionicons name="trash" size={20} color="#FF6B6B" />
+              <Ionicons name="trash" size={20} color="#ef4444" />
             </TouchableOpacity>
           </View>
         ))

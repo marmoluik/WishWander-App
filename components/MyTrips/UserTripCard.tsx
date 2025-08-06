@@ -77,22 +77,24 @@ const UserTripCard = ({
               },
             ])
           }
-          className="absolute top-1 right-1 bg-background rounded-full"
+          className="absolute top-1 right-1 bg-white rounded-full"
         >
-          <Ionicons name="close" size={20} color="#FF6B6B" />
+          <Ionicons name="close" size={20} color="#ef4444" />
         </TouchableOpacity>
       </View>
       <View className="flex-1">
         <Text
-          className="font-outfit-medium text-lg text-text-primary"
+          className={`font-outfit-medium text-lg ${
+            isPastTrip ? "text-gray-500" : ""
+          }`}
           numberOfLines={2}
         >
           {trip?.tripPlan?.trip_plan?.location}
         </Text>
-        <Text className="font-outfit text-md text-text-primary mt-1">
+        <Text className="font-outfit text-md text-gray-500 mt-1">
           {startDate ? moment(startDate).format("DD MMM yyyy") : ""}
         </Text>
-        <Text className="font-outfit-medium text-md text-text-primary mt-1">
+        <Text className="font-outfit-medium text-md text-gray-500 mt-1">
           {trip?.tripPlan?.trip_plan?.group_size?.split(" ")[0] ?? "N/A"}
         </Text>
       </View>

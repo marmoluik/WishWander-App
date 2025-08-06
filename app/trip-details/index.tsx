@@ -45,7 +45,7 @@ const TripDetails = () => {
   const budget = parsedTripData?.find((item: any) => item.budget)?.budget?.type;
 
   return (
-    <ScrollView className="flex-1 bg-background">
+    <ScrollView className="flex-1 bg-white">
       <Image
         source={{
           uri: locationInfo?.photoRef
@@ -61,21 +61,21 @@ const TripDetails = () => {
         </Text>
 
         <View className="mt-4 space-y-2">
-          <Text className="text-lg font-outfit text-text-primary">
+          <Text className="text-lg font-outfit text-gray-600">
             {startDate ? moment(startDate).format("MMM D") : ""} -{" "}
             {endDate ? moment(endDate).format("MMM D, YYYY") : ""}
           </Text>
-          <Text className="text-lg font-outfit text-text-primary">
+          <Text className="text-lg font-outfit text-gray-600">
             Total Number of Days: {totalNumberOfDays}
           </Text>
-          <Text className="text-lg font-outfit text-text-primary">
+          <Text className="text-lg font-outfit text-gray-600">
             {travelers?.type} ({travelers?.count})
           </Text>
-          <Text className="text-lg font-outfit text-text-primary">
+          <Text className="text-lg font-outfit text-gray-600">
             Budget Type: {budget ?? "N/A"}
           </Text>
           <View className="flex mt-10 items-center justify-center">
-            <Text className="text-lg font-outfit-medium text-text-primary">
+            <Text className="text-lg font-outfit-medium text-gray-600">
               Want to see flights, hotel recommendations and more plan details?
             </Text>
           </View>
