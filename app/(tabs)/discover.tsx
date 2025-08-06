@@ -5,8 +5,9 @@ import {
   Image,
   Linking,
   TouchableOpacity,
+  FlatList,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
@@ -37,6 +38,8 @@ const Discover = () => {
   const [parsedTripPlan, setParsedTripPlan] = useState<any>(null);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [selectedPlaces, setSelectedPlaces] = useState<any[]>([]);
+  const hotelListRef = useRef<FlatList<any>>(null);
+  const [hotelIndex, setHotelIndex] = useState(0);
 
   const fetchPlaceImage = async (placeName: string) => {
     try {
@@ -115,6 +118,21 @@ const Discover = () => {
       p.categories?.includes(cat)
     )
   );
+
+  const hotelOptions =
+    parsedTripPlan?.trip_plan?.hotel?.options?.slice(0, 10) || [];
+  const ITEM_WIDTH = 304;
+  const scrollHotels = (dir: number) => {
+    const newIndex = Math.min(
+      Math.max(hotelIndex + dir, 0),
+      hotelOptions.length - 1
+    );
+    hotelListRef.current?.scrollToOffset({
+      offset: newIndex * ITEM_WIDTH,
+      animated: true,
+    });
+    setHotelIndex(newIndex);
+  };
 
   if (!parsedTripPlan || !parsedTripData) {
     return (
@@ -224,15 +242,20 @@ const Discover = () => {
             </View>
             <View className="border-t border-gray-200 pt-4">
               <Text className="font-outfit text-gray-600">
-                Airline: {parsedTripPlan.trip_plan.flight_details.airline}
+                Airline:{" "}
+                {parsedTripPlan.trip_plan.flight_details.airline || "N/A"}
               </Text>
               <Text className="font-outfit text-gray-600">
-                Flight: {parsedTripPlan.trip_plan.flight_details.flight_number}
+                Flight:{" "}
+                {parsedTripPlan.trip_plan.flight_details.flight_number || "N/A"}
               </Text>
               <Text className="font-outfit text-gray-600">
-                Price: {parsedTripPlan.trip_plan.flight_details.price}
+                Price:{" "}
+                {parsedTripPlan.trip_plan.flight_details.price || "N/A"}
               </Text>
-              {parsedTripPlan.trip_plan.flight_details.booking_url ? (
+              {parsedTripPlan.trip_plan.flight_details.booking_url?.startsWith(
+                "http"
+              ) ? (
                 <CustomButton
                   title="Book Flight"
                   onPress={() =>
@@ -259,49 +282,88 @@ const Discover = () => {
       {/* Hotels Section */}
       <View className="mb-8">
         <Text className="text-2xl font-outfit-bold mb-4">Hotel Options</Text>
-        {parsedTripPlan?.trip_plan?.hotel?.options?.length ? (
-          parsedTripPlan.trip_plan.hotel.options.map(
-            (hotel: any, index: number) => (
-              <View
-                key={index}
-                className="bg-gray-50 p-4 rounded-xl mb-4 border border-gray-100"
-              >
-                <Image
-                  source={{ uri: hotel.image_url || DEFAULT_IMAGE_URL }}
-                  className="w-full h-48 rounded-xl mb-4"
-                />
-                <Text className="font-outfit-bold text-lg">{hotel.name}</Text>
-                <Text className="font-outfit text-gray-600 mb-2">
-                  {hotel.address}
-                </Text>
-                <Text className="font-outfit text-gray-600">
-                  Price: {hotel.price}
-                </Text>
-                <Text className="font-outfit text-gray-600">
-                  Rating: {hotel.rating} ⭐
-                </Text>
-                <Text className="font-outfit text-gray-600 mt-2">
-                  {hotel.description}
-                </Text>
-                <CustomButton
-                  title="View on Map"
-                  onPress={() => handleOpenMap(hotel.address)}
-                  className="mt-4"
-                />
-                <CustomButton
-                  title="Book Hotel"
-                  onPress={() =>
-                    Linking.openURL(
-                      generateHotelLink(
-                        `${hotel.name}, ${parsedTripPlan.trip_plan.location}`
-                      )
-                    )
-                  }
-                  className="mt-2"
-                />
-              </View>
-            )
-          )
+        {hotelOptions.length ? (
+          <>
+            <View className="flex-row items-center">
+              {hotelIndex > 0 && (
+                <TouchableOpacity
+                  onPress={() => scrollHotels(-1)}
+                  className="mr-2"
+                >
+                  <Ionicons
+                    name="chevron-back"
+                    size={24}
+                    color="#8b5cf6"
+                  />
+                </TouchableOpacity>
+              )}
+              <FlatList
+                ref={hotelListRef}
+                data={hotelOptions}
+                horizontal
+                keyExtractor={(_, i) => i.toString()}
+                renderItem={({ item }) => (
+                  <View className="w-72 mr-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <Image
+                      source={{ uri: item.image_url || DEFAULT_IMAGE_URL }}
+                      className="w-full h-48 rounded-xl mb-4"
+                    />
+                    <Text className="font-outfit-bold text-lg">{item.name}</Text>
+                    <Text className="font-outfit text-gray-600 mb-2">
+                      {item.address}
+                    </Text>
+                    <Text className="font-outfit text-gray-600">
+                      Price: {item.price}
+                    </Text>
+                    <Text className="font-outfit text-gray-600">
+                      Rating: {item.rating} ⭐
+                    </Text>
+                    <Text className="font-outfit text-gray-600 mt-2">
+                      {item.description}
+                    </Text>
+                    <CustomButton
+                      title="View on Map"
+                      onPress={() => handleOpenMap(item.address)}
+                      className="mt-4"
+                    />
+                    <CustomButton
+                      title="Book Hotel"
+                      onPress={() =>
+                        Linking.openURL(
+                          generateHotelLink(
+                            `${item.name} ${parsedTripPlan.trip_plan.location}`
+                          )
+                        )
+                      }
+                      className="mt-2"
+                    />
+                  </View>
+                )}
+                showsHorizontalScrollIndicator={false}
+              />
+              {hotelIndex < hotelOptions.length - 1 && (
+                <TouchableOpacity
+                  onPress={() => scrollHotels(1)}
+                  className="ml-2"
+                >
+                  <Ionicons
+                    name="chevron-forward"
+                    size={24}
+                    color="#8b5cf6"
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+            <CustomButton
+              title="See More Hotels"
+              onPress={() =>
+                Linking.openURL(
+                  generateHotelLink(parsedTripPlan.trip_plan.location)
+                )
+              }
+              className="mt-4"
+            />
+          </>
         ) : (
           <Text className="font-outfit text-gray-600">
             No hotel options available.
@@ -399,7 +461,7 @@ const Discover = () => {
                   onPress={() =>
                     Linking.openURL(
                       generatePoiLink(
-                        `${place.name}, ${parsedTripPlan.trip_plan.location}`
+                        `${place.name} ${parsedTripPlan.trip_plan.location}`
                       )
                     )
                   }

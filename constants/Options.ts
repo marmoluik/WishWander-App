@@ -52,7 +52,9 @@ export const budgetOptions = [
 ];
 
 export const AI_PROMPT = `Return only JSON. Generate a trip plan for Location "{location}" lasting {totalDays} day(s) and {totalNights} night(s) for {travelers} with a {budget} budget.
-
+Provide exact flight details including airline name, flight number and price.
+Return exactly 10 specific hotel options with real hotel names and addresses.
+Return at least 10 specific places to visit (individual attractions, not broad cities).
 For each place_to_visit include a \"categories\" array containing any of: Nature, Culture, Adventure, Relaxation, Food & Drink.
 
 Use this exact schema:
