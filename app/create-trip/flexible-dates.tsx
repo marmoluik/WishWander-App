@@ -80,7 +80,22 @@ const FlexibleDates = () => {
 
       const searchUrl = `https://api.travelpayouts.com/v2/prices/month-matrix?origin=${originAirport.code}&destination=${arrival.code}&token=${tpToken}&currency=usd`;
       const flightRes = await fetch(searchUrl);
-      const flightJson = await flightRes.json();
+      if (!flightRes.ok) {
+        console.error("flexible search failed", await flightRes.text());
+        Alert.alert("Search failed. Please try again");
+        setLoading(false);
+        return;
+      }
+      const flightText = await flightRes.text();
+      let flightJson: any;
+      try {
+        flightJson = JSON.parse(flightText);
+      } catch (err) {
+        console.error("flexible search failed", err);
+        Alert.alert("Search failed. Please try again");
+        setLoading(false);
+        return;
+      }
       const flights = Array.isArray(flightJson.data)
         ? flightJson.data
         : Object.values(flightJson.data || {});

@@ -20,6 +20,7 @@ import {
   StoredItinerary,
 } from "@/context/ItineraryContext";
 import HeaderLogo from "@/components/HeaderLogo";
+import { registerTripMonitor } from "@/services/tripMonitor";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -59,6 +60,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
+      registerTripMonitor();
     }
   }, [loaded]);
 
