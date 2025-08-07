@@ -17,6 +17,7 @@ import {
   generateHotelLink,
   fetchCheapestFlights,
 } from "@/utils/travelpayouts";
+import { fetchFlightEmissions } from "@/utils/emissions";
 
 const DEFAULT_IMAGE_URL =
   "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?q=80&w=2071&auto=format&fit=crop";
@@ -46,6 +47,7 @@ const Discover = () => {
   const [loadingFlights, setLoadingFlights] = useState(false);
   const hotelListRef = useRef<FlatList<any>>(null);
   const [hotelIndex, setHotelIndex] = useState(0);
+  const [flightEmissionKg, setFlightEmissionKg] = useState<number | null>(null);
 
   const fetchPlaceImage = async (placeName: string) => {
     try {
@@ -111,6 +113,19 @@ const Discover = () => {
       );
     }
   }, [tripData, tripPlan]);
+
+  const loadFlightEmission = async () => {
+    const { origin, destination } = getFlightCodes();
+    if (!origin || !destination) return;
+    const grams = await fetchFlightEmissions(origin, destination);
+    if (grams != null) setFlightEmissionKg(grams / 1000);
+  };
+
+  useEffect(() => {
+    if (parsedTripPlan?.trip_plan?.flight_details) {
+      loadFlightEmission();
+    }
+  }, [parsedTripPlan]);
 
   const filteredPlaces =
     parsedTripPlan?.trip_plan?.places_to_visit?.filter((p: any) =>
@@ -290,6 +305,11 @@ const Discover = () => {
                 Price:{" "}
                 {parsedTripPlan.trip_plan.flight_details.price || "N/A"}
               </Text>
+              {flightEmissionKg != null && (
+                <Text className="font-outfit text-text-primary">
+                  Est. CO₂: {flightEmissionKg.toFixed(1)} kg
+                </Text>
+              )}
               {parsedTripPlan.trip_plan.flight_details.booking_url?.startsWith(
                 "http"
               ) && (
