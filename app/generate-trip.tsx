@@ -14,6 +14,8 @@ import { auth, db } from "@/config/FirebaseConfig";
 import {
   generateFlightLink,
   fetchFlightInfo,
+  generateHotelLink,
+  generatePoiLink,
 } from "@/utils/travelpayouts";
 
 const formatDate = (value: any) => {
@@ -54,6 +56,7 @@ export default function GenerateTrip() {
       const originAirport = tripData.find((item) => item.originAirport)?.originAirport;
 
       const startDateStr = formatDate(dates?.startDate);
+      const endDateStr = formatDate(dates?.endDate);
 
       // Compute totals
       const totalDays = dates?.totalNumberOfDays || 0;
@@ -108,11 +111,12 @@ export default function GenerateTrip() {
         const cleanedHotels = (hotels || [])
           .filter(
             (h: any) =>
-              h?.name &&
-              h?.booking_url &&
-              h.booking_url.startsWith("http") &&
-              !/accommodation|option/i.test(h.name)
+              h?.name && !/accommodation|option/i.test(h.name)
           )
+          .map((h: any) => ({
+            ...h,
+            booking_url: generateHotelLink(h.name),
+          }))
           .slice(0, 10);
 
         const places =
@@ -131,6 +135,10 @@ export default function GenerateTrip() {
                 .toLowerCase()
                 .includes((locationInfo?.name || "").toLowerCase())
           )
+          .map((p: any) => ({
+            ...p,
+            booking_url: generatePoiLink(p.name),
+          }))
           .slice(0, 10);
 
         const filledFlight = {
@@ -199,7 +207,7 @@ export default function GenerateTrip() {
         const hotelOpts = tripPlan?.hotel?.options;
         if (
           !Array.isArray(hotelOpts) ||
-          hotelOpts.length < 5 ||
+          hotelOpts.length === 0 ||
           hotelOpts.some((h: any) => !h?.name)
         ) {
           missing.push("hotel options");
@@ -208,7 +216,7 @@ export default function GenerateTrip() {
         const places = tripPlan?.places_to_visit;
         if (
           !Array.isArray(places) ||
-          places.length < 5 ||
+          places.length === 0 ||
           places.some((p: any) => !p?.name)
         ) {
           missing.push("places to visit");
@@ -250,7 +258,8 @@ export default function GenerateTrip() {
             parsed.trip_plan.flight_details.booking_url = generateFlightLink(
               originAirport.code,
               arrival.code,
-              startDateStr || ""
+              startDateStr || "",
+              endDateStr || undefined
             );
             const info = await fetchFlightInfo(
               originAirport.code,

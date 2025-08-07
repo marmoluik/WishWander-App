@@ -6,7 +6,7 @@ import CustomButton from "@/components/CustomButton";
 import { Link, router } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/config/FirebaseConfig";
-import DummyLogin from "@/components/DummyLogin";
+import SocialLogin from "@/components/SocialLogin";
 
 export default function SignIn() {
   const [form, setForm] = useState({
@@ -97,7 +97,7 @@ export default function SignIn() {
             disabled={isLoading}
           />
 
-          <DummyLogin />
+          <SocialLogin />
 
           <Link
             href="/(auth)/sign-up"

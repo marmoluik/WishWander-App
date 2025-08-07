@@ -65,12 +65,17 @@ export const fetchCheapestFlights = async (
     );
     const json = await res.json();
     const flights = json?.data || [];
-    return flights.map((f: any) => ({
-      airline: f.airline || "",
-      flight_number: f.flight_number || "",
-      price: f.price || f.value || "",
-      booking_url: generateFlightLink(origin, destination, departDate),
-    }));
+    const marker = getTravelpayoutsMarker();
+    return flights
+      .map((f: any) => ({
+        airline: f.airline || "",
+        flight_number: f.flight_number || "",
+        price: f.price || f.value || "",
+        booking_url: f.link
+          ? `https://tp.media/r?campaign_id=100&marker=${marker}&p=4114&sub_id=ww&trs=446474&u=${encodeURIComponent(`https://www.aviasales.com${f.link}`)}`
+          : generateFlightLink(origin, destination, departDate),
+      }))
+      .sort((a, b) => Number(a.price) - Number(b.price));
   } catch (e) {
     console.error("cheapest flights fetch failed", e);
   }
