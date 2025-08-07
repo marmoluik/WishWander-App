@@ -36,7 +36,7 @@ export default function MyTrip() {
     setUserTrips([]);
     const q = query(
       collection(db, "UserTrips"),
-      where("userEmail", "==", user.email)
+      where("userId", "==", user.uid)
     );
     const querySnapshot = await getDocs(q);
 
