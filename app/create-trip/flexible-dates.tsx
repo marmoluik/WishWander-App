@@ -88,13 +88,19 @@ const FlexibleDates = () => {
         .map((f: any) => ({
           start: f.depart_date,
           end: f.return_date,
-          price: `${f.value} ${flightJson.currency || "USD"}`,
+          priceNum: f.value,
         }))
         .filter((r: any) => {
           const diff = moment(r.end).diff(moment(r.start), "days");
           return diff >= nightsFrom && diff <= nightsTo;
         })
-        .slice(0, 10);
+        .sort((a: any, b: any) => a.priceNum - b.priceNum)
+        .slice(0, 10)
+        .map((r: any) => ({
+          start: r.start,
+          end: r.end,
+          price: `${r.priceNum} ${flightJson.currency || "USD"}`,
+        }));
       setResults(parsed);
     } catch (e) {
       console.error("flexible search failed", e);
