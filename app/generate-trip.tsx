@@ -281,7 +281,7 @@ export default function GenerateTrip() {
       // Save the entire parsed response so downstream screens receive trip_plan
       const docId = Date.now().toString();
       if (db && user) {
-        await setDoc(doc(db, "UserTrips", docId), {
+        await setDoc(doc(db, "UserTrips", user.uid, "trips", docId), {
           userEmail: user.email,
           tripPlan: parsed,
           tripData: JSON.stringify(tripData),
@@ -319,15 +319,12 @@ export default function GenerateTrip() {
       ) : (
         <>
           <Text className="font-outfit-bold text-3xl text-center">
-            Please Wait...
-          </Text>
-          <Text className="font-outfit-medium text-xl text-center mt-10">
             Generating your itinerary...
           </Text>
 
           <Image
             source={require("@/assets/images/wishwander_loading.gif")}
-            className="w-96 h-96"
+            className="w-96 h-96 mt-10"
           />
 
           <Text className="font-outfit text-text-primary text-center mt-10">

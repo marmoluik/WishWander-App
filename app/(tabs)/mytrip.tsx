@@ -8,14 +8,7 @@ import {
 import React, { useEffect, useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import StartNewTripCard from "@/components/MyTrips/StartNewTripCard";
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { auth, db } from "@/config/FirebaseConfig";
 import UserTripList from "@/components/MyTrips/UserTripList";
 import { useRouter } from "expo-router";
@@ -34,11 +27,8 @@ export default function MyTrip() {
     if (!db || !user) return;
     setLoading(true);
     setUserTrips([]);
-    const q = query(
-      collection(db, "UserTrips"),
-      where("userEmail", "==", user.email)
-    );
-    const querySnapshot = await getDocs(q);
+    const tripCollection = collection(db, "UserTrips", user.uid, "trips");
+    const querySnapshot = await getDocs(tripCollection);
 
     querySnapshot.forEach((docSnap) => {
       const data = docSnap.data();
@@ -55,10 +45,10 @@ export default function MyTrip() {
   };
 
   const deleteTrip = async (id: string) => {
-    if (!db || !id) return;
+    if (!db || !id || !user) return;
     setLoading(true);
     try {
-      await deleteDoc(doc(db, "UserTrips", id));
+      await deleteDoc(doc(db, "UserTrips", user.uid, "trips", id));
       setUserTrips((prev) => prev.filter((trip) => trip.id !== id));
     } catch (e) {
       console.error("failed to delete trip", e);
