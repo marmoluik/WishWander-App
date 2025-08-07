@@ -301,7 +301,7 @@ export default function GenerateTrip() {
           </Text>
 
           <Image
-            source={require("@/assets/images/loading.gif")}
+            source={require("@/assets/images/wishwander_loading.gif")}
             className="w-96 h-96"
           />
 
