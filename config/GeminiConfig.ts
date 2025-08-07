@@ -30,9 +30,10 @@ const defaultGenerationConfig = {
  */
 export function startChatSession(
   history: Array<{ role: 'user' | 'model'; parts: { text: string }[] }>,
-  modelName: string = 'gemini-1.5-flash'
+  modelName: string = 'gemini-1.5-flash',
+  tools?: { functionDeclarations: any[] }
 ) {
-  const model = genAI.getGenerativeModel({ model: modelName });
+  const model = genAI.getGenerativeModel({ model: modelName, tools });
   return model.startChat({
     generationConfig: defaultGenerationConfig,
     history,
