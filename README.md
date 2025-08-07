@@ -48,6 +48,7 @@ https://drive.google.com/file/d/1UbQjPsd1CdqOqducUJLfNspNC3GU2N6Z/view?usp=shari
 - AI-Powered Custom Itinerary Generation
 - Smart Hotel Recommendations
 - Flight Details and Booking Links
+- CO₂ Emission Estimates for Flights
 - Points of Interest Discovery
 - Google Places Integration for Destination Search
 - Direct Google Maps Integration for Navigation
@@ -82,6 +83,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
    EXPO_PUBLIC_TRAVELPAYOUTS_MARKER=your_travelpayouts_marker
    EXPO_PUBLIC_TRAVELPAYOUTS_TOKEN=your_travelpayouts_token
+   EXPO_PUBLIC_TRAVEL_IMPACT_API_KEY=your_travel_impact_model_api_key
    ```
 
    The `GOOGLE_PLACES_API_KEY` and `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` should be the same key with the Places and Maps APIs enabled for search and photos.
