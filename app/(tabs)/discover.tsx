@@ -222,7 +222,7 @@ const Discover = () => {
                   {parsedTripPlan.trip_plan.flight_details.departure_time}
                 </Text>
               </View>
-              <Ionicons name="airplane" size={24} color="#7C3AED" />
+              <Ionicons name="airplane" size={24} color="#9C00FF" />
               <View className="flex-1 pl-2 items-end">
                 <Text
                   className="font-outfit-bold text-lg text-right"
@@ -293,7 +293,7 @@ const Discover = () => {
                   <Ionicons
                     name="chevron-back"
                     size={24}
-                    color="#7C3AED"
+                    color="#9C00FF"
                   />
                 </TouchableOpacity>
               )}
@@ -348,7 +348,7 @@ const Discover = () => {
                   <Ionicons
                     name="chevron-forward"
                     size={24}
-                    color="#7C3AED"
+                    color="#9C00FF"
                   />
                 </TouchableOpacity>
               )}
@@ -435,7 +435,7 @@ const Discover = () => {
                   <Ionicons
                     name={isSelected ? "checkmark" : "add"}
                     size={20}
-                    color={isSelected ? "#ffffff" : "#7C3AED"}
+                    color={isSelected ? "#ffffff" : "#9C00FF"}
                   />
                 </TouchableOpacity>
                 <Text className="font-outfit-bold text-lg">{place.name}</Text>
