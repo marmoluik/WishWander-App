@@ -30,7 +30,7 @@ const ReviewTrip = () => {
   ) => (
     <View className="flex-row items-center justify-between bg-background p-4 rounded-xl mb-4 shadow-sm border border-primary">
       <View className="flex-row items-center flex-1">
-        <View className="bg-secondary p-3 rounded-full">{icon}</View>
+        <View className="bg-background p-3 rounded-full">{icon}</View>
         <View className="ml-4 flex-1">
           <Text className="text-text-primary text-sm font-outfit">{title}</Text>
           <Text className="text-lg font-outfit-bold">{value}</Text>

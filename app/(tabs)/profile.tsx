@@ -25,13 +25,13 @@ export default function Profile() {
       <Text className="text-3xl font-outfit-bold mb-8">Profile</Text>
 
       {/* User Info Section */}
-      <View className="bg-secondary p-6 rounded-xl mb-8">
+      <View className="bg-background p-6 rounded-xl mb-8 border border-primary">
         <View className="flex-row items-center mb-4">
           <View className="bg-primary p-4 rounded-full">
             <Ionicons name="person" size={32} color="#F9F5FF" />
           </View>
           <View className="ml-4">
-            <Text className="text-xl font-outfit-bold">{user?.email}</Text>
+            <Text className="text-xl font-outfit-bold text-text-primary">{user?.email}</Text>
             <Text className="text-text-primary font-outfit">
               Member since{" "}
               {user?.metadata?.creationTime

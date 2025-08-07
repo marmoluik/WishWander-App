@@ -65,8 +65,8 @@ const SelectDates = () => {
             onDateChange={onDateChange}
             selectedDayColor="#9C00FF"
             selectedDayTextColor="#ffffff"
-            todayBackgroundColor="#22C55E"
-            todayTextStyle={{ color: "#9C00FF" }}
+            todayBackgroundColor="#B347FF"
+            todayTextStyle={{ color: "#FFFFFF" }}
             textStyle={{
               fontFamily: "outfit",
               color: "#1E1B4B",
