@@ -1,7 +1,13 @@
+const cache = new Map<string, number>();
+
 export const fetchFlightEmissions = async (
   origin: string,
-  destination: string
+  destination: string,
+  airline?: string,
+  flightNumber?: string
 ): Promise<number | null> => {
+  const key = `${origin}-${destination}-${airline ?? ""}-${flightNumber ?? ""}`;
+  if (cache.has(key)) return cache.get(key)!;
   try {
     const apiKey = process.env.EXPO_PUBLIC_TRAVEL_IMPACT_API_KEY;
     if (!apiKey) return null;
@@ -13,7 +19,14 @@ export const fetchFlightEmissions = async (
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          flights: [{ origin, destination }],
+          flights: [
+            {
+              origin,
+              destination,
+              ...(airline ? { operatingCarrierCode: airline } : {}),
+              ...(flightNumber ? { flightNumber } : {}),
+            },
+          ],
         }),
       }
     );
@@ -21,7 +34,11 @@ export const fetchFlightEmissions = async (
     const grams =
       json?.flights?.[0]?.emissionsGramsCO2e ??
       json?.flightEmissions?.[0]?.emissionsGramsCO2e;
-    return typeof grams === "number" ? grams : null;
+    if (typeof grams === "number") {
+      cache.set(key, grams);
+      return grams;
+    }
+    return null;
   } catch (e) {
     console.error("emissions fetch failed", e);
     return null;
