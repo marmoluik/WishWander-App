@@ -6,7 +6,7 @@ import CustomButton from "@/components/CustomButton";
 import { Link, router } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/config/FirebaseConfig";
-import OAuth from "@/components/OAuth";
+import DummyLogin from "@/components/DummyLogin";
 
 export default function SignUp() {
   const [form, setForm] = useState({
@@ -95,14 +95,14 @@ export default function SignUp() {
             value={form.password}
             onChangeText={(value) => setForm({ ...form, password: value })}
           />
-            <CustomButton
-              title={isLoading ? "Creating Account..." : "Sign Up"}
-              onPress={onSignUpPress}
-              className="mt-6"
-              disabled={isLoading}
-            />
+          <CustomButton
+            title={isLoading ? "Creating Account..." : "Sign Up"}
+            onPress={onSignUpPress}
+            className="mt-6"
+            disabled={isLoading}
+          />
 
-            <OAuth />
+          <DummyLogin />
           <Link
             href="/(auth)/sign-in"
             className="text-lg text-center mt-10 font-outfit-medium"
