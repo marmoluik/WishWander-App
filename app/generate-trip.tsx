@@ -11,6 +11,7 @@ import { useRouter } from "expo-router";
 import { doc, setDoc } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
 import { auth, db } from "@/config/FirebaseConfig";
+import { Itinerary, Booking } from "@/types/itinerary";
 import {
   generateFlightLink,
   fetchFlightInfo,
@@ -283,10 +284,43 @@ export default function GenerateTrip() {
       // Save the entire parsed response so downstream screens receive trip_plan
       const docId = Date.now().toString();
       if (db && user) {
+        const bookings: Booking[] = [];
+        const fd = parsed.trip_plan.flight_details;
+        if (fd) {
+          bookings.push({
+            type: "flight",
+            provider: fd.airline || "",
+            reference: fd.flight_number || "",
+            url: fd.booking_url || "",
+          });
+        }
+        const firstHotel = parsed.trip_plan.hotel?.options?.[0];
+        if (firstHotel) {
+          bookings.push({
+            type: "hotel",
+            provider: firstHotel.name,
+            url: firstHotel.booking_url,
+          });
+        }
+        const itinerary: Itinerary = {
+          id: docId,
+          userId: user.uid,
+          destination: {
+            city: locationInfo?.name || "",
+            country: locationInfo?.country || "",
+          },
+          startDate: startDateStr,
+          endDate: endDateStr,
+          bookings,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        };
+
         await setDoc(doc(db, "UserTrips", user.uid, "trips", docId), {
           userEmail: user.email,
           tripPlan: parsed,
           tripData: JSON.stringify(tripData),
+          itinerary,
           docId,
         });
         router.push("/mytrip");
