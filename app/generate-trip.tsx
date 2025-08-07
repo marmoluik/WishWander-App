@@ -283,7 +283,6 @@ export default function GenerateTrip() {
       if (db && user) {
         await setDoc(doc(db, "UserTrips", docId), {
           userEmail: user.email,
-          userId: user.uid,
           tripPlan: parsed,
           tripData: JSON.stringify(tripData),
           docId,
@@ -319,7 +318,10 @@ export default function GenerateTrip() {
         </Text>
       ) : (
         <>
-          <Text className="font-outfit-medium text-xl text-center">
+          <Text className="font-outfit-bold text-3xl text-center">
+            Please Wait...
+          </Text>
+          <Text className="font-outfit-medium text-xl text-center mt-10">
             Generating your itinerary...
           </Text>
 
