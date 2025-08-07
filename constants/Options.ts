@@ -53,8 +53,8 @@ export const budgetOptions = [
 
 export const AI_PROMPT = `Return only JSON. Generate a trip plan for Location "{location}" lasting {totalDays} day(s) and {totalNights} night(s) for {travelers} with a {budget} budget.
 Provide exact flight details including airline name, flight number and price.
-Return exactly 10 specific hotel options with real hotel names and addresses.
-Return at least 10 specific places to visit (individual attractions, not broad cities).
+Return exactly 10 specific hotel options with real hotel names and addresses. Include a booking_url for each hotel and only return hotels that can be booked online.
+Return at least 10 specific places to visit (individual attractions, not broad cities). If tickets can be purchased online include a booking_url for the place, otherwise omit the field.
 For each place_to_visit include a \"categories\" array containing any of: Nature, Culture, Adventure, Relaxation, Food & Drink.
 
 Use this exact schema:
@@ -85,7 +85,8 @@ Use this exact schema:
           "image_url": "",
           "geo_coordinates": { "latitude": 0, "longitude": 0 },
           "rating": "",
-          "description": ""
+          "description": "",
+          "booking_url": ""
         }
       ]
     },
@@ -97,7 +98,8 @@ Use this exact schema:
         "geo_coordinates": { "latitude": 0, "longitude": 0 },
         "ticket_price": "",
         "time_to_travel": "",
-        "categories": []
+        "categories": [],
+        "booking_url": ""
       }
     ]
   }

@@ -13,8 +13,6 @@ import { FirebaseError } from "firebase/app";
 import { auth, db } from "@/config/FirebaseConfig";
 import {
   generateFlightLink,
-  generateHotelLink,
-  generatePoiLink,
   fetchFlightInfo,
 } from "@/utils/travelpayouts";
 
@@ -110,13 +108,12 @@ export default function GenerateTrip() {
         const cleanedHotels = (hotels || [])
           .filter(
             (h: any) =>
-              h?.name && !/accommodation|option/i.test(h.name)
+              h?.name &&
+              h?.booking_url &&
+              h.booking_url.startsWith("http") &&
+              !/accommodation|option/i.test(h.name)
           )
-          .slice(0, 10)
-          .map((h: any) => ({
-            ...h,
-            booking_url: generateHotelLink(`${h.name} ${locationInfo?.name || ""}`),
-          }));
+          .slice(0, 10);
 
         const places =
           root.places_to_visit ||
@@ -134,11 +131,7 @@ export default function GenerateTrip() {
                 .toLowerCase()
                 .includes((locationInfo?.name || "").toLowerCase())
           )
-          .slice(0, 10)
-          .map((p: any) => ({
-            ...p,
-            booking_url: generatePoiLink(`${p.name} ${locationInfo?.name || ""}`),
-          }));
+          .slice(0, 10);
 
         const filledFlight = {
           departure_city: originAirport?.name || flight?.departure_city || "TBD",

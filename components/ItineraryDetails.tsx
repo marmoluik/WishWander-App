@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import moment from "moment";
 import CustomButton from "@/components/CustomButton";
 import { DayPlan } from "@/context/ItineraryContext";
-import { generateHotelLink, generatePoiLink } from "@/utils/travelpayouts";
+import { generateHotelLink } from "@/utils/travelpayouts";
 
 interface Props {
   plan: DayPlan[];
@@ -156,31 +156,41 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                         Optional Activities
                       </Text>
                     </View>
-                    {d.optional_activities.map((act, i) => {
-                      const bookingUrl = generatePoiLink(act.name);
-                      return (
-                        <View
-                          key={i}
-                          className="mb-2 ml-6 flex-row items-center"
+                    {d.optional_activities.map((act, i) => (
+                      <View
+                        key={i}
+                        className="mb-2 ml-6 flex-row items-center"
+                      >
+                        <Ionicons
+                          name={activityIcon(act.name) as any}
+                          size={20}
+                          color="#9C00FF"
+                          style={{ marginRight: 6 }}
+                        />
+                        <TouchableOpacity
+                          onPress={() =>
+                            Linking.openURL(
+                              `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                                act.name
+                              )}`
+                            )
+                          }
+                          className="flex-1"
                         >
-                          <Ionicons
-                            name={activityIcon(act.name) as any}
-                            size={20}
-                            color="#9C00FF"
-                            style={{ marginRight: 6 }}
-                          />
-                          <View className="flex-1">{linkifyText(act.name)}</View>
+                          <Text className="text-text-primary">{act.name}</Text>
+                        </TouchableOpacity>
+                        {act.booking_url?.startsWith("http") && (
                           <TouchableOpacity
-                            onPress={() => Linking.openURL(bookingUrl)}
+                            onPress={() => Linking.openURL(act.booking_url)}
                             className="ml-2 bg-primary px-3 py-1 rounded-full"
                           >
                             <Text className="font-outfit-bold text-white text-sm">
                               Book
                             </Text>
                           </TouchableOpacity>
-                        </View>
-                      );
-                    })}
+                        )}
+                      </View>
+                    ))}
                   </View>
                 ) : null}
                 {d.travel_tips ? (

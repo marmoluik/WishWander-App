@@ -12,7 +12,11 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
 import { interestCategories } from "@/constants/Options";
-import { generateHotelLink, generatePoiLink } from "@/utils/travelpayouts";
+import {
+  generateFlightLink,
+  generateHotelLink,
+  fetchCheapestFlights,
+} from "@/utils/travelpayouts";
 
 const DEFAULT_IMAGE_URL =
   "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?q=80&w=2071&auto=format&fit=crop";
@@ -38,6 +42,8 @@ const Discover = () => {
   const [parsedTripPlan, setParsedTripPlan] = useState<any>(null);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [selectedPlaces, setSelectedPlaces] = useState<any[]>([]);
+  const [flightOptions, setFlightOptions] = useState<any[]>([]);
+  const [loadingFlights, setLoadingFlights] = useState(false);
   const hotelListRef = useRef<FlatList<any>>(null);
   const [hotelIndex, setHotelIndex] = useState(0);
 
@@ -120,7 +126,9 @@ const Discover = () => {
   );
 
   const hotelOptions =
-    parsedTripPlan?.trip_plan?.hotel?.options?.slice(0, 10) || [];
+    parsedTripPlan?.trip_plan?.hotel?.options
+      ?.filter((h: any) => h.booking_url?.startsWith("http"))
+      .slice(0, 10) || [];
   const ITEM_WIDTH = 304;
   const scrollHotels = (dir: number) => {
     const newIndex = Math.min(
@@ -162,6 +170,35 @@ const Discover = () => {
         ? prev.filter((i) => i !== interest)
         : [...prev, interest]
     );
+  };
+
+  const getFlightCodes = () => {
+    const origin = parsedTripData?.find((i: any) => i.originAirport)?.originAirport?.code;
+    const booking = parsedTripPlan?.trip_plan?.flight_details?.booking_url;
+    if (booking) {
+      try {
+        const tp = new URL(booking);
+        const search = tp.searchParams.get("u");
+        if (search) {
+          const decoded = new URL(decodeURIComponent(search));
+          return {
+            origin: decoded.searchParams.get("origin") || origin,
+            destination: decoded.searchParams.get("destination") || undefined,
+          };
+        }
+      } catch {}
+    }
+    return { origin, destination: undefined };
+  };
+
+  const loadCheapestFlights = async () => {
+    const { origin, destination } = getFlightCodes();
+    const depart = parsedTripPlan?.trip_plan?.flight_details?.departure_date;
+    if (!origin || !destination || !depart) return;
+    setLoadingFlights(true);
+    const offers = await fetchCheapestFlights(origin, destination, depart);
+    setFlightOptions(offers);
+    setLoadingFlights(false);
   };
 
   const togglePlace = (place: any) => {
@@ -255,7 +292,7 @@ const Discover = () => {
               </Text>
               {parsedTripPlan.trip_plan.flight_details.booking_url?.startsWith(
                 "http"
-              ) ? (
+              ) && (
                 <CustomButton
                   title="Book Flight"
                   onPress={() =>
@@ -265,10 +302,47 @@ const Discover = () => {
                   }
                   className="mt-4"
                 />
-              ) : (
+              )}
+              {loadingFlights ? (
                 <Text className="font-outfit text-text-primary mt-4">
-                  No flight offer available.
+                  Loading flights...
                 </Text>
+              ) : flightOptions.length === 0 ? (
+                <CustomButton
+                  title="Show 10 Cheapest Flights"
+                  onPress={loadCheapestFlights}
+                  className="mt-4"
+                />
+              ) : (
+                <>
+                  {flightOptions.map((f, i) => (
+                    <View key={i} className="mt-4">
+                      <Text className="font-outfit text-text-primary">
+                        {`${f.airline} ${f.flight_number} - $${f.price}`}
+                      </Text>
+                      <CustomButton
+                        title="Book"
+                        onPress={() => Linking.openURL(f.booking_url)}
+                        className="mt-2"
+                      />
+                    </View>
+                  ))}
+                  <CustomButton
+                    title="See More Flights"
+                    onPress={() => {
+                      const { origin, destination } = getFlightCodes();
+                      const depart =
+                        parsedTripPlan.trip_plan.flight_details.departure_date;
+                      if (origin && destination && depart)
+                        Linking.openURL(
+                          generateFlightLink(origin, destination, depart)
+                        );
+                    }}
+                    bgVariant="outline"
+                    textVariant="primary"
+                    className="mt-4"
+                  />
+                </>
               )}
             </View>
           </View>
@@ -323,22 +397,24 @@ const Discover = () => {
                     </Text>
                     <CustomButton
                       title="View on Map"
-                      onPress={() => handleOpenMap(item.address)}
+                      onPress={() =>
+                        handleOpenMap(
+                          item.address,
+                          item.geo_coordinates?.latitude,
+                          item.geo_coordinates?.longitude
+                        )
+                      }
                       className="mt-4"
                       bgVariant="outline"
                       textVariant="primary"
                     />
-                    <CustomButton
-                      title="Book Hotel"
-                      onPress={() =>
-                        Linking.openURL(
-                          generateHotelLink(
-                            `${item.name} ${parsedTripPlan.trip_plan.location}`
-                          )
-                        )
-                      }
-                      className="mt-2"
-                    />
+                    {item.booking_url?.startsWith("http") && (
+                      <CustomButton
+                        title="Book Hotel"
+                        onPress={() => Linking.openURL(item.booking_url)}
+                        className="mt-2"
+                      />
+                    )}
                   </View>
                 )}
                 showsHorizontalScrollIndicator={false}
@@ -452,24 +528,22 @@ const Discover = () => {
                   title="View on Map"
                   onPress={() =>
                     handleOpenMap(
-                      `${place.name}, ${parsedTripPlan.trip_plan.location}`
+                      undefined,
+                      place.geo_coordinates?.latitude,
+                      place.geo_coordinates?.longitude
                     )
                   }
                   className="mt-4"
                   bgVariant="outline"
                   textVariant="primary"
                 />
-                <CustomButton
-                  title="Book Tickets"
-                  onPress={() =>
-                    Linking.openURL(
-                      generatePoiLink(
-                        `${place.name} ${parsedTripPlan.trip_plan.location}`
-                      )
-                    )
-                  }
-                  className="mt-2"
-                />
+                {place.booking_url?.startsWith("http") && (
+                  <CustomButton
+                    title="Book Tickets"
+                    onPress={() => Linking.openURL(place.booking_url)}
+                    className="mt-2"
+                  />
+                )}
               </View>
             );
           })

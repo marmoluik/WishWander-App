@@ -22,6 +22,10 @@ export interface FlightInfo {
   price: string | number;
 }
 
+export interface FlightOffer extends FlightInfo {
+  booking_url: string;
+}
+
 export const fetchFlightInfo = async (
   origin: string,
   destination: string,
@@ -46,6 +50,31 @@ export const fetchFlightInfo = async (
     console.error("flight info fetch failed", e);
   }
   return null;
+};
+
+export const fetchCheapestFlights = async (
+  origin: string,
+  destination: string,
+  departDate: string
+): Promise<FlightOffer[]> => {
+  const token = process.env.EXPO_PUBLIC_TRAVELPAYOUTS_TOKEN;
+  if (!token) return [];
+  try {
+    const res = await fetch(
+      `https://api.travelpayouts.com/aviasales/v3/prices_for_dates?origin=${origin}&destination=${destination}&departure_at=${departDate}&limit=10&token=${token}&currency=usd`
+    );
+    const json = await res.json();
+    const flights = json?.data || [];
+    return flights.map((f: any) => ({
+      airline: f.airline || "",
+      flight_number: f.flight_number || "",
+      price: f.price || f.value || "",
+      booking_url: generateFlightLink(origin, destination, departDate),
+    }));
+  } catch (e) {
+    console.error("cheapest flights fetch failed", e);
+  }
+  return [];
 };
 
 export const generateHotelLink = (
@@ -80,6 +109,7 @@ export const generatePoiLink = (query: string) => {
 export default {
   generateFlightLink,
   fetchFlightInfo,
+  fetchCheapestFlights,
   generateHotelLink,
   generatePoiLink,
 };
