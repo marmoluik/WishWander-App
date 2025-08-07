@@ -33,11 +33,11 @@ const SelectTraveler = () => {
       onPress={() => handleSelectTraveler(item)}
       className="flex-row items-center p-4 bg-background rounded-xl mb-4 shadow-sm border border-primary"
     >
-      <View className="bg-secondary p-3 rounded-full">
+      <View className="bg-background p-3 rounded-full">
         {item.icon === "person" || item.icon === "people-circle" ? (
-          <Ionicons name={item.icon as any} size={24} color="#9C00FF" />
+          <Ionicons name={item.icon as any} size={24} color="#1E1B4B" />
         ) : (
-          <MaterialIcons name={item.icon as any} size={24} color="#9C00FF" />
+          <MaterialIcons name={item.icon as any} size={24} color="#1E1B4B" />
         )}
       </View>
       <View className="flex-1 ml-4">

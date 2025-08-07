@@ -150,11 +150,13 @@ const styles = StyleSheet.create({
   autocomplete: { flex: 1, padding: 16 },
   input: {
     height: 54,
-    backgroundColor: "#F9F5FF",
+    backgroundColor: "#FFFFFF",
     borderRadius: 999,
     paddingHorizontal: 16,
     fontSize: 15,
     marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "#9C00FF",
   },
   loading: { textAlign: "center", marginVertical: 8 },
   row: {

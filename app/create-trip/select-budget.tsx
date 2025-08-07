@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import React, { useContext } from "react";
 import { budgetOptions } from "@/constants/Options";
-import { router, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { CreateTripContext } from "@/context/CreateTripContext";
 
 const SelectBudget = () => {
@@ -28,7 +28,7 @@ const SelectBudget = () => {
       onPress={() => handleSelectBudget(item)}
       className="flex-row items-center p-4 bg-background rounded-xl mb-4 shadow-sm border border-primary"
     >
-      <View className="bg-secondary p-3 rounded-full">
+      <View className="bg-background p-3 rounded-full">
         <Text className="text-2xl">{item.icon}</Text>
       </View>
       <View className="flex-1 ml-4">
