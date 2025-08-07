@@ -64,7 +64,7 @@ export default function SignUp() {
       <View className="flex-1 bg-background">
         <View className="relative w-full h-72">
           <Image
-            source={require("@/assets/images/avent-sign.jpg")}
+            source={require("@/assets/images/wishwander-sign.jpg")}
             className="z-0 w-full h-72"
           />
           <Text className="text-3xl font-outfit-bold absolute bottom-0 left-5">

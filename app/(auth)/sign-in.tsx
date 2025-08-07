@@ -66,7 +66,7 @@ export default function SignIn() {
       <View className="flex-1 bg-background">
         <View className="relative w-full h-72">
           <Image
-            source={require("@/assets/images/avent-sign.jpg")}
+            source={require("@/assets/images/wishwander-sign.jpg")}
             className="z-0 w-full h-72"
           />
           <Text className="text-3xl font-outfit-bold absolute bottom-0 left-5">
@@ -103,7 +103,7 @@ export default function SignIn() {
             href="/(auth)/sign-up"
             className="text-lg text-center mt-10 font-outfit-medium"
           >
-            <Text className="">New to Avent? </Text>
+            <Text className="">New to WishWander? </Text>
             <Text className="text-primary">Sign Up</Text>
           </Link>
         </View>

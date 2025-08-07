@@ -1,7 +1,7 @@
-# Avent - AI Travel Planner Mobile App
+# Wishwander - AI Travel Planner Mobile App
 
 <p align="center">
-  <img src="./assets/images/splash.png" alt="Avent Logo" width="200"/>
+  <img src="./assets/images/splash.png" alt="Wishwander Logo" width="200"/>
 </p>
 
 ## 🚀 About
