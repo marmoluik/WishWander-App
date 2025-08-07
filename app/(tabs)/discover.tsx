@@ -187,8 +187,8 @@ const Discover = () => {
       <Text className="text-3xl font-outfit-bold mb-6">Trip Details</Text>
 
       {/* Trip Overview */}
-      <View className="bg-secondary p-4 rounded-xl mb-6">
-        <Text className="font-outfit-bold text-lg mb-2">Trip Overview</Text>
+      <View className="bg-secondary/20 p-4 rounded-xl mb-6">
+        <Text className="font-outfit-bold text-lg mb-2 text-text-primary">Trip Overview</Text>
         <Text className="font-outfit text-text-primary">
           Duration: {parsedTripPlan?.trip_plan?.duration ?? "N/A"}
         </Text>
@@ -385,14 +385,14 @@ const Discover = () => {
                   onPress={() => toggleInterest(cat)}
                   className={`px-3 py-1 m-1 rounded-full border ${
                     selectedInterests.includes(cat)
-                      ? "bg-primary border-primary"
+                      ? "bg-primary/10 border-primary"
                       : "border-secondary"
                   }`}
                 >
                   <Text
                     className={`font-outfit ${
                       selectedInterests.includes(cat)
-                        ? "text-white"
+                        ? "text-primary"
                         : "text-text-primary"
                     }`}
                   >
@@ -416,7 +416,7 @@ const Discover = () => {
                 key={index}
                 className={`p-4 rounded-xl mb-4 border ${
                   isSelected
-                    ? "bg-primary border-primary"
+                    ? "bg-primary/10 border-primary"
                     : "bg-background border-primary"
                 }`}
               >

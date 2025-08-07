@@ -74,12 +74,12 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
               onPress={() =>
                 setCollapsed((prev) => ({ ...prev, [index]: !prev[index] }))
               }
-              className="p-4 bg-secondary rounded-t-xl flex-row justify-between"
+              className="p-4 bg-secondary/20 rounded-t-xl flex-row justify-between"
             >
-              <Text className="font-outfit-bold">
+              <Text className="font-outfit-bold text-text-primary">
                 Day {d.day} - {moment(d.date).format("MMM D, YYYY")}
               </Text>
-              <Text>{collapsed[index] ? "+" : "-"}</Text>
+              <Text className="text-text-primary">{collapsed[index] ? "+" : "-"}</Text>
             </TouchableOpacity>
             {!collapsed[index] && (
               <View className="p-4 space-y-3">
