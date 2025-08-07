@@ -1,12 +1,5 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Animated,
-  Easing,
-  Alert,
-} from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { View, Text, TouchableOpacity, Alert, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -23,7 +16,6 @@ const Itineraries = () => {
   const { selectedPlaces, tripData } = useLocalSearchParams();
   const [loading, setLoading] = useState(false);
   const [currentId, setCurrentId] = useState<string | null>(null);
-  const spinValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (selectedPlaces) {
@@ -32,18 +24,7 @@ const Itineraries = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPlaces]);
 
-  useEffect(() => {
-    if (loading) {
-      Animated.loop(
-        Animated.timing(spinValue, {
-          toValue: 1,
-          duration: 2000,
-          easing: Easing.linear,
-          useNativeDriver: true,
-        })
-      ).start();
-    }
-  }, [loading, spinValue]);
+  // No animation effect needed for custom loader
 
   const generateItinerary = async () => {
     try {
@@ -82,16 +63,15 @@ const Itineraries = () => {
   };
 
   if (loading) {
-    const spin = spinValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: ["0deg", "360deg"],
-    });
     return (
       <SafeAreaView className="flex-1 justify-center items-center">
-        <Animated.View style={{ transform: [{ rotate: spin }] }}>
-          <Ionicons name="document-text" size={64} color="#9C00FF" />
-        </Animated.View>
-        <Text className="font-outfit-medium mt-2 text-text-primary">Generating itinerary...</Text>
+        <Image
+          source={require("@/assets/images/wishwander_loading.gif")}
+          className="w-96 h-96"
+        />
+        <Text className="font-outfit-medium mt-2 text-text-primary">
+          Generating itinerary...
+        </Text>
       </SafeAreaView>
     );
   }
