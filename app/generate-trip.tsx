@@ -2,6 +2,7 @@
 
 import { Text, Image } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
+import JSON5 from "json5";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CreateTripContext } from "@/context/CreateTripContext";
 import { AI_PROMPT } from "@/constants/Options";
@@ -76,10 +77,16 @@ export default function GenerateTrip() {
       // Helper to extract JSON from possible extra text
       const extractJSON = (text: string) => {
         const match = text.match(/\{[\s\S]*\}/);
-        if (match) {
-          return JSON.parse(match[0]);
+        if (!match) {
+          throw new Error("Invalid response format");
         }
-        throw new Error("Invalid response format");
+        const jsonStr = match[0].replace(/```json|```/gi, "");
+        try {
+          return JSON.parse(jsonStr);
+        } catch (_) {
+          // Fallback to JSON5 for more forgiving parsing (handles trailing commas, single quotes, etc.)
+          return JSON5.parse(jsonStr);
+        }
       };
 
       // Normalize various AI response formats into our expected structure
@@ -174,7 +181,12 @@ export default function GenerateTrip() {
             parsed = normalizeTripPlan(extractJSON(rawText));
           } catch (err) {
             console.error("parse error", err);
-            throw new Error("Invalid response format");
+            attempt++;
+            if (attempt >= MAX_RETRIES) {
+              throw new Error("Invalid response format");
+            }
+            await new Promise((res) => setTimeout(res, attempt * 1000));
+            continue; // retry after parse failure
           }
         } catch (err) {
           if (err instanceof Error && err.message.includes("503")) {
@@ -194,7 +206,7 @@ export default function GenerateTrip() {
         const hotelOpts = tripPlan?.hotel?.options;
         if (
           !Array.isArray(hotelOpts) ||
-          hotelOpts.length < 10 ||
+          hotelOpts.length < 5 ||
           hotelOpts.some((h: any) => !h?.name)
         ) {
           missing.push("hotel options");
@@ -203,7 +215,7 @@ export default function GenerateTrip() {
         const places = tripPlan?.places_to_visit;
         if (
           !Array.isArray(places) ||
-          places.length < 10 ||
+          places.length < 5 ||
           places.some((p: any) => !p?.name)
         ) {
           missing.push("places to visit");
