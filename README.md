@@ -18,6 +18,7 @@ A smart travel planning mobile application that leverages AI to create personali
 - User Authentication (Email and Password) with Firebase
 - Database is Firebase's Firestore DB
 - Google Maps API for mapping features
+- Expo Notifications and Background Fetch for monitoring bookings
 
 ## Custom Color Palette
 
@@ -43,6 +44,7 @@ https://drive.google.com/file/d/1UbQjPsd1CdqOqducUJLfNspNC3GU2N6Z/view?usp=shari
 - Interactive Date Selection Calendar
 - Budget-based Trip Planning
 - Real-time Trip Updates
+- Conversational AI travel assistant
 
 ### 🌍 Travel Planning
 - AI-Powered Custom Itinerary Generation
@@ -51,6 +53,7 @@ https://drive.google.com/file/d/1UbQjPsd1CdqOqducUJLfNspNC3GU2N6Z/view?usp=shari
 - Points of Interest Discovery
 - Google Places Integration for Destination Search
 - Direct Google Maps Integration for Navigation
+- Background monitoring for flights and hotels
 
 
 -----------------------------------------------------------------
@@ -82,6 +85,9 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
    EXPO_PUBLIC_TRAVELPAYOUTS_MARKER=your_travelpayouts_marker
    EXPO_PUBLIC_TRAVELPAYOUTS_TOKEN=your_travelpayouts_token
+   FLIGHT_API_KEY=your_flight_api_key
+   HOTEL_API_KEY=your_hotel_api_key
+   CHATGPT_API_KEY=your_chatgpt_api_key
    ```
 
    The `GOOGLE_PLACES_API_KEY` and `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` should be the same key with the Places and Maps APIs enabled for search and photos.
