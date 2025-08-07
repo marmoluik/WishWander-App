@@ -88,9 +88,11 @@ export const generateHotelLink = (
   checkOut?: string
 ) => {
   const marker = getTravelpayoutsMarker();
-  const baseSearch = `https://search.hotellook.com/hotels?destination=${query}${
-    checkIn ? `&checkIn=${checkIn}` : ""
-  }${checkOut ? `&checkOut=${checkOut}` : ""}`;
+  const baseSearch = `https://search.hotellook.com/hotels?destination=${encodeURIComponent(
+    query
+  )}${checkIn ? `&checkIn=${checkIn}` : ""}${
+    checkOut ? `&checkOut=${checkOut}` : ""
+  }`;
   return `https://tp.media/r?campaign_id=101&marker=${marker}&p=4115&sub_id=ww&trs=446474&u=${encodeURIComponent(
     baseSearch
   )}`;
@@ -100,12 +102,12 @@ export const generatePoiLink = (query: string) => {
   const marker = getTravelpayoutsMarker();
   const lower = query.toLowerCase();
   if (lower.includes("cruise") || lower.includes("boat") || lower.includes("sail")) {
-    const base = "https://searadar.com";
+    const base = `https://searadar.com/search?q=${encodeURIComponent(query)}`;
     return `https://tp.media/r?campaign_id=258&marker=${marker}&p=5907&sub_id=ww&trs=446474&u=${encodeURIComponent(
       base
     )}`;
   }
-  const base = "https://welcomepickups.com";
+  const base = `https://welcomepickups.com/search?q=${encodeURIComponent(query)}`;
   return `https://tp.media/r?campaign_id=627&marker=${marker}&p=8919&sub_id=ww&trs=446474&u=${encodeURIComponent(
     base
   )}`;

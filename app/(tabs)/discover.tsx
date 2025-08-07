@@ -18,6 +18,7 @@ import {
   fetchCheapestFlights,
 } from "@/utils/travelpayouts";
 import { fetchFlightEmissions } from "@/utils/emissions";
+import { recordAffiliateClick } from "@/services/affiliate";
 
 const DEFAULT_IMAGE_URL =
   "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?q=80&w=2071&auto=format&fit=crop";
@@ -151,6 +152,11 @@ const Discover = () => {
   const hotelOptions =
     parsedTripPlan?.trip_plan?.hotel?.options
       ?.filter((h: any) => h.booking_url?.startsWith("http"))
+      .sort(
+        (a: any, b: any) =>
+          parseFloat(String(a.price).replace(/[^0-9.]/g, "")) -
+          parseFloat(String(b.price).replace(/[^0-9.]/g, ""))
+      )
       .slice(0, 10) || [];
   const ITEM_WIDTH = 304;
   const scrollHotels = (dir: number) => {
@@ -343,11 +349,12 @@ const Discover = () => {
               ) && (
                 <CustomButton
                   title="Book Flight"
-                  onPress={() =>
+                  onPress={() => {
+                    recordAffiliateClick("flight");
                     Linking.openURL(
                       parsedTripPlan.trip_plan.flight_details.booking_url
-                    )
-                  }
+                    );
+                  }}
                   className="mt-4"
                 />
               )}
@@ -376,6 +383,13 @@ const Discover = () => {
                   />
                   {sortedFlightOptions.map((f, i) => (
                     <View key={i} className="mt-4">
+                      {i === 0 && (
+                        <View className="self-start mb-1 bg-secondary/30 px-2 py-1 rounded-full">
+                          <Text className="text-xs font-outfit-bold text-primary">
+                            {sortByEmission ? "Eco friendly" : "Best deal"}
+                          </Text>
+                        </View>
+                      )}
                       <Text className="font-outfit text-text-primary">
                         {`${f.airline} ${f.flight_number} - $${f.price}`}
                       </Text>
@@ -386,7 +400,10 @@ const Discover = () => {
                       )}
                       <CustomButton
                         title="Book"
-                        onPress={() => Linking.openURL(f.booking_url)}
+                        onPress={() => {
+                          recordAffiliateClick("flight");
+                          Linking.openURL(f.booking_url);
+                        }}
                         className="mt-2"
                       />
                     </View>
@@ -397,10 +414,12 @@ const Discover = () => {
                       const { origin, destination } = getFlightCodes();
                       const depart =
                         parsedTripPlan.trip_plan.flight_details.departure_date;
-                      if (origin && destination && depart)
+                      if (origin && destination && depart) {
+                        recordAffiliateClick("flight");
                         Linking.openURL(
                           generateFlightLink(origin, destination, depart)
                         );
+                      }
                     }}
                     bgVariant="outline"
                     textVariant="primary"
@@ -440,8 +459,13 @@ const Discover = () => {
                 data={hotelOptions}
                 horizontal
                 keyExtractor={(_, i) => i.toString()}
-                renderItem={({ item }) => (
+                renderItem={({ item, index }) => (
                   <View className="w-72 mr-4 bg-background p-4 rounded-xl border border-primary">
+                    {index === 0 && (
+                      <View className="self-start mb-2 bg-secondary/30 px-2 py-1 rounded-full">
+                        <Text className="text-xs font-outfit-bold text-primary">Best deal</Text>
+                      </View>
+                    )}
                     <Image
                       source={{ uri: item.image_url || DEFAULT_IMAGE_URL }}
                       className="w-full h-48 rounded-xl mb-4"
@@ -475,7 +499,10 @@ const Discover = () => {
                     {item.booking_url?.startsWith("http") && (
                       <CustomButton
                         title="Book Hotel"
-                        onPress={() => Linking.openURL(item.booking_url)}
+                        onPress={() => {
+                          recordAffiliateClick("hotel");
+                          Linking.openURL(item.booking_url);
+                        }}
                         className="mt-2"
                       />
                     )}
@@ -495,11 +522,12 @@ const Discover = () => {
             </View>
             <CustomButton
               title="See More Hotels"
-              onPress={() =>
+              onPress={() => {
+                recordAffiliateClick("hotel");
                 Linking.openURL(
                   generateHotelLink(parsedTripPlan.trip_plan.location)
-                )
-              }
+                );
+              }}
               bgVariant="outline"
               textVariant="primary"
               className="mt-4"
@@ -604,7 +632,10 @@ const Discover = () => {
                 {place.booking_url?.startsWith("http") && (
                   <CustomButton
                     title="Book Tickets"
-                    onPress={() => Linking.openURL(place.booking_url)}
+                    onPress={() => {
+                      recordAffiliateClick("poi");
+                      Linking.openURL(place.booking_url);
+                    }}
                     className="mt-2"
                   />
                 )}

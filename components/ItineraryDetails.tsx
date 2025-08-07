@@ -5,6 +5,7 @@ import moment from "moment";
 import CustomButton from "@/components/CustomButton";
 import { DayPlan } from "@/context/ItineraryContext";
 import { generateHotelLink } from "@/utils/travelpayouts";
+import { recordAffiliateClick } from "@/services/affiliate";
 
 interface Props {
   plan: DayPlan[];
@@ -134,9 +135,10 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                       {linkifyText(d.stay_options)}
                       <TouchableOpacity
                         className="mt-2 bg-primary px-3 py-1 rounded-full w-24 items-center"
-                        onPress={() =>
-                          Linking.openURL(generateStayLink(d.stay_options))
-                        }
+                        onPress={() => {
+                          recordAffiliateClick("hotel");
+                          Linking.openURL(generateStayLink(d.stay_options));
+                        }}
                       >
                         <Text className="font-outfit-bold text-white">Book</Text>
                       </TouchableOpacity>
@@ -181,7 +183,10 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
                         </TouchableOpacity>
                         {act.booking_url?.startsWith("http") && (
                           <TouchableOpacity
-                            onPress={() => Linking.openURL(act.booking_url)}
+                            onPress={() => {
+                              recordAffiliateClick("poi");
+                              Linking.openURL(act.booking_url);
+                            }}
                             className="ml-2 bg-primary px-3 py-1 rounded-full"
                           >
                             <Text className="font-outfit-bold text-white text-sm">
