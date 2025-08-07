@@ -48,6 +48,7 @@ const Discover = () => {
   const hotelListRef = useRef<FlatList<any>>(null);
   const [hotelIndex, setHotelIndex] = useState(0);
   const [flightEmissionKg, setFlightEmissionKg] = useState<number | null>(null);
+  const [sortByEmission, setSortByEmission] = useState(false);
 
   const fetchPlaceImage = async (placeName: string) => {
     try {
@@ -117,7 +118,14 @@ const Discover = () => {
   const loadFlightEmission = async () => {
     const { origin, destination } = getFlightCodes();
     if (!origin || !destination) return;
-    const grams = await fetchFlightEmissions(origin, destination);
+    const airline = parsedTripPlan?.trip_plan?.flight_details?.airline;
+    const flightNumber = parsedTripPlan?.trip_plan?.flight_details?.flight_number;
+    const grams = await fetchFlightEmissions(
+      origin,
+      destination,
+      airline,
+      flightNumber
+    );
     if (grams != null) setFlightEmissionKg(grams / 1000);
   };
 
@@ -212,7 +220,21 @@ const Discover = () => {
     if (!origin || !destination || !depart) return;
     setLoadingFlights(true);
     const offers = await fetchCheapestFlights(origin, destination, depart);
-    setFlightOptions(offers);
+    const withEmissions = await Promise.all(
+      offers.map(async (f) => {
+        const grams = await fetchFlightEmissions(
+          origin,
+          destination,
+          f.airline,
+          f.flight_number
+        );
+        return {
+          ...f,
+          emissionKg: grams != null ? grams / 1000 : null,
+        };
+      })
+    );
+    setFlightOptions(withEmissions);
     setLoadingFlights(false);
   };
 
@@ -225,6 +247,12 @@ const Discover = () => {
       return [...prev, place];
     });
   };
+
+  const sortedFlightOptions = [...flightOptions].sort((a, b) =>
+    sortByEmission
+      ? (a.emissionKg ?? Infinity) - (b.emissionKg ?? Infinity)
+      : Number(a.price) - Number(b.price)
+  );
 
   return (
     <View className="flex-1 bg-background">
@@ -335,11 +363,27 @@ const Discover = () => {
                 />
               ) : (
                 <>
-                  {flightOptions.map((f, i) => (
+                  <CustomButton
+                    title={
+                      sortByEmission
+                        ? "Show cheaper flights first"
+                        : "Show greener flights first"
+                    }
+                    onPress={() => setSortByEmission((p) => !p)}
+                    className="mt-4"
+                    bgVariant="outline"
+                    textVariant="primary"
+                  />
+                  {sortedFlightOptions.map((f, i) => (
                     <View key={i} className="mt-4">
                       <Text className="font-outfit text-text-primary">
                         {`${f.airline} ${f.flight_number} - $${f.price}`}
                       </Text>
+                      {f.emissionKg != null && (
+                        <Text className="font-outfit text-text-primary">
+                          Est. CO₂: {f.emissionKg.toFixed(1)} kg
+                        </Text>
+                      )}
                       <CustomButton
                         title="Book"
                         onPress={() => Linking.openURL(f.booking_url)}
