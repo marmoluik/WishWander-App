@@ -1,10 +1,48 @@
 import { View, Text, Image } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import CustomButton from "./CustomButton";
 import { icons } from "@/constants";
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+import * as Facebook from "expo-auth-session/providers/facebook";
+import { auth } from "@/config/FirebaseConfig";
+import {
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signInWithCredential,
+} from "firebase/auth";
+import { Ionicons } from "@expo/vector-icons";
+
+WebBrowser.maybeCompleteAuthSession();
 
 const OAuth = () => {
-  const handleGoogleSignIn = () => {};
+  const [gRequest, gResponse, gPromptAsync] = Google.useAuthRequest({
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || "",
+  });
+
+  const [fbRequest, fbResponse, fbPromptAsync] = Facebook.useAuthRequest({
+    clientId: process.env.EXPO_PUBLIC_FACEBOOK_APP_ID || "",
+  });
+
+  useEffect(() => {
+    if (gResponse?.type === "success") {
+      const idToken = gResponse.authentication?.idToken;
+      if (idToken) {
+        const credential = GoogleAuthProvider.credential(idToken);
+        signInWithCredential(auth, credential).catch(console.error);
+      }
+    }
+  }, [gResponse]);
+
+  useEffect(() => {
+    if (fbResponse?.type === "success") {
+      const accessToken = fbResponse.authentication?.accessToken;
+      if (accessToken) {
+        const credential = FacebookAuthProvider.credential(accessToken);
+        signInWithCredential(auth, credential).catch(console.error);
+      }
+    }
+  }, [fbResponse]);
 
   return (
     <View>
@@ -26,7 +64,25 @@ const OAuth = () => {
         )}
         bgVariant="outline"
         textVariant="primary"
-        onPress={handleGoogleSignIn}
+        onPress={() => gPromptAsync()}
+        disabled={!gRequest}
+      />
+
+      <CustomButton
+        title="Log In with Facebook"
+        className="mt-3 w-full shadow-none"
+        IconLeft={() => (
+          <Ionicons
+            name="logo-facebook"
+            size={20}
+            color="#1877F2"
+            style={{ marginHorizontal: 8 }}
+          />
+        )}
+        bgVariant="outline"
+        textVariant="primary"
+        onPress={() => fbPromptAsync()}
+        disabled={!fbRequest}
       />
     </View>
   );
