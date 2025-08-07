@@ -38,27 +38,3 @@ export function startChatSession(
     history,
   });
 }
-
-/**
- * createFunctionCallModel
- * Utility for agents that leverage the model's tool/function calling
- * capabilities. Provide an array of function declarations describing
- * the functions the model may invoke. The returned GenerativeModel can
- * then be used to start chat sessions that respond with functionCalls
- * when appropriate.
- */
-export function createFunctionCallModel(
-  functionDeclarations: any[],
-  modelName: string = 'gemini-1.5-flash'
-) {
-  return genAI.getGenerativeModel({
-    model: modelName,
-    tools: [
-      {
-        functionDeclarations,
-      },
-    ],
-  });
-}
-
-export { defaultGenerationConfig };
