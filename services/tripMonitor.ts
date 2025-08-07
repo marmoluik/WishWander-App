@@ -7,7 +7,7 @@ import { db } from "@/config/FirebaseConfig";
 
 const TASK_NAME = "trip-monitor";
 
-TaskManager.defineTask(TASK_NAME, async () => {
+const tripMonitorTask = async () => {
   try {
     if (!db) return BackgroundFetch.BackgroundFetchResult.NoData;
     const tripsSnap = await getDocs(collection(db, "UserTrips"));
@@ -17,7 +17,11 @@ TaskManager.defineTask(TASK_NAME, async () => {
       for (const t of trips.docs) {
         const trip = t.data() as any;
         const flight = trip?.tripPlan?.trip_plan?.flight_details;
-        if (flight?.departure_city && flight?.arrival_city && flight?.departure_date) {
+        if (
+          flight?.departure_city &&
+          flight?.arrival_city &&
+          flight?.departure_date
+        ) {
           const info = await fetchFlightInfo(
             flight.departure_city,
             flight.arrival_city,
@@ -40,15 +44,25 @@ TaskManager.defineTask(TASK_NAME, async () => {
     console.error("trip monitor failed", e);
     return BackgroundFetch.BackgroundFetchResult.Failed;
   }
-});
+};
 
 export const registerTripMonitor = async () => {
   try {
-    await BackgroundFetch.registerTaskAsync(TASK_NAME, {
-      minimumInterval: 60 * 60, // 1 hour
-      stopOnTerminate: false,
-      startOnBoot: true,
-    });
+    // ensure the task is defined before attempting to register
+    try {
+      TaskManager.defineTask(TASK_NAME, tripMonitorTask);
+    } catch {
+      // ignore if task is already defined
+    }
+
+    const isRegistered = await TaskManager.isTaskRegisteredAsync(TASK_NAME);
+    if (!isRegistered) {
+      await BackgroundFetch.registerTaskAsync(TASK_NAME, {
+        minimumInterval: 60 * 60, // 1 hour
+        stopOnTerminate: false,
+        startOnBoot: true,
+      });
+    }
   } catch (e) {
     console.error("registerTripMonitor error", e);
   }
