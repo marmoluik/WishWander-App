@@ -16,8 +16,5 @@ export default ({ config }) => ({
     googleIosClientId: process.env.GOOGLE_IOS_CLIENT_ID,
     googleAndroidClientId: process.env.GOOGLE_ANDROID_CLIENT_ID,
     facebookAppId: process.env.FACEBOOK_APP_ID,
-    flightApiKey: process.env.FLIGHT_API_KEY,
-    hotelApiKey: process.env.HOTEL_API_KEY,
-    chatgptApiKey: process.env.CHATGPT_API_KEY,
   },
 });
