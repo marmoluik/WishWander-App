@@ -11,6 +11,7 @@ import {
   Keyboard,
   SafeAreaView,
   StyleSheet,
+  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useGoogleAutocomplete } from "@appandflow/react-native-google-autocomplete";
@@ -20,6 +21,8 @@ import { CreateTripContext } from "@/context/CreateTripContext";
 export default function SearchPlace() {
   const router = useRouter();
   const { setTripData } = useContext(CreateTripContext);
+
+  const isWeb = Platform.OS === "web";
 
   // Initialize the hook with your API key and options
   const {
@@ -35,6 +38,7 @@ export default function SearchPlace() {
       minLength: 2,
       // Allow searching for both cities and countries
       queryTypes: "geocode",
+      ...(isWeb && { proxyUrl: "https://cors.isomorphic-git.org/" }),
     }
   );
 
@@ -58,8 +62,10 @@ export default function SearchPlace() {
     router.push("/create-trip/select-origin-airport");
   };
 
+  const Wrapper: any = isWeb ? View : TouchableWithoutFeedback;
+
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <Wrapper {...(!isWeb ? { onPress: Keyboard.dismiss } : {})}>
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>Where do you want to go?</Text>
@@ -97,7 +103,7 @@ export default function SearchPlace() {
           />
         </View>
       </SafeAreaView>
-    </TouchableWithoutFeedback>
+    </Wrapper>
   );
 }
 

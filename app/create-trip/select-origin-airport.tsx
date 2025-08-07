@@ -11,6 +11,7 @@ import {
   Keyboard,
   SafeAreaView,
   StyleSheet,
+  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useGoogleAutocomplete } from "@appandflow/react-native-google-autocomplete";
@@ -21,6 +22,7 @@ import { getNearestAirport } from "@/utils/getNearestAirport";
 export default function SelectOriginAirport() {
   const router = useRouter();
   const { setTripData } = useContext(CreateTripContext);
+  const isWeb = Platform.OS === "web";
 
   const {
     locationResults,
@@ -35,6 +37,7 @@ export default function SelectOriginAirport() {
       minLength: 2,
       // Restrict results to airport establishments only
       queryTypes: "establishment",
+      ...(isWeb && { proxyUrl: "https://cors.isomorphic-git.org/" }),
     }
   );
 
@@ -99,8 +102,10 @@ export default function SelectOriginAirport() {
     router.push("/create-trip/select-traveler");
   };
 
+  const Wrapper: any = isWeb ? View : TouchableWithoutFeedback;
+
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <Wrapper {...(!isWeb ? { onPress: Keyboard.dismiss } : {})}>
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>Which airport are you flying from?</Text>
@@ -138,7 +143,7 @@ export default function SelectOriginAirport() {
           />
         </View>
       </SafeAreaView>
-    </TouchableWithoutFeedback>
+    </Wrapper>
   );
 }
 
