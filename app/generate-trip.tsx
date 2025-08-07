@@ -8,6 +8,7 @@ import { AI_PROMPT } from "@/constants/Options";
 import { startChatSession } from "@/config/GeminiConfig";
 import { useRouter } from "expo-router";
 import { doc, setDoc } from "firebase/firestore";
+import { FirebaseError } from "firebase/app";
 import { auth, db } from "@/config/FirebaseConfig";
 import {
   generateFlightLink,
@@ -230,8 +231,16 @@ export default function GenerateTrip() {
               locationInfo.name
             )}&locale=en&types[]=airport&limit=1`
           );
-          const locJson = await locRes.json();
-          const arrival = locJson?.[0];
+          let arrival: any = null;
+          try {
+            if (locRes.ok) {
+              const locJson = await locRes.json();
+              arrival = locJson?.[0];
+            }
+          } catch (parseErr) {
+            console.error("flight location parse failed", parseErr);
+          }
+
           if (arrival?.code) {
             parsed.trip_plan.flight_details.booking_url = generateFlightLink(
               originAirport.code,
@@ -273,7 +282,11 @@ export default function GenerateTrip() {
     } catch (err) {
       console.error("Failed to generate trip", err);
 
-      if (err instanceof Error && err.message.includes("503")) {
+      if (err instanceof FirebaseError && err.code === "permission-denied") {
+        setError(
+          "You do not have permission to save this trip. Please verify your Firebase rules."
+        );
+      } else if (err instanceof Error && err.message.includes("503")) {
         setError("AI service is overloaded. Please try again later.");
       } else {
         setError(
