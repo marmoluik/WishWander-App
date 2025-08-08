@@ -7,6 +7,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import { CreateTripContext } from "@/context/CreateTripContext";
+import moment from "moment";
 
 export default function SelectDates() {
   const router = useRouter();
@@ -31,11 +32,6 @@ export default function SelectDates() {
       alert("End date must be after start date");
       return;
     }
-    const days =
-      Math.ceil(
-        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
-      ) + 1;
-
     const days = moment(endDate).diff(moment(startDate), "days") + 1;
 
     setTripData((prev) => {
