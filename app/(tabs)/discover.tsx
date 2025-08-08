@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
@@ -19,6 +19,7 @@ import {
 } from "@/utils/travelpayouts";
 import { fetchFlightEmissions } from "@/utils/emissions";
 import { recordAffiliateClick } from "@/services/affiliate";
+import { UserPreferencesContext } from "@/context/UserPreferencesContext";
 
 const DEFAULT_IMAGE_URL =
   "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?q=80&w=2071&auto=format&fit=crop";
@@ -50,6 +51,7 @@ const Discover = () => {
   const [hotelIndex, setHotelIndex] = useState(0);
   const [flightEmissionKg, setFlightEmissionKg] = useState<number | null>(null);
   const [sortByEmission, setSortByEmission] = useState(false);
+  const { preferences } = useContext(UserPreferencesContext);
 
   const fetchPlaceImage = async (placeName: string) => {
     try {
@@ -152,6 +154,21 @@ const Discover = () => {
   const hotelOptions =
     parsedTripPlan?.trip_plan?.hotel?.options
       ?.filter((h: any) => h.booking_url?.startsWith("http"))
+      .filter((h: any) => {
+        const price = parseFloat(String(h.price).replace(/[^0-9.]/g, ""));
+        const priceOk =
+          !preferences.budget || isNaN(price) || price <= preferences.budget;
+        const nameOk =
+          !preferences.preferredHotels.length ||
+          preferences.preferredHotels.some((ph) =>
+            h.name?.toLowerCase().includes(ph.toLowerCase())
+          );
+        const petOk =
+          !preferences.petFriendly ||
+          h.pet_friendly === true ||
+          /pet/i.test(h.description || "");
+        return priceOk && nameOk && petOk;
+      })
       .sort(
         (a: any, b: any) =>
           parseFloat(String(a.price).replace(/[^0-9.]/g, "")) -
@@ -225,7 +242,12 @@ const Discover = () => {
     const depart = parsedTripPlan?.trip_plan?.flight_details?.departure_date;
     if (!origin || !destination || !depart) return;
     setLoadingFlights(true);
-    const offers = await fetchCheapestFlights(origin, destination, depart);
+    const offers = await fetchCheapestFlights(
+      origin,
+      destination,
+      depart,
+      preferences
+    );
     const withEmissions = await Promise.all(
       offers.map(async (f) => {
         const grams = await fetchFlightEmissions(

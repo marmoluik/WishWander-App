@@ -1,4 +1,7 @@
-export const getTravelpayoutsMarker = () => process.env.EXPO_PUBLIC_TRAVELPAYOUTS_MARKER || "";
+import { UserPreferences } from "@/types/user";
+
+export const getTravelpayoutsMarker = () =>
+  process.env.EXPO_PUBLIC_TRAVELPAYOUTS_MARKER || "";
 
 export const generateFlightLink = (
   origin: string,
@@ -29,17 +32,24 @@ export interface FlightOffer extends FlightInfo {
 export const fetchFlightInfo = async (
   origin: string,
   destination: string,
-  departDate: string
+  departDate: string,
+  prefs?: UserPreferences
 ): Promise<FlightInfo | null> => {
   const token = process.env.EXPO_PUBLIC_TRAVELPAYOUTS_TOKEN;
   if (!token) return null;
   try {
+    const airlineParam = prefs?.preferredAirlines?.[0]
+      ? `&airline=${prefs.preferredAirlines[0]}`
+      : "";
     const res = await fetch(
-      `https://api.travelpayouts.com/aviasales/v3/prices_for_dates?origin=${origin}&destination=${destination}&departure_at=${departDate}&limit=1&token=${token}&currency=usd`
+      `https://api.travelpayouts.com/aviasales/v3/prices_for_dates?origin=${origin}&destination=${destination}&departure_at=${departDate}&limit=1${airlineParam}&token=${token}&currency=usd`
     );
     const json = await res.json();
     const flight = json?.data?.[0];
     if (flight) {
+      if (prefs?.budget && flight.price > prefs.budget) {
+        return null;
+      }
       return {
         airline: flight.airline || "",
         flight_number: flight.flight_number || "",
@@ -55,16 +65,28 @@ export const fetchFlightInfo = async (
 export const fetchCheapestFlights = async (
   origin: string,
   destination: string,
-  departDate: string
+  departDate: string,
+  prefs?: UserPreferences
 ): Promise<FlightOffer[]> => {
   const token = process.env.EXPO_PUBLIC_TRAVELPAYOUTS_TOKEN;
   if (!token) return [];
   try {
+    const airlineParam = prefs?.preferredAirlines?.[0]
+      ? `&airline=${prefs.preferredAirlines[0]}`
+      : "";
     const res = await fetch(
-      `https://api.travelpayouts.com/aviasales/v3/prices_for_dates?origin=${origin}&destination=${destination}&departure_at=${departDate}&limit=10&token=${token}&currency=usd`
+      `https://api.travelpayouts.com/aviasales/v3/prices_for_dates?origin=${origin}&destination=${destination}&departure_at=${departDate}&limit=10${airlineParam}&token=${token}&currency=usd`
     );
     const json = await res.json();
-    const flights = json?.data || [];
+    let flights = json?.data || [];
+    if (prefs?.budget) {
+      flights = flights.filter((f: any) => f.price <= prefs.budget);
+    }
+    if (prefs?.preferredAirlines?.length) {
+      flights = flights.filter((f: any) =>
+        prefs.preferredAirlines.includes(f.airline)
+      );
+    }
     const marker = getTravelpayoutsMarker();
     return flights
       .map((f: any) => ({

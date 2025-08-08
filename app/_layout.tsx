@@ -20,6 +20,8 @@ import {
   DayPlan,
   StoredItinerary,
 } from "@/context/ItineraryContext";
+import { UserPreferencesContext } from "@/context/UserPreferencesContext";
+import { UserPreferences } from "@/types/user";
 import HeaderLogo from "@/components/HeaderLogo";
 import { registerTripMonitor } from "@/services/tripMonitor";
 
@@ -29,6 +31,13 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [tripData, setTripData] = useState<any[]>([]);
   const [itineraries, setItineraries] = useState<StoredItinerary[]>([]);
+  const [preferences, setPreferences] = useState<UserPreferences>({
+    preferredAirlines: [],
+    preferredHotels: [],
+    dietaryNeeds: [],
+    budget: undefined,
+    petFriendly: false,
+  });
 
   const addItinerary = (it: StoredItinerary) => {
     setItineraries((prev) => [...prev, it]);
@@ -52,8 +61,25 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
+    (async () => {
+      try {
+        const stored = await AsyncStorage.getItem("userPreferences");
+        if (stored) {
+          setPreferences(JSON.parse(stored));
+        }
+      } catch (e) {
+        console.error("load preferences failed", e);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
     AsyncStorage.setItem("itineraries", JSON.stringify(itineraries));
   }, [itineraries]);
+
+  useEffect(() => {
+    AsyncStorage.setItem("userPreferences", JSON.stringify(preferences));
+  }, [preferences]);
 
   const updateTripData = (newData: any) => {
     setTripData((prevData) => {
@@ -88,21 +114,25 @@ export default function RootLayout() {
 
   return (
     <>
-      <CreateTripContext.Provider value={{ tripData, setTripData }}>
-        <ItineraryContext.Provider value={{ itineraries, addItinerary, removeItinerary }}>
-          <StatusBar style="dark" />
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="(auth)" />
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="create-trip" />
-            <Stack.Screen
-              name="generate-trip"
-              options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
-            />
-          </Stack>
-        </ItineraryContext.Provider>
-      </CreateTripContext.Provider>
+      <UserPreferencesContext.Provider value={{ preferences, setPreferences }}>
+        <CreateTripContext.Provider value={{ tripData, setTripData }}>
+          <ItineraryContext.Provider
+            value={{ itineraries, addItinerary, removeItinerary }}
+          >
+            <StatusBar style="dark" />
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="index" />
+              <Stack.Screen name="(auth)" />
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="create-trip" />
+              <Stack.Screen
+                name="generate-trip"
+                options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
+              />
+            </Stack>
+          </ItineraryContext.Provider>
+        </CreateTripContext.Provider>
+      </UserPreferencesContext.Provider>
     </>
   );
 }
