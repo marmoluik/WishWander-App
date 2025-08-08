@@ -10,6 +10,8 @@ import {
   StoredItinerary,
   DayPlan,
 } from "@/context/ItineraryContext";
+import { z } from "zod";
+import { dayPlanSchema } from "@/utils/itinerarySchema";
 
 const Itineraries = () => {
   const { itineraries, addItinerary, removeItinerary } = useContext(ItineraryContext);
@@ -40,8 +42,14 @@ const Itineraries = () => {
       const session = startChatSession([{ role: "user", parts: [{ text: prompt }] }]);
       const result = await session.sendMessage(prompt);
       const raw = await result.response.text();
-      const json = JSON.parse(raw);
-      const planData: DayPlan[] = json.itinerary || [];
+      const parsed = JSON.parse(raw);
+      const validation = z
+        .object({ itinerary: z.array(dayPlanSchema).optional() })
+        .safeParse(parsed);
+      if (!validation.success) {
+        throw validation.error;
+      }
+      const planData: DayPlan[] = validation.data.itinerary || [];
       const id = Date.now().toString();
       const title = location?.name || "Trip";
       const stored: StoredItinerary = { id, title, plan: planData };

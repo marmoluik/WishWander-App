@@ -8,10 +8,11 @@ import { CreateTripContext } from "@/context/CreateTripContext";
 import { AI_PROMPT } from "@/constants/Options";
 import { startChatSession } from "@/config/GeminiConfig";
 import { useRouter } from "expo-router";
-import { doc, setDoc } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
-import { auth, db } from "@/config/FirebaseConfig";
+import { auth } from "@/config/FirebaseConfig";
 import { Itinerary, Booking } from "@/types/itinerary";
+import { tripPlanSchema, TripPlan } from "@/utils/itinerarySchema";
+import { saveItinerary } from "@/services/itinerary";
 import {
   generateFlightLink,
   fetchFlightInfo,
@@ -94,11 +95,10 @@ export default function GenerateTrip() {
       // Normalize various AI response formats into our expected structure
       const normalizeTripPlan = (data: any) => {
         const root = data.trip_plan || data;
-        let flight =
+        let flights =
           root.flight_details || root.flights || data.flight_details || data.flights;
-
-        if (Array.isArray(flight)) {
-          flight = flight[0];
+        if (!Array.isArray(flights)) {
+          flights = flights ? [flights] : [];
         }
 
         const hotels =
@@ -142,23 +142,23 @@ export default function GenerateTrip() {
           }))
           .slice(0, 10);
 
-        const filledFlight = {
-          departure_city: originAirport?.name || flight?.departure_city || "TBD",
-          arrival_city: locationInfo?.name || flight?.arrival_city || "",
-          departure_date: startDateStr || flight?.departure_date || "",
-          departure_time: flight?.departure_time || "",
-          arrival_date: startDateStr || flight?.arrival_date || "",
-          arrival_time: flight?.arrival_time || "",
-          airline: flight?.airline || "",
-          flight_number: flight?.flight_number || "",
-          price: flight?.price || "",
-          booking_url: flight?.booking_url || "",
-        };
+        const filledFlights = flights.map((f: any) => ({
+          departure_city: originAirport?.name || f?.departure_city || "TBD",
+          arrival_city: locationInfo?.name || f?.arrival_city || "",
+          departure_date: startDateStr || f?.departure_date || "",
+          departure_time: f?.departure_time || "",
+          arrival_date: startDateStr || f?.arrival_date || "",
+          arrival_time: f?.arrival_time || "",
+          airline: f?.airline || "",
+          flight_number: f?.flight_number || "",
+          price: f?.price || "",
+          booking_url: f?.booking_url || "",
+        }));
 
         return {
           trip_plan: {
             ...root,
-            flight_details: filledFlight,
+            flight_details: filledFlights,
             hotel: { options: cleanedHotels },
             places_to_visit: cleanedPlaces,
           },
@@ -169,7 +169,7 @@ export default function GenerateTrip() {
       const MAX_RETRIES = 5;
       let attempt = 0;
       let prompt = FINAL_PROMPT;
-      let parsed: any = null;
+        let parsed: { trip_plan: TripPlan } | null = null;
 
       while (attempt < MAX_RETRIES) {
         try {
@@ -180,7 +180,12 @@ export default function GenerateTrip() {
           const rawText = await result.response.text();
 
           try {
-            parsed = normalizeTripPlan(extractJSON(rawText));
+            const normalized = normalizeTripPlan(extractJSON(rawText));
+            const validation = tripPlanSchema.safeParse(normalized.trip_plan);
+            if (!validation.success) {
+              throw validation.error;
+            }
+            parsed = { trip_plan: validation.data };
           } catch (err) {
             console.error("parse error", err);
             attempt++;
@@ -255,27 +260,26 @@ export default function GenerateTrip() {
             console.error("flight location parse failed", parseErr);
           }
 
-          if (arrival?.code) {
-            parsed.trip_plan.flight_details.booking_url = generateFlightLink(
-              originAirport.code,
-              arrival.code,
-              startDateStr || "",
-              endDateStr || undefined
-            );
-            const info = await fetchFlightInfo(
-              originAirport.code,
-              arrival.code,
-              startDateStr || ""
-            );
-            if (info) {
-              parsed.trip_plan.flight_details.airline =
-                info.airline || parsed.trip_plan.flight_details.airline;
-              parsed.trip_plan.flight_details.flight_number =
-                info.flight_number || parsed.trip_plan.flight_details.flight_number;
-              if (info.price)
-                parsed.trip_plan.flight_details.price = `$${info.price}`;
-            }
+        if (arrival?.code) {
+          const firstFlight = parsed.trip_plan.flight_details[0];
+          firstFlight.booking_url = generateFlightLink(
+            originAirport.code,
+            arrival.code,
+            startDateStr || "",
+            endDateStr || undefined
+          );
+          const info = await fetchFlightInfo(
+            originAirport.code,
+            arrival.code,
+            startDateStr || ""
+          );
+          if (info) {
+            firstFlight.airline = info.airline || firstFlight.airline;
+            firstFlight.flight_number =
+              info.flight_number || firstFlight.flight_number;
+            if (info.price) firstFlight.price = `$${info.price}`;
           }
+        }
         } catch (e) {
           console.error("flight link failed", e);
         }
@@ -283,18 +287,18 @@ export default function GenerateTrip() {
 
       // Save the entire parsed response so downstream screens receive trip_plan
       const docId = Date.now().toString();
-      if (db && user) {
-        const bookings: Booking[] = [];
-        const fd = parsed.trip_plan.flight_details;
-        if (fd) {
-          bookings.push({
-            type: "flight",
-            provider: fd.airline || "",
-            reference: fd.flight_number || "",
-            url: fd.booking_url || "",
-          });
-        }
-        const firstHotel = parsed.trip_plan.hotel?.options?.[0];
+        if (user) {
+          const bookings: Booking[] = [];
+          const fd = parsed.trip_plan.flight_details[0];
+          if (fd) {
+            bookings.push({
+              type: "flight",
+              provider: fd.airline || "",
+              reference: fd.flight_number || "",
+              url: fd.booking_url || "",
+            });
+          }
+          const firstHotel = parsed.trip_plan.hotel?.options?.[0];
         if (firstHotel) {
           bookings.push({
             type: "hotel",
@@ -316,17 +320,11 @@ export default function GenerateTrip() {
           updatedAt: Date.now(),
         };
 
-        await setDoc(doc(db, "UserTrips", user.uid, "trips", docId), {
-          userEmail: user.email,
-          tripPlan: parsed,
-          tripData: JSON.stringify(tripData),
-          itinerary,
-          docId,
-        });
-        router.push("/mytrip");
-      } else {
-        setError("Unable to save trip. Please sign in and try again.");
-      }
+          await saveItinerary(parsed!.trip_plan, itinerary, tripData, user.email || undefined);
+          router.push("/mytrip");
+        } else {
+          setError("Unable to save trip. Please sign in and try again.");
+        }
     } catch (err) {
       console.error("Failed to generate trip", err);
 
