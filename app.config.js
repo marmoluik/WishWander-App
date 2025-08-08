@@ -3,6 +3,19 @@ import 'dotenv/config';
 
 export default ({ config }) => ({
   ...config,
+  ios: {
+    ...config.ios,
+    infoPlist: {
+      ...(config.ios?.infoPlist || {}),
+      UIBackgroundModes: Array.from(
+        new Set([
+          ...((config.ios?.infoPlist?.UIBackgroundModes as string[]) || []),
+          "fetch",
+          "process",
+        ])
+      ),
+    },
+  },
   extra: {
     firebaseApiKey: process.env.FIREBASE_API_KEY,
     firebaseAuthDomain: process.env.FIREBASE_AUTH_DOMAIN,
