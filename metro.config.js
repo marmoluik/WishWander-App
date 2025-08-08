@@ -1,24 +1,27 @@
 const { getDefaultConfig } = require("expo/metro-config");
 const { withNativeWind } = require("nativewind/metro");
 
-const config = getDefaultConfig(__dirname, {
-  // Add this configuration
-  resolver: {
-    assetExts: ["ttf", "png", "jpg"],
-    sourceExts: ["js", "jsx", "ts", "tsx", "svg"],
-  },
-});
+// Start with Expo's default Metro configuration
+const config = getDefaultConfig(__dirname);
 
-// Add this configuration for SVG support
-const { transformer, resolver } = config;
+// Ensure common asset extensions remain while adding custom ones
+config.resolver.assetExts = [
+  ...config.resolver.assetExts,
+  "ttf",
+  "png",
+  "jpg",
+];
+
+// Add SVG support without dropping default source extensions
+config.resolver.sourceExts = [...config.resolver.sourceExts, "svg"];
+config.resolver.assetExts = config.resolver.assetExts.filter(
+  (ext) => ext !== "svg"
+);
+
+// Use the SVG transformer alongside the defaults
 config.transformer = {
-  ...transformer,
+  ...config.transformer,
   babelTransformerPath: require.resolve("react-native-svg-transformer"),
-};
-config.resolver = {
-  ...resolver,
-  assetExts: resolver.assetExts.filter((ext) => ext !== "svg"),
-  sourceExts: [...resolver.sourceExts, "svg"],
 };
 
 module.exports = withNativeWind(config, { input: "./global.css" });
