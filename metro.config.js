@@ -19,11 +19,12 @@ config.resolver.assetExts = config.resolver.assetExts.filter(
 );
 
 // Ensure tslib resolves to its CommonJS build to avoid runtime __extends errors
-config.resolver.extraNodeModules = {
-  ...(config.resolver.extraNodeModules || {}),
-  tslib: require.resolve("tslib/tslib.js"),
-  "tslib/tslib.es6.js": require.resolve("tslib/tslib.js"),
-  "tslib/tslib.es6.mjs": require.resolve("tslib/tslib.js"),
+const cjsTslib = require.resolve("tslib/tslib.js");
+config.resolver.alias = {
+  ...(config.resolver.alias || {}),
+  tslib: cjsTslib,
+  "tslib/tslib.es6.js": cjsTslib,
+  "tslib/tslib.es6.mjs": cjsTslib,
 };
 
 // Use the SVG transformer alongside the defaults
