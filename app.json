@@ -15,14 +15,18 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UIBackgroundModes": ["fetch", "process"]
+        "UIBackgroundModes": [
+          "fetch",
+          "process"
+        ]
       }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anonymous.wishwander"
     },
     "web": {
       "bundler": "metro",
@@ -31,10 +35,27 @@
     },
     "plugins": [
       "expo-router",
-	  "sentry-expo"
+      "sentry-expo"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "firebaseApiKey": "AIzaSyB9VAbJVnOhfgsidFcvptxRX-YTJjmxT4I",
+      "firebaseAuthDomain": "wishwander-6b78b.firebaseapp.com",
+      "firebaseProjectId": "wishwander-6b78b",
+      "firebaseStorageBucket": "wishwander-6b78b.firebasestorage.app",
+      "firebaseMessagingSenderId": "156023005730",
+      "firebaseAppId": "1:156023005730:web:7d7b9c2860ec0fd469207b",
+      "googlePlacesApiKey": "AIzaSyATlo6QXWfSQYB3TaCGssCsLLkLz7_6wgU",
+      "geminiApiKey": "AIzaSyDdEQwYE_XKEvFRKhueBLLMEqtR9GUy2_s",
+      "googleExpoClientId": "513926833632-oe4qjsmqpgn6u9rscodrcv4fms1a52vc.apps.googleusercontent.com",
+      "googleIosClientId": "513926833632-p53duen9ac1j6bijt1nbbpb8u65pkjfn.apps.googleusercontent.com",
+      "googleAndroidClientId": "1234567890-uvwxyzabcd.apps.googleusercontent.com",
+      "facebookAppId": "1302171388294519",
+      "sendgridApiKey": "",
+      "sendgridFromEmail": "",
+      "router": {},
     }
   }
 }
