@@ -18,10 +18,16 @@ config.resolver.assetExts = config.resolver.assetExts.filter(
   (ext) => ext !== "svg"
 );
 
+// Ensure tslib resolves to its CommonJS build to avoid runtime __extends errors
+config.resolver.extraNodeModules = {
+  ...(config.resolver.extraNodeModules || {}),
+  tslib: require.resolve("tslib/tslib.js"),
+};
+
 // Use the SVG transformer alongside the defaults
 config.transformer = {
   ...config.transformer,
   babelTransformerPath: require.resolve("react-native-svg-transformer"),
 };
-
 module.exports = withNativeWind(config, { input: "./global.css" });
+
