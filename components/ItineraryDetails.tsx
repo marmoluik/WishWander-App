@@ -18,6 +18,15 @@ const slotIcon: Record<string, any> = {
   night: "moon",
 };
 
+const getEventVisual = (slot: string, text: string) => {
+  const lower = text.toLowerCase();
+  if (lower.includes("flight") || lower.includes("airport"))
+    return { icon: "airplane", color: "#2563EB" };
+  if (lower.includes("hotel") || lower.includes("check-in"))
+    return { icon: "bed", color: "#F59E0B" };
+  return { icon: slotIcon[slot], color: "#9C00FF" };
+};
+
 const activityIcon = (name: string) => {
   const lower = name.toLowerCase();
   if (lower.includes("boat") || lower.includes("sail")) return "boat";
@@ -68,152 +77,165 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
 
   return (
     <>
-      <ScrollView>
+      <ScrollView className="flex-1">
         {plan.map((d, index) => (
-          <View key={index} className="mb-4 border border-primary rounded-xl">
-            <TouchableOpacity
-              onPress={() =>
-                setCollapsed((prev) => ({ ...prev, [index]: !prev[index] }))
-              }
-              className="p-4 bg-secondary/20 rounded-t-xl flex-row justify-between"
+          <View key={index} className="mb-4 flex-row">
+            <View className="items-center">
+              <View className="h-3 w-3 rounded-full bg-primary" />
+              {index < plan.length - 1 && <View className="flex-1 w-px bg-primary" />}
+            </View>
+            <View className="ml-4 flex-1 border border-primary rounded-xl">
+              <TouchableOpacity
+                onPress={() =>
+                  setCollapsed((prev) => ({ ...prev, [index]: !prev[index] }))
+                }
+              className="flex-row justify-between rounded-t-xl bg-secondary/20 p-4"
             >
-              <Text className="font-outfit-bold text-text-primary">
-                Day {d.day} - {moment(d.date).format("MMM D, YYYY")}
-              </Text>
-              <Text className="text-text-primary">{collapsed[index] ? "+" : "-"}</Text>
-            </TouchableOpacity>
-            {!collapsed[index] && (
-              <View className="p-4 space-y-3">
-                {(["morning", "afternoon", "evening", "night"] as const).map(
-                  (slot) => {
-                    const text = (d.schedule as any)[slot];
-                    if (!text) return null;
-                    return (
-                      <View key={slot} className="mb-2 flex-row">
-                        <Ionicons
-                          name={slotIcon[slot] as any}
-                          size={20}
-                          color="#9C00FF"
-                          style={{ marginRight: 8, marginTop: 2 }}
-                        />
-                        <View className="flex-1">
-                          <Text className="font-outfit-medium capitalize">
-                            {slot}
-                          </Text>
-                          {linkifyText(text)}
+                <Text className="font-outfit-bold text-text-primary">
+                  Day {d.day} - {moment(d.date).format("MMM D, YYYY")}
+                </Text>
+                <Text className="text-text-primary">
+                  {collapsed[index] ? "+" : "-"}
+                </Text>
+              </TouchableOpacity>
+              {!collapsed[index] && (
+                <View className="space-y-3 p-4">
+                  {(["morning", "afternoon", "evening", "night"] as const).map(
+                    (slot) => {
+                      const text = (d.schedule as any)[slot];
+                      if (!text) return null;
+                      const { icon, color } = getEventVisual(slot, text);
+                      return (
+                        <View key={slot} className="mb-2 flex-row">
+                          <Ionicons
+                            name={icon as any}
+                            size={20}
+                            color={color}
+                            style={{ marginRight: 8, marginTop: 2 }}
+                          />
+                          <View className="flex-1">
+                            <Text className="font-outfit-medium capitalize">
+                              {slot}
+                            </Text>
+                            {linkifyText(text)}
+                          </View>
                         </View>
-                      </View>
-                    );
-                  }
-                )}
-                {d.food_recommendations ? (
-                  <View className="flex-row">
-                    <Ionicons
-                      name="restaurant"
-                      size={20}
-                      color="#9C00FF"
-                      style={{ marginRight: 8, marginTop: 2 }}
-                    />
-                    <View className="flex-1">
-                      <Text className="font-outfit-medium">
-                        Food Recommendations
-                      </Text>
-                      {linkifyText(d.food_recommendations)}
-                    </View>
-                  </View>
-                ) : null}
-                {d.stay_options ? (
-                  <View className="flex-row">
-                    <Ionicons
-                      name="bed"
-                      size={20}
-                      color="#9C00FF"
-                      style={{ marginRight: 8, marginTop: 2 }}
-                    />
-                    <View className="flex-1">
-                      <Text className="font-outfit-medium">Stay Options</Text>
-                      {linkifyText(d.stay_options)}
-                      <TouchableOpacity
-                        className="mt-2 bg-primary px-3 py-1 rounded-full w-24 items-center"
-                        onPress={() => {
-                          recordAffiliateClick("hotel");
-                          Linking.openURL(generateStayLink(d.stay_options));
-                        }}
-                      >
-                        <Text className="font-outfit-bold text-white">Book</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                ) : null}
-                {d.optional_activities?.length ? (
-                  <View>
-                    <View className="flex-row mb-1">
+                      );
+                    }
+                  )}
+                  {d.food_recommendations ? (
+                    <View className="flex-row">
                       <Ionicons
-                        name="bicycle"
+                        name="restaurant"
                         size={20}
-                        color="#9C00FF"
+                        color="#EF4444"
                         style={{ marginRight: 8, marginTop: 2 }}
                       />
-                      <Text className="font-outfit-medium">
-                        Optional Activities
-                      </Text>
+                      <View className="flex-1">
+                        <Text className="font-outfit-medium">
+                          Food Recommendations
+                        </Text>
+                        {linkifyText(d.food_recommendations)}
+                      </View>
                     </View>
-                    {d.optional_activities.map((act, i) => (
-                      <View
-                        key={i}
-                        className="mb-2 ml-6 flex-row items-center"
-                      >
-                        <Ionicons
-                          name={activityIcon(act.name) as any}
-                          size={20}
-                          color="#9C00FF"
-                          style={{ marginRight: 6 }}
-                        />
+                  ) : null}
+                  {d.stay_options ? (
+                    <View className="flex-row">
+                      <Ionicons
+                        name="bed"
+                        size={20}
+                        color="#F59E0B"
+                        style={{ marginRight: 8, marginTop: 2 }}
+                      />
+                      <View className="flex-1">
+                        <Text className="font-outfit-medium">Stay Options</Text>
+                        {linkifyText(d.stay_options)}
                         <TouchableOpacity
-                          onPress={() =>
-                            Linking.openURL(
-                              `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                                act.name
-                              )}`
-                            )
-                          }
-                          className="flex-1"
+                          className="mt-2 w-24 items-center rounded-full bg-primary px-3 py-1"
+                          onPress={() => {
+                            recordAffiliateClick("hotel");
+                            Linking.openURL(generateStayLink(d.stay_options));
+                          }}
                         >
-                          <Text className="text-text-primary">{act.name}</Text>
+                          <Text className="font-outfit-bold text-white">
+                            Book
+                          </Text>
                         </TouchableOpacity>
-                        {act.booking_url?.startsWith("http") && (
+                      </View>
+                    </View>
+                  ) : null}
+                  {d.optional_activities?.length ? (
+                    <View>
+                      <View className="mb-1 flex-row">
+                        <Ionicons
+                          name="bicycle"
+                          size={20}
+                          color="#10B981"
+                          style={{ marginRight: 8, marginTop: 2 }}
+                        />
+                        <Text className="font-outfit-medium">
+                          Optional Activities
+                        </Text>
+                      </View>
+                      {d.optional_activities.map((act, i) => (
+                        <View
+                          key={i}
+                          className="mb-2 ml-6 flex-row items-center"
+                        >
+                          <Ionicons
+                            name={activityIcon(act.name) as any}
+                            size={20}
+                            color="#10B981"
+                            style={{ marginRight: 6 }}
+                          />
                           <TouchableOpacity
-                            onPress={() => {
-                              recordAffiliateClick("poi");
-                              Linking.openURL(act.booking_url);
-                            }}
-                            className="ml-2 bg-primary px-3 py-1 rounded-full"
+                            onPress={() =>
+                              Linking.openURL(
+                                `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                                  act.name
+                                )}`
+                              )
+                            }
+                            className="flex-1"
                           >
-                            <Text className="font-outfit-bold text-white text-sm">
-                              Book
+                            <Text className="text-text-primary">
+                              {act.name}
                             </Text>
                           </TouchableOpacity>
-                        )}
-                      </View>
-                    ))}
-                  </View>
-                ) : null}
-                {d.travel_tips ? (
-                  <View className="flex-row">
-                    <Ionicons
-                      name="bulb"
-                      size={20}
-                      color="#9C00FF"
-                      style={{ marginRight: 8, marginTop: 2 }}
-                    />
-                    <View className="flex-1">
-                      <Text className="font-outfit-medium">Travel Tips</Text>
-                      {linkifyText(d.travel_tips)}
+                          {act.booking_url?.startsWith("http") && (
+                            <TouchableOpacity
+                              onPress={() => {
+                                recordAffiliateClick("poi");
+                                Linking.openURL(act.booking_url);
+                              }}
+                              className="ml-2 rounded-full bg-primary px-3 py-1"
+                            >
+                              <Text className="font-outfit-bold text-white text-sm">
+                                Book
+                              </Text>
+                            </TouchableOpacity>
+                          )}
+                        </View>
+                      ))}
                     </View>
-                  </View>
-                ) : null}
-              </View>
-            )}
+                  ) : null}
+                  {d.travel_tips ? (
+                    <View className="flex-row">
+                      <Ionicons
+                        name="bulb"
+                        size={20}
+                        color="#3B82F6"
+                        style={{ marginRight: 8, marginTop: 2 }}
+                      />
+                      <View className="flex-1">
+                        <Text className="font-outfit-medium">Travel Tips</Text>
+                        {linkifyText(d.travel_tips)}
+                      </View>
+                    </View>
+                  ) : null}
+                </View>
+              )}
+            </View>
           </View>
         ))}
       </ScrollView>
