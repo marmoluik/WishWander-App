@@ -9,7 +9,10 @@ import CustomButton from "@/components/CustomButton";
 import { CreateTripContext } from "@/context/CreateTripContext";
 import moment from "moment";
 
-export default function SelectDates() {
+// Expo Router requires a default export for each route. Using a
+// named component and exporting it explicitly helps ensure the bundler
+// recognizes the route component correctly.
+const SelectDates = () => {
   const router = useRouter();
   const { setTripData } = useContext(CreateTripContext);
 
@@ -73,9 +76,6 @@ export default function SelectDates() {
             fontFamily: "outfit",
             color: "#1E1B4B",
           }}
-          selectedRangeStartStyle={{ backgroundColor: "#9C00FF" }}
-          selectedRangeEndStyle={{ backgroundColor: "#9C00FF" }}
-          selectedRangeStyle={{ backgroundColor: "#9C00FF" }}
         />
       </View>
 
@@ -94,4 +94,6 @@ export default function SelectDates() {
       </View>
     </SafeAreaView>
   );
-}
+};
+
+export default SelectDates;
