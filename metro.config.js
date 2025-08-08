@@ -22,6 +22,8 @@ config.resolver.assetExts = config.resolver.assetExts.filter(
 config.resolver.extraNodeModules = {
   ...(config.resolver.extraNodeModules || {}),
   tslib: require.resolve("tslib/tslib.js"),
+  "tslib/tslib.es6.js": require.resolve("tslib/tslib.js"),
+  "tslib/tslib.es6.mjs": require.resolve("tslib/tslib.js"),
 };
 
 // Use the SVG transformer alongside the defaults
