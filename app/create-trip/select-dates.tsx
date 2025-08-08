@@ -36,14 +36,11 @@ export default function SelectDates() {
         (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
       ) + 1;
 
-<<<<<<< Updated upstream
-    setTripData((prev = []) => {
-      const filtered = prev.filter((item) => !item.dates);
-=======
+    const days = moment(endDate).diff(moment(startDate), "days") + 1;
+
     setTripData((prev) => {
       // filter out any old “dates” entry:
       const filtered = prev.filter((i) => !i.dates);
->>>>>>> Stashed changes
       return [
         ...filtered,
         {
@@ -55,12 +52,8 @@ export default function SelectDates() {
         },
       ];
     });
-<<<<<<< Updated upstream
-
-    router.push("select-budget");
-=======
     router.push("/create-trip/select-budget");
->>>>>>> Stashed changes
+
   };
 
   return (
@@ -104,7 +97,6 @@ export default function SelectDates() {
         <CustomButton
           title="Confirm Dates"
           onPress={handleConfirm}
-<<<<<<< Updated upstream
           disabled={!startDate || !endDate}
           className="bg-primary text-white"
         />
@@ -112,10 +104,6 @@ export default function SelectDates() {
           title="Flexible Dates"
           onPress={() => router.push("flexible-dates")}
           className="border-2 border-primary text-primary bg-background"
-=======
-          style={styles.confirmButton}
-          textStyle={styles.confirmText}
->>>>>>> Stashed changes
         />
       </View>
     </SafeAreaView>
