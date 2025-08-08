@@ -1,4 +1,5 @@
-import 'setimmediate';
+import "setimmediate";
+import "@/config/sentry";
 import {
   DarkTheme,
   DefaultTheme,
