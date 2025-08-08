@@ -1,6 +1,6 @@
+import * as tslib from "tslib";
 import "setimmediate";
 import "@/config/sentry";
-import "tslib";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -23,6 +23,8 @@ import {
   SubscriptionState,
   defaultSubscriptionState,
 } from "@/types/subscription";
+
+(globalThis as any).tslib = tslib;
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
