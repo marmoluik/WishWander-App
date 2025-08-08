@@ -5,6 +5,7 @@ import React, { useContext, useEffect, useState } from "react";
 import JSON5 from "json5";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CreateTripContext } from "@/context/CreateTripContext";
+import { UserPreferencesContext } from "@/context/UserPreferencesContext";
 import { AI_PROMPT } from "@/constants/Options";
 import { startChatSession } from "@/config/GeminiConfig";
 import { useRouter } from "expo-router";
@@ -38,6 +39,7 @@ const formatDate = (value: any) => {
 
 export default function GenerateTrip() {
   const { tripData } = useContext(CreateTripContext);
+  const { preferences } = useContext(UserPreferencesContext);
   const [error, setError] = useState<string | null>(null);
   const user = auth?.currentUser;
   const router = useRouter();
@@ -65,7 +67,7 @@ export default function GenerateTrip() {
       const totalNights = totalDays > 0 ? totalDays - 1 : 0;
 
       // Build your final prompt string
-      const FINAL_PROMPT = AI_PROMPT.replace(
+      const BASE_PROMPT = AI_PROMPT.replace(
         "{location}",
         locationInfo?.name || ""
       )
@@ -76,6 +78,30 @@ export default function GenerateTrip() {
           `${travelers?.type || ""} (${travelers?.count || 0})`
         )
         .replace("{budget}", budget?.type || "");
+
+      const prefParts: string[] = [];
+      if (preferences.budget)
+        prefParts.push(`overall budget up to $${preferences.budget}`);
+      if (preferences.preferredAirlines.length)
+        prefParts.push(
+          `preferred airlines: ${preferences.preferredAirlines.join(", ")}`
+        );
+      if (preferences.preferredHotels.length)
+        prefParts.push(
+          `preferred hotels: ${preferences.preferredHotels.join(", ")}`
+        );
+      if (preferences.dietaryNeeds.length)
+        prefParts.push(
+          `dietary needs: ${preferences.dietaryNeeds.join(", ")}`
+        );
+      if (preferences.petFriendly)
+        prefParts.push("only pet-friendly options");
+
+      const PREF_PROMPT = prefParts.length
+        ? ` Please consider these preferences: ${prefParts.join(", ")}.`
+        : "";
+
+      const FINAL_PROMPT = `${BASE_PROMPT}${PREF_PROMPT}`;
 
       // Helper to extract JSON from possible extra text
       const extractJSON = (text: string) => {
@@ -155,11 +181,37 @@ export default function GenerateTrip() {
           booking_url: f?.booking_url || "",
         }));
 
+        const filteredFlights = filledFlights.filter((f: any) => {
+          const priceNum = parseFloat(String(f.price).replace(/[^0-9.]/g, ""));
+          const priceOk =
+            !preferences.budget || isNaN(priceNum) || priceNum <= preferences.budget;
+          const airlineOk =
+            !preferences.preferredAirlines.length ||
+            preferences.preferredAirlines.includes(f.airline);
+          return priceOk && airlineOk;
+        });
+
+        const filteredHotels = cleanedHotels.filter((h: any) => {
+          const priceNum = parseFloat(String(h.price).replace(/[^0-9.]/g, ""));
+          const priceOk =
+            !preferences.budget || isNaN(priceNum) || priceNum <= preferences.budget;
+          const nameOk =
+            !preferences.preferredHotels.length ||
+            preferences.preferredHotels.some((ph) =>
+              h.name?.toLowerCase().includes(ph.toLowerCase())
+            );
+          const petOk =
+            !preferences.petFriendly ||
+            h.pet_friendly === true ||
+            /pet/i.test(h.description || "");
+          return priceOk && nameOk && petOk;
+        });
+
         return {
           trip_plan: {
             ...root,
-            flight_details: filledFlights,
-            hotel: { options: cleanedHotels },
+            flight_details: filteredFlights,
+            hotel: { options: filteredHotels },
             places_to_visit: cleanedPlaces,
           },
         };
@@ -271,7 +323,8 @@ export default function GenerateTrip() {
           const info = await fetchFlightInfo(
             originAirport.code,
             arrival.code,
-            startDateStr || ""
+            startDateStr || "",
+            preferences
           );
           if (info) {
             firstFlight.airline = info.airline || firstFlight.airline;

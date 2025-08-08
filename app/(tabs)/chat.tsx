@@ -1,7 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { startChatSession } from '@/config/GeminiConfig';
+import { UserPreferencesContext } from '@/context/UserPreferencesContext';
 
 interface Message {
   role: 'user' | 'model';
@@ -11,7 +12,20 @@ interface Message {
 const ChatScreen = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const sessionRef = useRef(startChatSession([]));
+  const { preferences } = useContext(UserPreferencesContext);
+  const prefParts: string[] = [];
+  if (preferences.budget) prefParts.push(`budget up to $${preferences.budget}`);
+  if (preferences.preferredAirlines.length)
+    prefParts.push(`preferred airlines: ${preferences.preferredAirlines.join(', ')}`);
+  if (preferences.preferredHotels.length)
+    prefParts.push(`preferred hotels: ${preferences.preferredHotels.join(', ')}`);
+  if (preferences.dietaryNeeds.length)
+    prefParts.push(`dietary needs: ${preferences.dietaryNeeds.join(', ')}`);
+  if (preferences.petFriendly) prefParts.push('pet friendly');
+  const initial = prefParts.length
+    ? [{ role: 'user', parts: [{ text: `Preferences: ${prefParts.join(', ')}` }] }]
+    : [];
+  const sessionRef = useRef(startChatSession(initial));
 
   const sendMessage = async () => {
     if (!input.trim()) return;

@@ -4,6 +4,7 @@ import {
   generatePoiLink,
   FlightOffer,
 } from "@/utils/travelpayouts";
+import { UserPreferences } from "@/types/user";
 
 /**
  * Function declarations exposed to the LLM for structured function calling.
@@ -65,7 +66,8 @@ export type TravelFunctionName =
 
 export const executeAgentFunction = async (
   name: TravelFunctionName,
-  args: any
+  args: any,
+  prefs?: UserPreferences
 ): Promise<any> => {
   switch (name) {
     case "search_flights": {
@@ -73,7 +75,8 @@ export const executeAgentFunction = async (
       const flights: FlightOffer[] = await fetchCheapestFlights(
         origin,
         destination,
-        departDate
+        departDate,
+        prefs
       );
       return flights;
     }
