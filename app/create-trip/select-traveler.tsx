@@ -13,7 +13,7 @@ const SelectTraveler = () => {
   const { setTripData } = useContext(CreateTripContext);
 
   const handleSelectTraveler = (option: any) => {
-    setTripData((prev) => {
+    setTripData((prev = []) => {
       const newData = prev.filter((item) => !item.travelers);
       return [
         ...newData,
@@ -25,7 +25,7 @@ const SelectTraveler = () => {
         },
       ];
     });
-    router.push("/create-trip/select-dates");
+    router.push("select-dates");
   };
 
   const renderItem = ({ item }: { item: any }) => (
