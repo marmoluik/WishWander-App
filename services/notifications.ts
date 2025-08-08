@@ -1,6 +1,5 @@
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
-import * as Mail from "@sendgrid/mail";
 
 export enum AlertType {
   FLIGHT_STATUS = "flight_status",
@@ -19,10 +18,6 @@ interface AlertOptions {
 
 const SENDGRID_KEY =
   Constants.expoConfig?.extra?.sendgridApiKey || process.env.SENDGRID_API_KEY;
-
-if (SENDGRID_KEY) {
-  Mail.setApiKey(SENDGRID_KEY);
-}
 
 export const registerForPushNotifications = async (): Promise<string | undefined> => {
   const { status } = await Notifications.requestPermissionsAsync();
@@ -51,13 +46,28 @@ export const sendPushNotification = async (
 
 export const sendEmailFallback = async (opts: AlertOptions): Promise<void> => {
   if (!SENDGRID_KEY || !opts.email) return;
-  await Mail.send({
-    to: opts.email,
-    from: Constants.expoConfig?.extra?.sendgridFromEmail || "noreply@example.com",
-    subject: opts.title,
-    html: `${opts.message}${
-      opts.link ? `<br/><a href="${opts.link}">View details</a>` : ""
-    }`,
+  await fetch("https://api.sendgrid.com/v3/mail/send", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${SENDGRID_KEY}`,
+    },
+    body: JSON.stringify({
+      personalizations: [{ to: [{ email: opts.email }] }],
+      from: {
+        email:
+          Constants.expoConfig?.extra?.sendgridFromEmail || "noreply@example.com",
+      },
+      subject: opts.title,
+      content: [
+        {
+          type: "text/html",
+          value: `${opts.message}${
+            opts.link ? `<br/><a href="${opts.link}">View details</a>` : ""
+          }`,
+        },
+      ],
+    }),
   });
 };
 
