@@ -24,14 +24,11 @@ import {
 import { UserPreferencesContext } from "@/context/UserPreferencesContext";
 import { UserPreferences } from "@/types/user";
 import HeaderLogo from "@/components/HeaderLogo";
-import { registerTripMonitor } from "@/services/tripMonitor";
-import { initializeStripe } from "@/services/payment";
 import { SubscriptionContext } from "@/context/SubscriptionContext";
 import {
   SubscriptionState,
   defaultSubscriptionState,
 } from "@/types/subscription";
-import { fetchSubscriptionState } from "@/services/subscription";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -91,6 +88,9 @@ export default function RootLayout() {
         if (stored) {
           setSubscription(JSON.parse(stored));
         } else {
+          const { fetchSubscriptionState } = await import(
+            "@/services/subscription"
+          );
           const remote = await fetchSubscriptionState();
           setSubscription(remote);
         }
@@ -135,8 +135,12 @@ export default function RootLayout() {
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
-      registerTripMonitor();
-      initializeStripe();
+      import("@/services/tripMonitor").then(({ registerTripMonitor }) =>
+        registerTripMonitor()
+      );
+      import("@/services/payment").then(({ initializeStripe }) =>
+        initializeStripe()
+      );
     }
   }, [loaded]);
 
