@@ -1,4 +1,9 @@
-import { generateFlightLink, generateHotelLink, generatePoiLink } from "./travelpayouts";
+import {
+  generateFlightLink,
+  generateHotelLink,
+  generatePoiLink,
+  fetchFlightInfo,
+} from "./travelpayouts";
 
 describe("travelpayouts link generators", () => {
   beforeEach(() => {
@@ -38,5 +43,34 @@ describe("travelpayouts link generators", () => {
     const tp2 = new URL(tour);
     const redirect2 = new URL(decodeURIComponent(tp2.searchParams.get("u")!));
     expect(redirect2.href).toContain("welcomepickups.com/search?q=Lisbon%20tour");
+  });
+});
+
+describe("fetchFlightInfo scenarios", () => {
+  const globalAny: any = global;
+
+  beforeEach(() => {
+    process.env.EXPO_PUBLIC_TRAVELPAYOUTS_TOKEN = "token";
+    globalAny.fetch = jest.fn();
+  });
+
+  it("returns null when flight cancelled (no data)", async () => {
+    globalAny.fetch.mockResolvedValue({ json: async () => ({ data: [] }) });
+    const info = await fetchFlightInfo("NYC", "LON", "2025-12-01");
+    expect(info).toBeNull();
+  });
+
+  it("respects budget and returns null when over budget", async () => {
+    globalAny.fetch.mockResolvedValue({
+      json: async () => ({ data: [{ price: 500, airline: "AA", flight_number: "AA1" }] }),
+    });
+    const info = await fetchFlightInfo("NYC", "LON", "2025-12-01", {
+      budget: 200,
+      preferredAirlines: [],
+      preferredHotels: [],
+      dietaryNeeds: [],
+      petFriendly: false,
+    });
+    expect(info).toBeNull();
   });
 });
