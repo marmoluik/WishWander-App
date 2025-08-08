@@ -7,13 +7,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useContext,
-  useCallback,
-} from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
@@ -124,26 +118,7 @@ const Discover = () => {
     }
   }, [tripData, tripPlan]);
 
-  const getFlightCodes = useCallback(() => {
-    const origin = parsedTripData?.find((i: any) => i.originAirport)?.originAirport?.code;
-    const booking = parsedTripPlan?.trip_plan?.flight_details?.booking_url;
-    if (booking) {
-      try {
-        const tp = new URL(booking);
-        const search = tp.searchParams.get("u");
-        if (search) {
-          const decoded = new URL(decodeURIComponent(search));
-          return {
-            origin: decoded.searchParams.get("origin") || origin,
-            destination: decoded.searchParams.get("destination") || undefined,
-          };
-        }
-      } catch {}
-    }
-    return { origin, destination: undefined };
-  }, [parsedTripData, parsedTripPlan]);
-
-  const loadFlightEmission = useCallback(async () => {
+  const loadFlightEmission = async () => {
     const { origin, destination } = getFlightCodes();
     if (!origin || !destination) return;
     const airline = parsedTripPlan?.trip_plan?.flight_details?.airline;
@@ -155,13 +130,13 @@ const Discover = () => {
       flightNumber
     );
     if (grams != null) setFlightEmissionKg(grams / 1000);
-  }, [getFlightCodes, parsedTripPlan]);
+  };
 
   useEffect(() => {
     if (parsedTripPlan?.trip_plan?.flight_details) {
       loadFlightEmission();
     }
-  }, [parsedTripPlan, loadFlightEmission]);
+  }, [parsedTripPlan]);
 
   const filteredPlaces =
     parsedTripPlan?.trip_plan?.places_to_visit?.filter((p: any) =>
@@ -241,6 +216,25 @@ const Discover = () => {
         ? prev.filter((i) => i !== interest)
         : [...prev, interest]
     );
+  };
+
+  const getFlightCodes = () => {
+    const origin = parsedTripData?.find((i: any) => i.originAirport)?.originAirport?.code;
+    const booking = parsedTripPlan?.trip_plan?.flight_details?.booking_url;
+    if (booking) {
+      try {
+        const tp = new URL(booking);
+        const search = tp.searchParams.get("u");
+        if (search) {
+          const decoded = new URL(decodeURIComponent(search));
+          return {
+            origin: decoded.searchParams.get("origin") || origin,
+            destination: decoded.searchParams.get("destination") || undefined,
+          };
+        }
+      } catch {}
+    }
+    return { origin, destination: undefined };
   };
 
   const loadCheapestFlights = async () => {

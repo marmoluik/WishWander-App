@@ -14,7 +14,7 @@ export default function SignUp() {
     email: "",
     password: "",
   });
-  const [isLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSignUpPress = async () => {
     try {

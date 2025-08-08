@@ -112,9 +112,8 @@ export default function GenerateTrip() {
         const jsonStr = match[0].replace(/```json|```/gi, "");
         try {
           return JSON.parse(jsonStr);
-        } catch (err) {
+        } catch (_) {
           // Fallback to JSON5 for more forgiving parsing (handles trailing commas, single quotes, etc.)
-          console.error("JSON parse failed", err);
           return JSON5.parse(jsonStr);
         }
       };

@@ -1,6 +1,5 @@
 import * as TaskManager from "expo-task-manager";
 import * as BackgroundTask from "expo-background-task";
-import Constants from "expo-constants";
 import { collection, getDocs } from "firebase/firestore";
 import { fetchFlightInfo } from "@/utils/travelpayouts";
 import { db } from "@/config/FirebaseConfig";
@@ -59,12 +58,6 @@ TaskManager.defineTask(TASK_NAME, async () => {
 // Register the background task
 export const registerTripMonitor = async () => {
   try {
-    // Background tasks are not available when running inside Expo Go.
-    if (Constants.appOwnership === "expo") {
-      console.warn("Skipping trip monitor registration in Expo Go");
-      return;
-    }
-
     const isRegistered = await TaskManager.isTaskRegisteredAsync(TASK_NAME);
     if (!isRegistered) {
       await BackgroundTask.registerTaskAsync(TASK_NAME, {
