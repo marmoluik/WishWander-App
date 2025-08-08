@@ -18,6 +18,6 @@ export default ({ config }) => ({
     facebookAppId: process.env.FACEBOOK_APP_ID,
     sendgridApiKey: process.env.SENDGRID_API_KEY,
     sendgridFromEmail: process.env.SENDGRID_FROM_EMAIL,
-    stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+    stripePublishableKey: process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY,
   },
 });

@@ -16,6 +16,7 @@ export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
 
   const onLoginPress = async () => {
+    setIsLoading(true);
     try {
       if (!form.email || !form.password) {
         alert("Please fill in all fields");
@@ -58,6 +59,8 @@ export default function SignIn() {
           alert("Error signing in: " + error.message);
       }
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 

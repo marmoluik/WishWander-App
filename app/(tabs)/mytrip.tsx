@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import StartNewTripCard from "@/components/MyTrips/StartNewTripCard";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
@@ -19,11 +19,7 @@ export default function MyTrip() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    user && getMyTrips();
-  }, [user]);
-
-  const getMyTrips = async () => {
+  const getMyTrips = useCallback(async () => {
     if (!db || !user) return;
     setLoading(true);
     setUserTrips([]);
@@ -42,7 +38,11 @@ export default function MyTrip() {
       }
     });
     setLoading(false);
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) getMyTrips();
+  }, [user, getMyTrips]);
 
   const deleteTrip = async (id: string) => {
     if (!db || !id || !user) return;
@@ -68,7 +68,7 @@ export default function MyTrip() {
         </TouchableOpacity>
       </View>
       {loading && <ActivityIndicator size="large" color="#9C00FF" />}
-      {userTrips?.length == 0 ? (
+      {userTrips?.length === 0 ? (
         <StartNewTripCard />
       ) : (
         <UserTripList userTrips={userTrips} onDelete={deleteTrip} />
