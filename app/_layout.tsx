@@ -24,6 +24,13 @@ import { UserPreferencesContext } from "@/context/UserPreferencesContext";
 import { UserPreferences } from "@/types/user";
 import HeaderLogo from "@/components/HeaderLogo";
 import { registerTripMonitor } from "@/services/tripMonitor";
+import { initializeStripe } from "@/services/payment";
+import { SubscriptionContext } from "@/context/SubscriptionContext";
+import {
+  SubscriptionState,
+  defaultSubscriptionState,
+} from "@/types/subscription";
+import { fetchSubscriptionState } from "@/services/subscription";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -38,6 +45,9 @@ export default function RootLayout() {
     budget: undefined,
     petFriendly: false,
   });
+  const [subscription, setSubscription] = useState<SubscriptionState>(
+    defaultSubscriptionState
+  );
 
   const addItinerary = (it: StoredItinerary) => {
     setItineraries((prev) => [...prev, it]);
@@ -74,12 +84,32 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
+    (async () => {
+      try {
+        const stored = await AsyncStorage.getItem("subscriptionState");
+        if (stored) {
+          setSubscription(JSON.parse(stored));
+        } else {
+          const remote = await fetchSubscriptionState();
+          setSubscription(remote);
+        }
+      } catch (e) {
+        console.error("load subscription failed", e);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
     AsyncStorage.setItem("itineraries", JSON.stringify(itineraries));
   }, [itineraries]);
 
   useEffect(() => {
     AsyncStorage.setItem("userPreferences", JSON.stringify(preferences));
   }, [preferences]);
+
+  useEffect(() => {
+    AsyncStorage.setItem("subscriptionState", JSON.stringify(subscription));
+  }, [subscription]);
 
   const updateTripData = (newData: any) => {
     setTripData((prevData) => {
@@ -105,6 +135,7 @@ export default function RootLayout() {
     if (loaded) {
       SplashScreen.hideAsync();
       registerTripMonitor();
+      initializeStripe();
     }
   }, [loaded]);
 
@@ -114,25 +145,27 @@ export default function RootLayout() {
 
   return (
     <>
-      <UserPreferencesContext.Provider value={{ preferences, setPreferences }}>
-        <CreateTripContext.Provider value={{ tripData, setTripData }}>
-          <ItineraryContext.Provider
-            value={{ itineraries, addItinerary, removeItinerary }}
-          >
-            <StatusBar style="dark" />
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="index" />
-              <Stack.Screen name="(auth)" />
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="create-trip" />
-              <Stack.Screen
-                name="generate-trip"
-                options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
-              />
-            </Stack>
-          </ItineraryContext.Provider>
-        </CreateTripContext.Provider>
-      </UserPreferencesContext.Provider>
+      <SubscriptionContext.Provider value={{ subscription, setSubscription }}>
+        <UserPreferencesContext.Provider value={{ preferences, setPreferences }}>
+          <CreateTripContext.Provider value={{ tripData, setTripData }}>
+            <ItineraryContext.Provider
+              value={{ itineraries, addItinerary, removeItinerary }}
+            >
+              <StatusBar style="dark" />
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="index" />
+                <Stack.Screen name="(auth)" />
+                <Stack.Screen name="(tabs)" />
+                <Stack.Screen name="create-trip" />
+                <Stack.Screen
+                  name="generate-trip"
+                  options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
+                />
+              </Stack>
+            </ItineraryContext.Provider>
+          </CreateTripContext.Provider>
+        </UserPreferencesContext.Provider>
+      </SubscriptionContext.Provider>
     </>
   );
 }
