@@ -8,6 +8,7 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import "react-native-reanimated";
 import { useColorScheme } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -36,6 +37,23 @@ export default function RootLayout() {
   const removeItinerary = (id: string) => {
     setItineraries((prev) => prev.filter((it) => it.id !== id));
   };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const stored = await AsyncStorage.getItem("itineraries");
+        if (stored) {
+          setItineraries(JSON.parse(stored));
+        }
+      } catch (e) {
+        console.error("load itineraries failed", e);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    AsyncStorage.setItem("itineraries", JSON.stringify(itineraries));
+  }, [itineraries]);
 
   const updateTripData = (newData: any) => {
     setTripData((prevData) => {
