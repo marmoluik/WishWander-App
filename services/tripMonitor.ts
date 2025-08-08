@@ -1,9 +1,9 @@
 import * as TaskManager from "expo-task-manager";
 import * as BackgroundTask from "expo-background-task";
-import * as Notifications from "expo-notifications";
 import { collection, getDocs } from "firebase/firestore";
 import { fetchFlightInfo } from "@/utils/travelpayouts";
 import { db } from "@/config/FirebaseConfig";
+import { notify, AlertType } from "@/services/notifications";
 
 const TASK_NAME = "trip-monitor";
 
@@ -16,6 +16,9 @@ TaskManager.defineTask(TASK_NAME, async () => {
     for (const userDoc of tripsSnap.docs) {
       const tripsCol = collection(db, "UserTrips", userDoc.id, "trips");
       const trips = await getDocs(tripsCol);
+      const user = userDoc.data() as any;
+      const token = user?.pushToken;
+      const email = user?.email;
       for (const t of trips.docs) {
         const trip = t.data() as any;
         const flight = trip?.tripPlan?.trip_plan?.flight_details;
@@ -30,12 +33,15 @@ TaskManager.defineTask(TASK_NAME, async () => {
             flight.departure_date
           );
           if (info && info.price && info.price !== flight.price) {
-            await Notifications.scheduleNotificationAsync({
-              content: {
-                title: "Flight price changed",
-                body: `${flight.departure_city} → ${flight.arrival_city} now $${info.price}`,
-              },
-              trigger: null,
+            await notify({
+              type: AlertType.FLIGHT_STATUS,
+              title: "Flight price changed",
+              message: `${flight.departure_city} → ${
+                flight.arrival_city
+              } now $${info.price}`,
+              link: `/trips/${t.id}`,
+              token,
+              email,
             });
           }
         }

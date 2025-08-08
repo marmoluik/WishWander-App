@@ -16,5 +16,7 @@ export default ({ config }) => ({
     googleIosClientId: process.env.GOOGLE_IOS_CLIENT_ID,
     googleAndroidClientId: process.env.GOOGLE_ANDROID_CLIENT_ID,
     facebookAppId: process.env.FACEBOOK_APP_ID,
+    sendgridApiKey: process.env.SENDGRID_API_KEY,
+    sendgridFromEmail: process.env.SENDGRID_FROM_EMAIL,
   },
 });
