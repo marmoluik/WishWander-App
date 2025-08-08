@@ -57,14 +57,14 @@ const ReviewTrip = () => {
           "Destination",
           locationInfo?.name || "Not selected",
           <Ionicons name="location-sharp" size={24} color="#9C00FF" />,
-          "/create-trip/search-place"
+          "search-place"
         )}
 
         {renderReviewItem(
           "Travelers",
           `${travelers?.type || "Not selected"} (${travelers?.count || "0"})`,
           <MaterialIcons name="people" size={24} color="#9C00FF" />,
-          "/create-trip/select-traveler"
+          "select-traveler"
         )}
 
         {renderReviewItem(
@@ -75,7 +75,7 @@ const ReviewTrip = () => {
               ).format("MMM D, YYYY")} (${dates.totalNumberOfDays} days)`
             : "Not selected",
           <FontAwesome5 name="calendar-alt" size={24} color="#9C00FF" />,
-          "/create-trip/select-dates"
+          "select-dates"
         )}
 
         {renderReviewItem(
@@ -86,7 +86,7 @@ const ReviewTrip = () => {
             size={24}
             color="#9C00FF"
           />,
-          "/create-trip/select-budget"
+          "select-budget"
         )}
       </View>
 

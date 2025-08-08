@@ -33,7 +33,7 @@ const SelectDates = () => {
 
     const days = moment(endDate).diff(moment(startDate), "days") + 1;
 
-    setTripData((prev) => {
+    setTripData((prev = []) => {
       const filtered = prev.filter((item) => !item.dates);
       return [
         ...filtered,
@@ -47,7 +47,7 @@ const SelectDates = () => {
       ];
     });
 
-    router.push("/create-trip/select-budget");
+    router.push("select-budget");
   };
 
   return (
@@ -88,7 +88,7 @@ const SelectDates = () => {
         />
         <CustomButton
           title="Flexible Dates"
-          onPress={() => router.push("/create-trip/flexible-dates")}
+          onPress={() => router.push("flexible-dates")}
           className="border-2 border-primary text-primary bg-background"
         />
       </View>

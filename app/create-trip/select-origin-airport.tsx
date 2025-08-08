@@ -86,7 +86,7 @@ export default function SelectOriginAirport() {
 
               if (!code || !coordinates) return;
 
-              setTripData((prev) => {
+              setTripData((prev = []) => {
                 const filtered = prev.filter((i) => !i.originAirport);
                 return [
                   ...filtered,
@@ -100,7 +100,7 @@ export default function SelectOriginAirport() {
                 ];
               });
 
-              router.push("/create-trip/select-traveler");
+              router.push("select-traveler");
             }}
             query={{
               key: Constants.expoConfig?.extra?.googlePlacesApiKey!,
