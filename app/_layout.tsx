@@ -9,7 +9,6 @@ import "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import "../global.css";
 import "react-native-get-random-values";
-import "deprecated-react-native-prop-types";
 import { CreateTripContext } from "@/context/CreateTripContext";
 import {
   ItineraryContext,
