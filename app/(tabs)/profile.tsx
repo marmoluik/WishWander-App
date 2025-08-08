@@ -6,10 +6,13 @@ import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
 import { UserPreferencesContext } from "@/context/UserPreferencesContext";
+import { SubscriptionContext } from "@/context/SubscriptionContext";
+import { subscribeUser } from "@/services/payment";
 
 export default function Profile() {
   const user = auth?.currentUser;
   const { preferences, setPreferences } = useContext(UserPreferencesContext);
+  const { subscription } = useContext(SubscriptionContext);
   const [form, setForm] = useState({
     budget: preferences.budget ? String(preferences.budget) : "",
     preferredAirlines: preferences.preferredAirlines.join(", "),
@@ -74,6 +77,19 @@ export default function Profile() {
               : ""}
           </Text>
         </TouchableOpacity>
+      </View>
+
+      {/* Subscription Section */}
+      <View className="mb-8">
+        <Text className="text-xl font-outfit-bold mb-4">Subscription</Text>
+        <Text className="text-text-primary font-outfit mb-4">
+          {subscription.isPremium
+            ? "You are a premium member."
+            : "You are using the free plan."}
+        </Text>
+        {!subscription.isPremium && (
+          <CustomButton title="Upgrade to Premium" onPress={subscribeUser} />
+        )}
       </View>
 
       {/* Preferences Section */}
