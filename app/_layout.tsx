@@ -1,5 +1,6 @@
 import "setimmediate";
 import "@/config/sentry";
+import "tslib";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -26,7 +27,7 @@ import {
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+function RootLayout() {
   const [tripData, setTripData] = useState<any[]>([]);
   const [itineraries, setItineraries] = useState<StoredItinerary[]>([]);
   const [preferences, setPreferences] = useState<UserPreferences>({
@@ -153,3 +154,5 @@ export default function RootLayout() {
     </>
   );
 }
+
+export default RootLayout;
