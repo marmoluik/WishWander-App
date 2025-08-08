@@ -13,6 +13,7 @@ export default function SignIn() {
     email: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const onLoginPress = async () => {
     try {
