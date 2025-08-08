@@ -125,7 +125,7 @@ const FlexibleDates = () => {
   };
 
   const selectRange = (r: FlexibleResult) => {
-    setTripData((prev) => {
+    setTripData((prev = []) => {
       const newData = prev.filter((item) => !item.dates);
       const totalDays = moment(r.end).diff(moment(r.start), "days") + 1;
       return [
@@ -139,7 +139,7 @@ const FlexibleDates = () => {
         },
       ];
     });
-    router.push("/create-trip/select-budget");
+    router.push("select-budget");
   };
 
   return (
