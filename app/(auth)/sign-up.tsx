@@ -17,6 +17,7 @@ export default function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
 
   const onSignUpPress = async () => {
+    setIsLoading(true);
     try {
       if (!form.email || !form.password || !form.name) {
         alert("Please fill in all fields");
@@ -56,6 +57,8 @@ export default function SignUp() {
           alert("Error creating account: " + error.message);
       }
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 

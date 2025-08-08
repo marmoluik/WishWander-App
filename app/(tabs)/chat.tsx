@@ -36,7 +36,7 @@ const ChatScreen = () => {
       const result = await sessionRef.current.sendMessage(input);
       const text = await result.response.text();
       setMessages((prev) => [...prev, { role: 'model', text }]);
-    } catch (e) {
+    } catch {
       setMessages((prev) => [...prev, { role: 'model', text: 'Something went wrong.' }]);
     }
   };

@@ -3,7 +3,7 @@ import Constants from "expo-constants";
 
 const STRIPE_KEY =
   Constants.expoConfig?.extra?.stripePublishableKey ||
-  process.env.STRIPE_PUBLISHABLE_KEY ||
+  process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY ||
   "";
 
 /**
