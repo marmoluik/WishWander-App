@@ -9,7 +9,7 @@ import CustomButton from "@/components/CustomButton";
 import { CreateTripContext } from "@/context/CreateTripContext";
 import moment from "moment";
 
-export default function SelectDates() {
+const SelectDates: React.FC = () => {
   const router = useRouter();
   const { setTripData } = useContext(CreateTripContext);
 
@@ -94,4 +94,6 @@ export default function SelectDates() {
       </View>
     </SafeAreaView>
   );
-}
+};
+
+export default SelectDates;
