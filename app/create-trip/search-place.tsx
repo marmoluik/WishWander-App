@@ -36,7 +36,7 @@ export default function SearchPlace() {
             onPress={(data, details = null) => {
               if (!details) return;
 
-              setTripData((prev) => {
+              setTripData((prev = []) => {
                 const filtered = prev.filter((i) => !i.locationInfo);
                 return [
                   ...filtered,
@@ -51,7 +51,7 @@ export default function SearchPlace() {
                 ];
               });
 
-              router.push("/create-trip/select-origin-airport");
+              router.push("select-origin-airport");
             }}
             query={{
               key: Constants.expoConfig?.extra?.googlePlacesApiKey!,
