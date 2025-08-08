@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Wishwander",
+    "name": "WishWander",
     "slug": "wishwander",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,7 +13,10 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "UIBackgroundModes": ["fetch", "process"]
+      }
     },
     "android": {
       "adaptiveIcon": {

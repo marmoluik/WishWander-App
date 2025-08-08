@@ -4,9 +4,6 @@ import React, { useContext } from "react";
 import {
   View,
   Text,
-  TextInput,
-  FlatList,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
   SafeAreaView,
@@ -14,7 +11,7 @@ import {
   Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useGoogleAutocomplete } from "@appandflow/react-native-google-autocomplete";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import Constants from "expo-constants";
 import { CreateTripContext } from "@/context/CreateTripContext";
 import { getNearestAirport } from "@/utils/getNearestAirport";
@@ -23,85 +20,6 @@ export default function SelectOriginAirport() {
   const router = useRouter();
   const { setTripData } = useContext(CreateTripContext);
   const isWeb = Platform.OS === "web";
-
-  const {
-    locationResults,
-    isSearching,
-    term,
-    setTerm,
-    searchDetails,
-  } = useGoogleAutocomplete(
-    Constants.expoConfig?.extra?.googlePlacesApiKey!,
-    {
-      debounce: 300,
-      minLength: 2,
-      // Restrict results to airport establishments only
-      queryTypes: "establishment",
-      ...(isWeb && { proxyUrl: "https://cors.isomorphic-git.org/" }),
-    }
-  );
-
-  const selectAirport = async (item: any) => {
-    let name = item.description;
-    let code = "";
-    let coordinates: { lat: number; lng: number } | undefined;
-
-    if (item.types?.includes("airport")) {
-      const detail = await searchDetails(item.place_id);
-      const codeMatch = item.description.match(/\(([^)]+)\)/);
-      code = codeMatch ? codeMatch[1] : "";
-      coordinates = detail.geometry.location;
-    } else {
-      const detail = await searchDetails(item.place_id);
-      const { lat, lng } = detail.geometry.location;
-      try {
-        const res = await fetch(
-          `https://autocomplete.travelpayouts.com/places2?term=${encodeURIComponent(
-            item.description
-          )}&locale=en&types[]=airport&limit=1`
-        );
-        const json = await res.json();
-        const airport = json?.[0];
-        if (airport) {
-          name = `${airport.name} (${airport.code})`;
-          code = airport.code;
-          coordinates = {
-            lat: airport.coordinates?.lat,
-            lng: airport.coordinates?.lon,
-          };
-        }
-      } catch (e) {
-        console.error("airport lookup failed", e);
-      }
-      // Fallback to local dataset when API isn't available
-      if (!code || !coordinates) {
-        const nearest = getNearestAirport(lat, lng);
-        if (nearest) {
-          name = `${nearest.name} (${nearest.code})`;
-          code = nearest.code;
-          coordinates = { lat: nearest.lat, lng: nearest.lng };
-        }
-      }
-    }
-
-    if (!code || !coordinates) return;
-
-    setTripData((prev) => {
-      const filtered = prev.filter((i) => !i.originAirport);
-      return [
-        ...filtered,
-        {
-          originAirport: {
-            name,
-            code,
-            coordinates,
-          },
-        },
-      ];
-    });
-    router.push("/create-trip/select-traveler");
-  };
-
   const Wrapper: any = isWeb ? View : TouchableWithoutFeedback;
 
   return (
@@ -116,30 +34,92 @@ export default function SelectOriginAirport() {
         </View>
 
         <View style={styles.autocomplete}>
-          <TextInput
-            style={styles.input}
+          <GooglePlacesAutocomplete
             placeholder="Search airport name or code"
-            placeholderTextColor="#1E1B4B"
-            returnKeyType="search"
-            value={term}
-            onChangeText={setTerm}
-          />
+            fetchDetails={true}
+            onPress={async (data, details = null) => {
+              if (!details) return;
 
-          {isSearching && <Text style={styles.loading}>Loading…</Text>}
+              let name = data.description;
+              let code = "";
+              let coordinates = details.geometry.location;
 
-          <FlatList
-            data={locationResults.filter((i) => i.types?.includes("airport"))}
-            keyExtractor={(item) => item.place_id}
-            renderItem={({ item }) => (
-              <TouchableOpacity style={styles.row} onPress={() => selectAirport(item)}>
-                <Text style={styles.rowText}>{item.description}</Text>
-              </TouchableOpacity>
-            )}
-            ListEmptyComponent={
-              !isSearching && term.length >= 2 ? (
-                <Text style={styles.noResults}>No results</Text>
-              ) : null
-            }
+              if (data.types?.includes("airport")) {
+                const codeMatch = data.description.match(/\(([^)]+)\)/);
+                code = codeMatch ? codeMatch[1] : "";
+              } else {
+                try {
+                  const res = await fetch(
+                    `https://autocomplete.travelpayouts.com/places2?term=${encodeURIComponent(
+                      data.description
+                    )}&locale=en&types[]=airport&limit=1`
+                  );
+                  const json = await res.json();
+                  const airport = json?.[0];
+                  if (airport) {
+                    name = `${airport.name} (${airport.code})`;
+                    code = airport.code;
+                    coordinates = {
+                      lat: airport.coordinates?.lat,
+                      lng: airport.coordinates?.lon,
+                    };
+                  }
+                } catch (e) {
+                  console.error("airport lookup failed", e);
+                }
+
+                if (!code || !coordinates) {
+                  const nearest = getNearestAirport(
+                    details.geometry.location.lat,
+                    details.geometry.location.lng
+                  );
+                  if (nearest) {
+                    name = `${nearest.name} (${nearest.code})`;
+                    code = nearest.code;
+                    coordinates = {
+                      lat: nearest.lat,
+                      lng: nearest.lng,
+                    };
+                  }
+                }
+              }
+
+              if (!code || !coordinates) return;
+
+              setTripData((prev) => {
+                const filtered = prev.filter((i) => !i.originAirport);
+                return [
+                  ...filtered,
+                  {
+                    originAirport: {
+                      name,
+                      code,
+                      coordinates,
+                    },
+                  },
+                ];
+              });
+
+              router.push("/create-trip/select-traveler");
+            }}
+            query={{
+              key: Constants.expoConfig?.extra?.googlePlacesApiKey!,
+              language: "en",
+              types: "establishment",
+            }}
+            styles={{
+              textInput: styles.input,
+              listView: { backgroundColor: "#F9F5FF" },
+              row: styles.row,
+              separator: {
+                height: 0.5,
+                backgroundColor: "#9C00FF",
+              },
+              description: styles.rowText,
+            }}
+            debounce={300}
+            minLength={2}
+            enablePoweredByContainer={false}
           />
         </View>
       </SafeAreaView>
@@ -150,7 +130,12 @@ export default function SelectOriginAirport() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F9F5FF" },
   header: { alignItems: "center", marginTop: 20, paddingHorizontal: 16 },
-  title: { fontSize: 32, fontWeight: "700", textAlign: "center", marginBottom: 8 },
+  title: {
+    fontSize: 32,
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: 8,
+  },
   subtitle: { fontSize: 16, color: "#1E1B4B" },
   autocomplete: { flex: 1, padding: 16 },
   input: {
@@ -163,7 +148,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#9C00FF",
   },
-  loading: { textAlign: "center", marginVertical: 8 },
   row: {
     padding: 13,
     backgroundColor: "#F9F5FF",
@@ -171,6 +155,4 @@ const styles = StyleSheet.create({
     borderBottomColor: "#9C00FF",
   },
   rowText: { fontSize: 15 },
-  noResults: { textAlign: "center", marginTop: 8, color: "#1E1B4B" },
 });
-

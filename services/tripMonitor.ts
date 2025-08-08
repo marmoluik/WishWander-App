@@ -1,5 +1,5 @@
 import * as TaskManager from "expo-task-manager";
-import * as BackgroundFetch from "expo-background-fetch";
+import * as BackgroundTask from "expo-background-task";
 import * as Notifications from "expo-notifications";
 import { collection, getDocs } from "firebase/firestore";
 import { fetchFlightInfo } from "@/utils/travelpayouts";
@@ -7,9 +7,11 @@ import { db } from "@/config/FirebaseConfig";
 
 const TASK_NAME = "trip-monitor";
 
-const tripMonitorTask = async () => {
+// Define the background task
+TaskManager.defineTask(TASK_NAME, async () => {
   try {
-    if (!db) return BackgroundFetch.BackgroundFetchResult.NoData;
+    if (!db) return BackgroundTask.BackgroundTaskResult.NoData;
+
     const tripsSnap = await getDocs(collection(db, "UserTrips"));
     for (const userDoc of tripsSnap.docs) {
       const tripsCol = collection(db, "UserTrips", userDoc.id, "trips");
@@ -39,29 +41,25 @@ const tripMonitorTask = async () => {
         }
       }
     }
-    return BackgroundFetch.BackgroundFetchResult.NewData;
+
+    return BackgroundTask.BackgroundTaskResult.NewData;
   } catch (e) {
     console.error("trip monitor failed", e);
-    return BackgroundFetch.BackgroundFetchResult.Failed;
+    return BackgroundTask.BackgroundTaskResult.Failed;
   }
-};
+});
 
+// Register the background task
 export const registerTripMonitor = async () => {
   try {
-    // ensure the task is defined before attempting to register
-    try {
-      TaskManager.defineTask(TASK_NAME, tripMonitorTask);
-    } catch {
-      // ignore if task is already defined
-    }
-
     const isRegistered = await TaskManager.isTaskRegisteredAsync(TASK_NAME);
     if (!isRegistered) {
-      await BackgroundFetch.registerTaskAsync(TASK_NAME, {
+      await BackgroundTask.registerTaskAsync(TASK_NAME, {
         minimumInterval: 60 * 60, // 1 hour
         stopOnTerminate: false,
         startOnBoot: true,
       });
+      console.log("Trip monitor background task registered");
     }
   } catch (e) {
     console.error("registerTripMonitor error", e);
