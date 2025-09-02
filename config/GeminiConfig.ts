@@ -31,11 +31,16 @@ const defaultGenerationConfig = {
 export function startChatSession(
   history: Array<{ role: 'user' | 'model'; parts: { text: string }[] }>,
   modelName: string = 'gemini-1.5-flash',
-  tools?: { functionDeclarations: any[] }
+  tools?: { functionDeclarations: any[] },
+  options?: { tripMode?: boolean }
 ) {
   const model = genAI.getGenerativeModel({ model: modelName, tools });
-  return model.startChat({
+  const chatOptions: any = {
     generationConfig: defaultGenerationConfig,
     history,
-  });
+  };
+  if (options?.tripMode) {
+    chatOptions.context = { tripMode: true };
+  }
+  return model.startChat(chatOptions);
 }
