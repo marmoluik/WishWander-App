@@ -15,7 +15,8 @@ export const runTravelAgent = async (prompt: string) => {
   const session = startChatSession(
     [{ role: "user", parts: [{ text: prompt }] }],
     "gemini-1.5-flash",
-    { functionDeclarations }
+    { functionDeclarations },
+    { tripMode: true }
   );
 
   // initial response from the model
