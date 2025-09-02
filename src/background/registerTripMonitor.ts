@@ -7,7 +7,7 @@ import { isExpoGo } from "../env";
 export const TRIP_MONITOR_TASK = "TRIP_MONITOR_TASK";
 TaskManager.defineTask(TRIP_MONITOR_TASK, async () => {
   // your background work here
-  return BackgroundFetch.Result.NewData;
+  return BackgroundFetch.BackgroundFetchResult.NewData;
 });
 
 // Call this during startup (e.g., in _layout or App)
