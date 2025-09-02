@@ -33,7 +33,7 @@
     "expo-status-bar": "~2.2.3",
     "expo-system-ui": "~5.0.10",
     "expo-task-manager": "~13.1.6",
-    "expo-background-fetch": "~12.1.6",
+    "expo-background-fetch": "~13.1.6",
     "expo-notifications": "~0.31.4",
     "expo-web-browser": "~14.2.0",
     "firebase": "^11.0.1",
