@@ -54,7 +54,11 @@
     "react-native-swiper": "^1.6.0",
     "react-native-web": "^0.20.0",
     "setimmediate": "^1.0.5",
-    "tailwindcss": "^3.4.14"
+    "tailwindcss": "^3.4.14",
+    "expo-dev-client": "~5.2.4",
+    "expo-location": "~18.1.6",
+    "expo-background-fetch": "~13.1.6",
+    "undefined": "\\"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

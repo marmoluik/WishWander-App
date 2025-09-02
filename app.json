@@ -2,6 +2,7 @@
   "expo": {
     "name": "Wishwander",
     "slug": "wishwander",
+    "owner": "veebiagentuur",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -15,8 +16,17 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UIBackgroundModes": ["fetch", "remote-notification"]
-      }
+        "UIBackgroundModes": [
+          "fetch",
+          "processing",
+          "remote-notification",
+          "fetch",
+          "processing",
+          "remote-notification"
+        ],
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "com.veebiagentuur.wishwander"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,10 +40,17 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-dev-client"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "aa38173b-0884-4dab-b5a4-c022e11ed248"
+      }
     }
   }
 }

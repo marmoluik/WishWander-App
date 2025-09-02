@@ -13,6 +13,7 @@ import { useColorScheme } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import "../global.css";
 import "react-native-get-random-values";
+import Constants from "expo-constants"; // ⬅️ NEW
 import { CreateTripContext } from "@/context/CreateTripContext";
 import {
   ItineraryContext,
@@ -39,13 +40,8 @@ export default function RootLayout() {
 
   const updateTripData = (newData: any) => {
     setTripData((prevData) => {
-      // Find the key of the new data (locationInfo, travelers, dates, or budget)
       const dataKey = Object.keys(newData)[0];
-
-      // Remove any existing data of the same type
       const filteredData = prevData.filter((item) => !item[dataKey]);
-
-      // Add the new data
       return [...filteredData, newData];
     });
   };
@@ -60,7 +56,13 @@ export default function RootLayout() {
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
-      registerTripMonitor();
+
+      const isExpoGo = Constants.executionEnvironment === "storeClient"; // ⬅️ NEW
+      if (isExpoGo) {
+        console.warn("Background tasks are disabled in Expo Go. Skipping registerTripMonitor().");
+      } else {
+        registerTripMonitor(); // only runs in dev client / standalone
+      }
     }
   }, [loaded]);
 
