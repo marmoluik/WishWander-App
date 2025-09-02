@@ -4,6 +4,11 @@ import {
   generatePoiLink,
   FlightOffer,
 } from "@/utils/travelpayouts";
+import {
+  evaluatePolicy,
+  PolicyEvaluationRequest,
+} from "../packages/agent/policies";
+import { logDecision } from "../packages/db/schemas/DecisionLog";
 
 /**
  * Function declarations exposed to the LLM for structured function calling.
@@ -56,12 +61,33 @@ export const functionDeclarations = [
       required: ["query"],
     },
   },
+  {
+    name: "confirm_booking",
+    description: "Confirm a booking after evaluating policy guardrails",
+    parameters: {
+      type: "object",
+      properties: {
+        cost: { type: "number", description: "Cost of the booking" },
+        departureTime: {
+          type: "string",
+          description: "ISO departure time, if applicable",
+        },
+        brand: { type: "string", description: "Airline or hotel brand" },
+        tripTotal: {
+          type: "number",
+          description: "Current cumulative trip cost",
+        },
+      },
+      required: ["cost"],
+    },
+  },
 ];
 
 export type TravelFunctionName =
   | "search_flights"
   | "hotel_link"
-  | "activity_link";
+  | "activity_link"
+  | "confirm_booking";
 
 export const executeAgentFunction = async (
   name: TravelFunctionName,
@@ -84,6 +110,27 @@ export const executeAgentFunction = async (
     case "activity_link": {
       const { query } = args;
       return { url: generatePoiLink(query) };
+    }
+    case "confirm_booking": {
+      const request: PolicyEvaluationRequest = {
+        cost: args.cost,
+        departureTime: args.departureTime,
+        brand: args.brand,
+        tripTotal: args.tripTotal,
+      };
+      const decision = evaluatePolicy(request);
+      logDecision({
+        id: Date.now().toString(),
+        action: "confirm_booking",
+        allowed: decision.allowed,
+        rationale: decision.reason || "",
+        timestamp: new Date(),
+        payload: args,
+      });
+      if (decision.allowed) {
+        return { status: "confirmed" };
+      }
+      return { status: "needs_confirmation", reason: decision.reason };
     }
     default:
       throw new Error(`Unknown function ${name}`);
