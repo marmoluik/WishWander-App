@@ -3,6 +3,8 @@ export interface Booking {
   provider: string;
   reference?: string;
   url?: string;
+  /** For activity bookings, whether it is indoors */
+  indoor?: boolean;
 }
 
 export interface Destination {

@@ -3,7 +3,9 @@ import { View, Text, ScrollView, TouchableOpacity, Linking } from "react-native"
 import { Ionicons } from "@expo/vector-icons";
 import moment from "moment";
 import CustomButton from "@/components/CustomButton";
+import WeatherSuggestionChip from "@/components/WeatherSuggestionChip";
 import { DayPlan } from "@/context/ItineraryContext";
+import { logWeatherAdjustment } from "@/utils/weatherLog";
 import { generateHotelLink } from "@/utils/travelpayouts";
 import { recordAffiliateClick } from "@/services/affiliate";
 
@@ -82,30 +84,42 @@ const ItineraryDetails: React.FC<Props> = ({ plan }) => {
               </Text>
               <Text className="text-text-primary">{collapsed[index] ? "+" : "-"}</Text>
             </TouchableOpacity>
-            {!collapsed[index] && (
-              <View className="p-4 space-y-3">
-                {(["morning", "afternoon", "evening", "night"] as const).map(
-                  (slot) => {
-                    const text = (d.schedule as any)[slot];
-                    if (!text) return null;
-                    return (
-                      <View key={slot} className="mb-2 flex-row">
-                        <Ionicons
-                          name={slotIcon[slot] as any}
-                          size={20}
-                          color="#9C00FF"
-                          style={{ marginRight: 8, marginTop: 2 }}
-                        />
-                        <View className="flex-1">
-                          <Text className="font-outfit-medium capitalize">
-                            {slot}
-                          </Text>
-                          {linkifyText(text)}
+              {!collapsed[index] && (
+                <View className="p-4 space-y-3">
+                  {d.weatherSuggestion && (
+                    <WeatherSuggestionChip
+                      message={d.weatherSuggestion}
+                      onApply={() => logWeatherAdjustment(d.weatherSuggestion!)}
+                    />
+                  )}
+                  {(["morning", "afternoon", "evening", "night"] as const).map(
+                    (slot) => {
+                      const activity = (d.schedule as any)[slot];
+                      if (!activity) return null;
+                      return (
+                        <View key={slot} className="mb-2 flex-row">
+                          <Ionicons
+                            name={slotIcon[slot] as any}
+                            size={20}
+                            color="#9C00FF"
+                            style={{ marginRight: 8, marginTop: 2 }}
+                          />
+                          <View className="flex-1">
+                            <Text className="font-outfit-medium capitalize flex-row items-center">
+                              {slot}
+                              <Ionicons
+                                name={activity.indoor ? "home" : "leaf"}
+                                size={16}
+                                color={activity.indoor ? "#9C00FF" : "#16a34a"}
+                                style={{ marginLeft: 4 }}
+                              />
+                            </Text>
+                            {linkifyText(activity.name)}
+                          </View>
                         </View>
-                      </View>
-                    );
-                  }
-                )}
+                      );
+                    }
+                  )}
                 {d.food_recommendations ? (
                   <View className="flex-row">
                     <Ionicons
