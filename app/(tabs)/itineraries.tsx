@@ -10,6 +10,7 @@ import {
   StoredItinerary,
   DayPlan,
 } from "@/context/ItineraryContext";
+import { suggestWeatherSwaps } from "@/packages/agent/weatherScheduler";
 
 const Itineraries = () => {
   const { itineraries, addItinerary, removeItinerary } = useContext(ItineraryContext);
@@ -40,8 +41,43 @@ const Itineraries = () => {
       const session = startChatSession([{ role: "user", parts: [{ text: prompt }] }]);
       const result = await session.sendMessage(prompt);
       const raw = await result.response.text();
-      const json = JSON.parse(raw);
-      const planData: DayPlan[] = json.itinerary || [];
+        const json = JSON.parse(raw);
+        const rawPlan: any[] = json.itinerary || [];
+        const planData: DayPlan[] = rawPlan.map((d) => ({
+          ...d,
+          schedule: {
+            morning: d.schedule?.morning
+              ? { name: d.schedule.morning, indoor: true }
+              : undefined,
+            afternoon: d.schedule?.afternoon
+              ? { name: d.schedule.afternoon, indoor: true }
+              : undefined,
+            evening: d.schedule?.evening
+              ? { name: d.schedule.evening, indoor: true }
+              : undefined,
+            night: d.schedule?.night
+              ? { name: d.schedule.night, indoor: true }
+              : undefined,
+          },
+        }));
+
+        // analyse weather and annotate plan with swap suggestions
+        try {
+          const swaps = await suggestWeatherSwaps(
+            planData,
+            location?.coordinates?.lat || 0,
+            location?.coordinates?.lng || 0
+          );
+          if (swaps.length) {
+            const s = swaps[0];
+            const activity = planData[s.fromDay - 1].schedule[s.fromSlot];
+            if (activity) {
+              planData[s.fromDay - 1].weatherSuggestion = `${s.reason} — move ${activity.name} to day ${s.toDay}?`;
+            }
+          }
+        } catch (err) {
+          console.error("weather swap analysis failed", err);
+        }
       const id = Date.now().toString();
       const title = location?.name || "Trip";
       const stored: StoredItinerary = { id, title, plan: planData };
