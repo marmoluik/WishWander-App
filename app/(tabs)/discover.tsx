@@ -6,6 +6,7 @@ import {
   Linking,
   TouchableOpacity,
   FlatList,
+  TextInput,
 } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -17,7 +18,8 @@ import {
   generateHotelLink,
   fetchCheapestFlights,
 } from "@/utils/travelpayouts";
-import { fetchFlightEmissions } from "@/utils/emissions";
+import airports from "@/utils/airports.json";
+import { estimateFlightCO2 } from "@/packages/impact/co2";
 import { recordAffiliateClick } from "@/services/affiliate";
 
 const DEFAULT_IMAGE_URL =
@@ -48,8 +50,9 @@ const Discover = () => {
   const [loadingFlights, setLoadingFlights] = useState(false);
   const hotelListRef = useRef<FlatList<any>>(null);
   const [hotelIndex, setHotelIndex] = useState(0);
-  const [flightEmissionKg, setFlightEmissionKg] = useState<number | null>(null);
-  const [sortByEmission, setSortByEmission] = useState(false);
+  const [flightCo2Kg, setFlightCo2Kg] = useState<number | null>(null);
+  const [sortGreenerFirst, setSortGreenerFirst] = useState(false);
+  const [maxCo2, setMaxCo2] = useState<number | null>(null);
 
   const fetchPlaceImage = async (placeName: string) => {
     try {
@@ -116,18 +119,28 @@ const Discover = () => {
     }
   }, [tripData, tripPlan]);
 
-  const loadFlightEmission = async () => {
+  interface Airport { code: string; lat: number; lng: number }
+  const toRad = (v: number) => (v * Math.PI) / 180;
+  const distance = (a: Airport, b: Airport) => {
+    const dLat = toRad(b.lat - a.lat);
+    const dLng = toRad(b.lng - a.lng);
+    const rLat1 = toRad(a.lat);
+    const rLat2 = toRad(b.lat);
+    const h =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(rLat1) * Math.cos(rLat2) *
+        Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    return 6371 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+  };
+
+  const loadFlightEmission = () => {
     const { origin, destination } = getFlightCodes();
     if (!origin || !destination) return;
-    const airline = parsedTripPlan?.trip_plan?.flight_details?.airline;
-    const flightNumber = parsedTripPlan?.trip_plan?.flight_details?.flight_number;
-    const grams = await fetchFlightEmissions(
-      origin,
-      destination,
-      airline,
-      flightNumber
-    );
-    if (grams != null) setFlightEmissionKg(grams / 1000);
+    const a1 = (airports as Airport[]).find((a) => a.code === origin);
+    const a2 = (airports as Airport[]).find((a) => a.code === destination);
+    if (!a1 || !a2) return;
+    const dist = distance(a1, a2);
+    setFlightCo2Kg(estimateFlightCO2([{ distanceKm: dist }]));
   };
 
   useEffect(() => {
@@ -226,21 +239,7 @@ const Discover = () => {
     if (!origin || !destination || !depart) return;
     setLoadingFlights(true);
     const offers = await fetchCheapestFlights(origin, destination, depart);
-    const withEmissions = await Promise.all(
-      offers.map(async (f) => {
-        const grams = await fetchFlightEmissions(
-          origin,
-          destination,
-          f.airline,
-          f.flight_number
-        );
-        return {
-          ...f,
-          emissionKg: grams != null ? grams / 1000 : null,
-        };
-      })
-    );
-    setFlightOptions(withEmissions);
+    setFlightOptions(offers);
     setLoadingFlights(false);
   };
 
@@ -254,9 +253,13 @@ const Discover = () => {
     });
   };
 
-  const sortedFlightOptions = [...flightOptions].sort((a, b) =>
-    sortByEmission
-      ? (a.emissionKg ?? Infinity) - (b.emissionKg ?? Infinity)
+  const filteredFlightOptions = flightOptions.filter(
+    (f) => maxCo2 == null || (f.co2Kg ?? Infinity) <= maxCo2
+  );
+
+  const sortedFlightOptions = [...filteredFlightOptions].sort((a, b) =>
+    sortGreenerFirst
+      ? (a.co2Kg ?? Infinity) - (b.co2Kg ?? Infinity)
       : Number(a.price) - Number(b.price)
   );
 
@@ -339,9 +342,9 @@ const Discover = () => {
                 Price:{" "}
                 {parsedTripPlan.trip_plan.flight_details.price || "N/A"}
               </Text>
-              {flightEmissionKg != null && (
+              {flightCo2Kg != null && (
                 <Text className="font-outfit text-text-primary">
-                  Est. CO₂: {flightEmissionKg.toFixed(1)} kg
+                  Est. CO₂: {flightCo2Kg.toFixed(1)} kg
                 </Text>
               )}
               {parsedTripPlan.trip_plan.flight_details.booking_url?.startsWith(
@@ -372,31 +375,42 @@ const Discover = () => {
                 <>
                   <CustomButton
                     title={
-                      sortByEmission
-                        ? "Show cheaper flights first"
-                        : "Show greener flights first"
+                      sortGreenerFirst
+                        ? "Sort by price"
+                        : "Greener first"
                     }
-                    onPress={() => setSortByEmission((p) => !p)}
+                    onPress={() => setSortGreenerFirst((p) => !p)}
                     className="mt-4"
                     bgVariant="outline"
                     textVariant="primary"
+                  />
+                  <TextInput
+                    placeholder="Max CO₂ kg"
+                    value={maxCo2 != null ? String(maxCo2) : ""}
+                    onChangeText={(t) =>
+                      setMaxCo2(t ? Number(t) : null)
+                    }
+                    keyboardType="numeric"
+                    className="mt-2 border border-secondary rounded-md px-2 py-1"
                   />
                   {sortedFlightOptions.map((f, i) => (
                     <View key={i} className="mt-4">
                       {i === 0 && (
                         <View className="self-start mb-1 bg-secondary/30 px-2 py-1 rounded-full">
                           <Text className="text-xs font-outfit-bold text-primary">
-                            {sortByEmission ? "Eco friendly" : "Best deal"}
+                            {sortGreenerFirst ? "Eco friendly" : "Best deal"}
                           </Text>
                         </View>
                       )}
                       <Text className="font-outfit text-text-primary">
                         {`${f.airline} ${f.flight_number} - $${f.price}`}
                       </Text>
-                      {f.emissionKg != null && (
-                        <Text className="font-outfit text-text-primary">
-                          Est. CO₂: {f.emissionKg.toFixed(1)} kg
-                        </Text>
+                      {f.co2Kg != null && (
+                        <View className="self-start mt-1 bg-secondary/30 px-2 py-1 rounded-full">
+                          <Text className="text-xs font-outfit text-text-primary">
+                            CO₂ {f.co2Kg.toFixed(1)} kg
+                          </Text>
+                        </View>
                       )}
                       <CustomButton
                         title="Book"

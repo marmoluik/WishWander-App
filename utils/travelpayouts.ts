@@ -1,5 +1,27 @@
 export const getTravelpayoutsMarker = () => process.env.EXPO_PUBLIC_TRAVELPAYOUTS_MARKER || "";
 
+import airports from "@/utils/airports.json";
+import { estimateFlightCO2 } from "@/packages/impact/co2";
+
+interface Airport { code: string; lat: number; lng: number }
+
+const toRad = (value: number) => (value * Math.PI) / 180;
+
+const distanceBetween = (a: Airport, b: Airport) => {
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const rLat1 = toRad(a.lat);
+  const rLat2 = toRad(b.lat);
+  const h =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(rLat1) * Math.cos(rLat2) *
+      Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  return 6371 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+};
+
+const findAirport = (code: string): Airport | undefined =>
+  (airports as Airport[]).find((a) => a.code === code);
+
 export const generateFlightLink = (
   origin: string,
   destination: string,
@@ -24,6 +46,8 @@ export interface FlightInfo {
 
 export interface FlightOffer extends FlightInfo {
   booking_url: string;
+  /** estimated CO2 emissions for the trip in kilograms */
+  co2Kg?: number;
 }
 
 export const fetchFlightInfo = async (
@@ -66,6 +90,16 @@ export const fetchCheapestFlights = async (
     const json = await res.json();
     const flights = json?.data || [];
     const marker = getTravelpayoutsMarker();
+
+    // estimate emissions once per route since all options share the same path
+    let co2: number | undefined;
+    const a1 = findAirport(origin);
+    const a2 = findAirport(destination);
+    if (a1 && a2) {
+      const distance = distanceBetween(a1, a2);
+      co2 = estimateFlightCO2([{ distanceKm: distance }]);
+    }
+
     return flights
       .map((f: any) => ({
         airline: f.airline || "",
@@ -74,6 +108,7 @@ export const fetchCheapestFlights = async (
         booking_url: f.link
           ? `https://tp.media/r?campaign_id=100&marker=${marker}&p=4114&sub_id=ww&trs=446474&u=${encodeURIComponent(`https://www.aviasales.com${f.link}`)}`
           : generateFlightLink(origin, destination, departDate),
+        co2Kg: co2,
       }))
       .sort((a, b) => Number(a.price) - Number(b.price));
   } catch (e) {
