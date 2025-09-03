@@ -66,6 +66,11 @@ const UserTripCard = ({
             }`}
           />
         </TouchableOpacity>
+        {trip?.conciergeActive && (
+          <View className="absolute bottom-1 left-1 bg-purple-600 px-2 py-1 rounded">
+            <Text className="text-white text-xs">Priority</Text>
+          </View>
+        )}
         <TouchableOpacity
           onPress={() =>
             Alert.alert("Delete Trip", "Are you sure you want to delete this trip?", [
