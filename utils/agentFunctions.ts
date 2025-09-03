@@ -1,9 +1,9 @@
 import {
-  fetchCheapestFlights,
-  generateHotelLink,
-  generatePoiLink,
-  FlightOffer,
-} from "@/utils/travelpayouts";
+  flightProvider,
+  hotelProvider,
+  activityProvider,
+} from "@/packages/providers/registry";
+import type { FlightOffer } from "@/packages/providers/types";
 import * as Notifications from "expo-notifications";
 import {
   evaluatePolicy,
@@ -159,20 +159,22 @@ export const executeAgentFunction = async (
   switch (name) {
     case "search_flights": {
       const { origin, destination, departDate } = args;
-      const flights: FlightOffer[] = await fetchCheapestFlights(
+      const flights: FlightOffer[] = await flightProvider.search({
         origin,
         destination,
-        departDate
-      );
+        departDate,
+      });
       return flights;
     }
     case "hotel_link": {
       const { query, checkIn, checkOut } = args;
-      return { url: generateHotelLink(query, checkIn, checkOut) };
+      return {
+        url: hotelProvider.getSearchUrl({ query, checkIn, checkOut }),
+      };
     }
     case "activity_link": {
       const { query } = args;
-      return { url: generatePoiLink(query) };
+      return { url: activityProvider.getSearchUrl({ query }) };
     }
     case "find_nearby": {
       const { kind, radius = 1 } = args;

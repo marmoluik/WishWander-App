@@ -6,7 +6,7 @@ import CustomButton from "@/components/CustomButton";
 import WeatherSuggestionChip from "@/components/WeatherSuggestionChip";
 import { DayPlan } from "@/context/ItineraryContext";
 import { logWeatherAdjustment } from "@/utils/weatherLog";
-import { generateHotelLink } from "@/utils/travelpayouts";
+import { hotelProvider } from "@/packages/providers/registry";
 import { recordAffiliateClick } from "@/services/affiliate";
 
 interface Props {
@@ -54,8 +54,9 @@ const linkifyText = (text: string) => {
   return <Text className="text-text-primary">{text}</Text>;
 };
 
-// Build affiliate links via Travelpayouts
-const generateStayLink = (name: string) => generateHotelLink(name);
+// Build affiliate links via provider
+const generateStayLink = (name: string) =>
+  hotelProvider.getSearchUrl({ query: name });
 
 const ItineraryDetails: React.FC<Props> = ({ plan }) => {
   const [collapsed, setCollapsed] = useState<Record<number, boolean>>({});
