@@ -1,7 +1,7 @@
 // config/GeminiConfig.ts
 
 import Constants from 'expo-constants';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, type Tool } from '@google/generative-ai';
 
 // Pull the key you injected via app.config.js → extra
 const apiKey = Constants.expoConfig!.extra!.geminiApiKey as string;
@@ -31,7 +31,7 @@ const defaultGenerationConfig = {
 export function startChatSession(
   history: Array<{ role: 'user' | 'model'; parts: { text: string }[] }>,
   modelName: string = 'gemini-1.5-flash',
-  tools?: { functionDeclarations: any[] },
+  tools?: Tool[],
   options?: { tripMode?: boolean }
 ) {
   const model = genAI.getGenerativeModel({ model: modelName, tools });

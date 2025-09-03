@@ -1,4 +1,4 @@
-undefined
- ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command "build" not found
 
-Did you mean "pnpm uuid"?
+> wishwander@1.0.0 build /workspace/WishWander-App
+> tsc -p tsconfig.json
+

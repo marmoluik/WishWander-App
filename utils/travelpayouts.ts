@@ -40,12 +40,12 @@ export const generateFlightLink = (
 
 export interface FlightInfo {
   airline: string;
-  flight_number: string;
+  flightNumber: string;
   price: string | number;
 }
 
 export interface FlightOffer extends FlightInfo {
-  booking_url: string;
+  bookingUrl: string;
   /** estimated CO2 emissions for the trip in kilograms */
   co2Kg?: number;
 }
@@ -66,7 +66,7 @@ export const fetchFlightInfo = async (
     if (flight) {
       return {
         airline: flight.airline || "",
-        flight_number: flight.flight_number || "",
+        flightNumber: flight.flight_number || "",
         price: flight.price || flight.value || "",
       };
     }
@@ -103,14 +103,14 @@ export const fetchCheapestFlights = async (
     return flights
       .map((f: any) => ({
         airline: f.airline || "",
-        flight_number: f.flight_number || "",
+        flightNumber: f.flight_number || "",
         price: f.price || f.value || "",
-        booking_url: f.link
+        bookingUrl: f.link
           ? `https://tp.media/r?campaign_id=100&marker=${marker}&p=4114&sub_id=ww&trs=446474&u=${encodeURIComponent(`https://www.aviasales.com${f.link}`)}`
           : generateFlightLink(origin, destination, departDate),
         co2Kg: co2,
       }))
-      .sort((a, b) => Number(a.price) - Number(b.price));
+      .sort((a: FlightOffer, b: FlightOffer) => Number(a.price) - Number(b.price));
   } catch (e) {
     console.error("cheapest flights fetch failed", e);
   }

@@ -72,9 +72,9 @@ Use this exact schema:
       "arrival_date": "",
       "arrival_time": "",
       "airline": "",
-      "flight_number": "",
+      "flightNumber": "",
       "price": "",
-      "booking_url": ""
+      "bookingUrl": ""
     },
     "hotel": {
       "options": [

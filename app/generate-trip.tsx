@@ -149,9 +149,9 @@ export default function GenerateTrip() {
           arrival_date: startDateStr || flight?.arrival_date || "",
           arrival_time: flight?.arrival_time || "",
           airline: flight?.airline || "",
-          flight_number: flight?.flight_number || "",
+          flightNumber: flight?.flightNumber || "",
           price: flight?.price || "",
-          booking_url: flight?.booking_url || "",
+          bookingUrl: flight?.bookingUrl || "",
         };
 
         return {
@@ -255,7 +255,7 @@ export default function GenerateTrip() {
           }
 
           if (arrival?.code) {
-            parsed.trip_plan.flight_details.booking_url =
+            parsed.trip_plan.flight_details.bookingUrl =
               flightProvider.getSearchUrl({
                 origin: originAirport.code,
                 destination: arrival.code,
@@ -270,8 +270,8 @@ export default function GenerateTrip() {
             if (info) {
               parsed.trip_plan.flight_details.airline =
                 info.airline || parsed.trip_plan.flight_details.airline;
-              parsed.trip_plan.flight_details.flight_number =
-                info.flight_number || parsed.trip_plan.flight_details.flight_number;
+              parsed.trip_plan.flight_details.flightNumber =
+                info.flightNumber || parsed.trip_plan.flight_details.flightNumber;
               if (info.price)
                 parsed.trip_plan.flight_details.price = `$${info.price}`;
             }
@@ -290,8 +290,8 @@ export default function GenerateTrip() {
           bookings.push({
             type: "flight",
             provider: fd.airline || "",
-            reference: fd.flight_number || "",
-            url: fd.booking_url || "",
+            reference: fd.flightNumber || "",
+            url: fd.bookingUrl || "",
           });
         }
         const firstHotel = parsed.trip_plan.hotel?.options?.[0];

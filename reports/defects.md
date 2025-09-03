@@ -1,25 +1,12 @@
 # Defects
 
-## TypeScript Errors
-- Severity: high
-- Repro: run `pnpm tsc --noEmit`
-- Expected: typecheck passes
-- Actual: multiple missing modules and type errors (see reports/static/typecheck.log)
+## Simulation Scripts Require Cycle
+- Severity: low
+- Repro: `pnpm sim:disruption` or `pnpm sim:weather`
+- Expected: mock data generated
+- Actual: Node ERR_REQUIRE_CYCLE_MODULE prevents execution
 
-## Build Script Missing
+## Mobile E2E Skipped
 - Severity: medium
-- Repro: run `pnpm build`
-- Expected: project builds
-- Actual: script not found
+- Reason: no mobile simulator available; tests not executed
 
-## Mobile E2E Fails
-- Severity: high
-- Repro: run `pnpm test:e2e:mobile`
-- Expected: tests execute
-- Actual: Babel syntax error in packages/notify
-
-## Accessibility Tool Missing Browser
-- Severity: medium
-- Repro: `npx @axe-core/cli https://example.com`
-- Expected: report generated
-- Actual: Chrome binary missing

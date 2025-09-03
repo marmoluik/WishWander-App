@@ -29,9 +29,9 @@ export class DefaultFlightSearchProvider implements FlightSearchProvider {
       if (offers.length) {
         return offers.map((o) => ({
           airline: o.airline,
-          flightNumber: o.flight_number,
+          flightNumber: o.flightNumber,
           price: o.price,
-          bookingUrl: o.booking_url,
+          bookingUrl: o.bookingUrl,
           co2Kg: o.co2Kg,
         }));
       }

@@ -213,7 +213,7 @@ const Discover = () => {
 
   const getFlightCodes = () => {
     const origin = parsedTripData?.find((i: any) => i.originAirport)?.originAirport?.code;
-    const booking = parsedTripPlan?.trip_plan?.flight_details?.booking_url;
+  const booking = parsedTripPlan?.trip_plan?.flight_details?.bookingUrl;
     if (booking) {
       try {
         const tp = new URL(booking);
@@ -337,7 +337,7 @@ const Discover = () => {
               </Text>
               <Text className="font-outfit text-text-primary">
                 Flight:{" "}
-                {parsedTripPlan.trip_plan.flight_details.flight_number || "N/A"}
+                {parsedTripPlan.trip_plan.flight_details.flightNumber || "N/A"}
               </Text>
               <Text className="font-outfit text-text-primary">
                 Price:{" "}
@@ -348,7 +348,7 @@ const Discover = () => {
                   Est. CO₂: {flightCo2Kg.toFixed(1)} kg
                 </Text>
               )}
-              {parsedTripPlan.trip_plan.flight_details.booking_url?.startsWith(
+              {parsedTripPlan.trip_plan.flight_details.bookingUrl?.startsWith(
                 "http"
               ) && (
                 <CustomButton
@@ -356,7 +356,7 @@ const Discover = () => {
                   onPress={() => {
                     recordAffiliateClick("flight");
                     Linking.openURL(
-                      parsedTripPlan.trip_plan.flight_details.booking_url
+                      parsedTripPlan.trip_plan.flight_details.bookingUrl
                     );
                   }}
                   className="mt-4"

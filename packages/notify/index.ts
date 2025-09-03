@@ -81,6 +81,19 @@ export async function notify(
     return;
   }
 
+  const useMock = !process.env.EXPO_ACCESS_TOKEN && !process.env.RESEND_API_KEY;
+  if (useMock) {
+    const fs = await import('fs');
+    const path = await import('path');
+    const dir = path.resolve(__dirname, '../../reports/notifications');
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(
+      path.join(dir, `${Date.now()}-${type}.json`),
+      JSON.stringify({ userId, type, payload }, null, 2)
+    );
+    return;
+  }
+
   let pushSent = false;
   if (user?.deviceTokens?.length && process.env.EXPO_ACCESS_TOKEN) {
     try {

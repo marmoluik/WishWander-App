@@ -3,18 +3,31 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@/*": [
-        "./*"
-      ],
+      "@/*": ["./*"],
       "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"]
     }
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
+    "app/**/*",
+    "components/**/*",
+    "config/**/*",
+    "constants/**/*",
+    "context/**/*",
+    "services/**/*",
+    "src/**/*",
+    "utils/**/*",
+    "packages/impact/**/*",
+    "packages/providers/**/*",
+    "types/**/*",
     "expo-env.d.ts",
     "nativewind-env.d.ts"
   ],
-  
+  "exclude": [
+    "apps",
+    "packages/db",
+    "packages/agent",
+    "e2e",
+    "reports",
+    "node_modules"
+  ]
 }

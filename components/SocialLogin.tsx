@@ -13,7 +13,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 const SocialLogin = () => {
   const [, gResponse, promptGoogle] = Google.useAuthRequest({
-    expoClientId: Constants.expoConfig?.extra?.googleExpoClientId,
+    clientId: Constants.expoConfig?.extra?.googleExpoClientId,
     iosClientId: Constants.expoConfig?.extra?.googleIosClientId,
     androidClientId: Constants.expoConfig?.extra?.googleAndroidClientId,
     webClientId: Constants.expoConfig?.extra?.googleExpoClientId,

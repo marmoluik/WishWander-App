@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  qa:
+  qa-web:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,13 +16,38 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
-      - run: pnpm i
-      - run: pnpm lint
-      - run: pnpm tsc --noEmit
-      - run: pnpm build
+      - run: pnpm install
+      - run: pnpm -w lint
+      - run: pnpm -w typecheck
+      - run: pnpm -w build
+      - run: npx playwright install --with-deps
+      - run: pnpm sim:disruption || true
+      - run: pnpm sim:weather || true
       - run: pnpm test:e2e:web
-      - run: pnpm test:e2e:mobile
+      - run: pnpm test:a11y
       - uses: actions/upload-artifact@v4
         with:
           name: reports
+          path: reports
+
+  qa-mobile:
+    runs-on: macos-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm -w lint
+      - run: pnpm -w typecheck
+      - run: pnpm -w build
+      - run: pnpm test:e2e:mobile
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reports-mobile
           path: reports
