@@ -29,6 +29,8 @@ export interface PolicyEvaluationRequest {
 export interface PolicyDecision {
   allowed: boolean;
   reason?: string;
+  requiresHuman?: boolean;
+  deltas?: Record<string, any>;
 }
 
 /**
@@ -85,5 +87,51 @@ export const evaluatePolicy = (
   ) {
     return { allowed: false, reason: "Too late for departure" };
   }
-  return { allowed: true };
+  let requiresHuman = false;
+  let reason: string | undefined;
+  const deltas: Record<string, any> = {};
+
+  if (
+    currentPolicy.perItemCap &&
+    request.cost > currentPolicy.perItemCap * 0.85
+  ) {
+    requiresHuman = true;
+    reason = reason || "Cost near per-item cap";
+    deltas.cost = request.cost;
+    deltas.perItemCap = currentPolicy.perItemCap;
+  }
+  if (
+    typeof request.tripTotal === "number" &&
+    currentPolicy.perTripCap &&
+    request.tripTotal + request.cost > currentPolicy.perTripCap * 0.85
+  ) {
+    requiresHuman = true;
+    reason = reason || "Trip total near cap";
+    deltas.tripTotal = request.tripTotal + request.cost;
+    deltas.perTripCap = currentPolicy.perTripCap;
+  }
+  if (
+    currentPolicy.allowedAirlines &&
+    request.brand &&
+    !currentPolicy.allowedAirlines.includes(request.brand)
+  ) {
+    requiresHuman = true;
+    reason = reason || "Airline not in allowed list";
+    deltas.brand = request.brand;
+  }
+  if (
+    currentPolicy.allowedHotels &&
+    request.brand &&
+    !currentPolicy.allowedHotels.includes(request.brand)
+  ) {
+    requiresHuman = true;
+    reason = reason || "Hotel not in allowed list";
+    deltas.brand = request.brand;
+  }
+  return {
+    allowed: true,
+    requiresHuman,
+    ...(reason ? { reason } : {}),
+    ...(requiresHuman ? { deltas } : {}),
+  };
 };

@@ -5,6 +5,7 @@ export interface DecisionLog {
   rationale: string;
   timestamp: Date;
   payload?: any;
+  approvedBy?: string;
 }
 
 const decisionLogs: DecisionLog[] = [];
