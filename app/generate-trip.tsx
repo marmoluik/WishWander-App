@@ -13,11 +13,10 @@ import { FirebaseError } from "firebase/app";
 import { auth, db } from "@/config/FirebaseConfig";
 import { Itinerary, Booking } from "@/types/itinerary";
 import {
-  generateFlightLink,
-  fetchFlightInfo,
-  generateHotelLink,
-  generatePoiLink,
-} from "@/utils/travelpayouts";
+  flightProvider,
+  hotelProvider,
+  activityProvider,
+} from "@/packages/providers/registry";
 
 const formatDate = (value: any) => {
   if (!value) return "";
@@ -116,7 +115,7 @@ export default function GenerateTrip() {
           )
           .map((h: any) => ({
             ...h,
-            booking_url: generateHotelLink(h.name),
+            booking_url: hotelProvider.getSearchUrl({ query: h.name }),
           }))
           .slice(0, 10);
 
@@ -138,7 +137,7 @@ export default function GenerateTrip() {
           )
           .map((p: any) => ({
             ...p,
-            booking_url: generatePoiLink(p.name),
+            booking_url: activityProvider.getSearchUrl({ query: p.name }),
           }))
           .slice(0, 10);
 
@@ -256,17 +255,18 @@ export default function GenerateTrip() {
           }
 
           if (arrival?.code) {
-            parsed.trip_plan.flight_details.booking_url = generateFlightLink(
-              originAirport.code,
-              arrival.code,
-              startDateStr || "",
-              endDateStr || undefined
-            );
-            const info = await fetchFlightInfo(
-              originAirport.code,
-              arrival.code,
-              startDateStr || ""
-            );
+            parsed.trip_plan.flight_details.booking_url =
+              flightProvider.getSearchUrl({
+                origin: originAirport.code,
+                destination: arrival.code,
+                departDate: startDateStr || "",
+                returnDate: endDateStr || undefined,
+              });
+            const info = await flightProvider.getInfo?.({
+              origin: originAirport.code,
+              destination: arrival.code,
+              departDate: startDateStr || "",
+            });
             if (info) {
               parsed.trip_plan.flight_details.airline =
                 info.airline || parsed.trip_plan.flight_details.airline;

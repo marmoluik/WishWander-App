@@ -13,11 +13,8 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
 import { interestCategories } from "@/constants/Options";
-import {
-  generateFlightLink,
-  generateHotelLink,
-  fetchCheapestFlights,
-} from "@/utils/travelpayouts";
+import { flightProvider, hotelProvider } from "@/packages/providers/registry";
+import type { FlightOffer } from "@/packages/providers/types";
 import airports from "@/utils/airports.json";
 import { estimateFlightCO2 } from "@/packages/impact/co2";
 import { recordAffiliateClick } from "@/services/affiliate";
@@ -46,7 +43,7 @@ const Discover = () => {
   const [parsedTripPlan, setParsedTripPlan] = useState<any>(null);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [selectedPlaces, setSelectedPlaces] = useState<any[]>([]);
-  const [flightOptions, setFlightOptions] = useState<any[]>([]);
+  const [flightOptions, setFlightOptions] = useState<FlightOffer[]>([]);
   const [loadingFlights, setLoadingFlights] = useState(false);
   const hotelListRef = useRef<FlatList<any>>(null);
   const [hotelIndex, setHotelIndex] = useState(0);
@@ -238,7 +235,11 @@ const Discover = () => {
     const depart = parsedTripPlan?.trip_plan?.flight_details?.departure_date;
     if (!origin || !destination || !depart) return;
     setLoadingFlights(true);
-    const offers = await fetchCheapestFlights(origin, destination, depart);
+    const offers = await flightProvider.search({
+      origin,
+      destination,
+      departDate: depart,
+    });
     setFlightOptions(offers);
     setLoadingFlights(false);
   };
@@ -403,7 +404,7 @@ const Discover = () => {
                         </View>
                       )}
                       <Text className="font-outfit text-text-primary">
-                        {`${f.airline} ${f.flight_number} - $${f.price}`}
+                        {`${f.airline} ${f.flightNumber} - $${f.price}`}
                       </Text>
                       {f.co2Kg != null && (
                         <View className="self-start mt-1 bg-secondary/30 px-2 py-1 rounded-full">
@@ -416,7 +417,7 @@ const Discover = () => {
                         title="Book"
                         onPress={() => {
                           recordAffiliateClick("flight");
-                          Linking.openURL(f.booking_url);
+                          Linking.openURL(f.bookingUrl);
                         }}
                         className="mt-2"
                       />
@@ -431,7 +432,11 @@ const Discover = () => {
                       if (origin && destination && depart) {
                         recordAffiliateClick("flight");
                         Linking.openURL(
-                          generateFlightLink(origin, destination, depart)
+                          flightProvider.getSearchUrl({
+                            origin,
+                            destination,
+                            departDate: depart,
+                          })
                         );
                       }
                     }}
@@ -539,7 +544,9 @@ const Discover = () => {
               onPress={() => {
                 recordAffiliateClick("hotel");
                 Linking.openURL(
-                  generateHotelLink(parsedTripPlan.trip_plan.location)
+                  hotelProvider.getSearchUrl({
+                    query: parsedTripPlan.trip_plan.location,
+                  })
                 );
               }}
               bgVariant="outline"

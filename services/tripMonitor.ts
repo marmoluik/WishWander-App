@@ -2,7 +2,7 @@ import * as TaskManager from "expo-task-manager";
 import * as BackgroundTask from "expo-background-task";
 import * as Notifications from "expo-notifications";
 import { collection, getDocs } from "firebase/firestore";
-import { fetchFlightInfo } from "@/utils/travelpayouts";
+import { flightProvider } from "@/packages/providers/registry";
 import { db } from "@/config/FirebaseConfig";
 
 const TASK_NAME = "trip-monitor";
@@ -22,11 +22,11 @@ const tripMonitorTask = async () => {
           flight?.arrival_city &&
           flight?.departure_date
         ) {
-          const info = await fetchFlightInfo(
-            flight.departure_city,
-            flight.arrival_city,
-            flight.departure_date
-          );
+          const info = await flightProvider.getInfo?.({
+            origin: flight.departure_city,
+            destination: flight.arrival_city,
+            departDate: flight.departure_date,
+          });
           if (info && info.price && info.price !== flight.price) {
             await Notifications.scheduleNotificationAsync({
               content: {
