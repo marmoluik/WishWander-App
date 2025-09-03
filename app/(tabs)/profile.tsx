@@ -1,13 +1,36 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, TouchableOpacity, Switch } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "@/config/FirebaseConfig";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
+import {
+  getNotificationPreferences,
+  setNotificationPreferences,
+} from "@/packages/notify";
 
 export default function Profile() {
   const user = auth?.currentUser;
+  const [prefs, setPrefs] = useState(() => ({
+    disruption: true,
+    replan: true,
+    booking: true,
+  }));
+
+  useEffect(() => {
+    if (user?.uid) {
+      setPrefs(getNotificationPreferences(user.uid));
+    }
+  }, [user?.uid]);
+
+  const updatePref = (key: "replan" | "booking", value: boolean) => {
+    const updated = { ...prefs, [key]: value };
+    setPrefs(updated);
+    if (user?.uid) {
+      setNotificationPreferences(user.uid, { [key]: value });
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -65,6 +88,54 @@ export default function Profile() {
               : ""}
           </Text>
         </TouchableOpacity>
+      </View>
+
+      {/* Notification Preferences */}
+      <View className="mb-8">
+        <Text className="text-xl font-outfit-bold mb-4">
+          Notification Preferences
+        </Text>
+
+        <View className="flex-row items-center justify-between bg-background p-4 rounded-xl mb-3">
+          <View className="flex-row items-center">
+            <Ionicons
+              name="refresh-outline"
+              size={24}
+              color="#9C00FF"
+            />
+            <Text className="ml-3 font-outfit">Replan Suggestions</Text>
+          </View>
+          <Switch
+            value={prefs.replan}
+            onValueChange={(v) => updatePref("replan", v)}
+          />
+        </View>
+
+        <View className="flex-row items-center justify-between bg-background p-4 rounded-xl mb-3">
+          <View className="flex-row items-center">
+            <Ionicons
+              name="checkmark-done-outline"
+              size={24}
+              color="#9C00FF"
+            />
+            <Text className="ml-3 font-outfit">Booking Confirmed</Text>
+          </View>
+          <Switch
+            value={prefs.booking}
+            onValueChange={(v) => updatePref("booking", v)}
+          />
+        </View>
+
+        <View className="flex-row items-center justify-between bg-background p-4 rounded-xl">
+          <View className="flex-row items-center">
+            <Ionicons
+              name="alert-circle-outline"
+              size={24}
+              color="#9C00FF"
+            />
+            <Text className="ml-3 font-outfit">Disruptions (always on)</Text>
+          </View>
+        </View>
       </View>
 
       {/* Logout Button */}
