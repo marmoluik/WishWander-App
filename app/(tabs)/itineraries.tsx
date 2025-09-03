@@ -11,6 +11,7 @@ import {
   DayPlan,
 } from "@/context/ItineraryContext";
 import { suggestWeatherSwaps } from "@/packages/agent/weatherScheduler";
+import { applyProfileToPlan } from "@/packages/agent/profileScoring";
 
 const Itineraries = () => {
   const { itineraries, addItinerary, removeItinerary } = useContext(ItineraryContext);
@@ -43,7 +44,7 @@ const Itineraries = () => {
       const raw = await result.response.text();
         const json = JSON.parse(raw);
         const rawPlan: any[] = json.itinerary || [];
-        const planData: DayPlan[] = rawPlan.map((d) => ({
+        let planData: DayPlan[] = rawPlan.map((d) => ({
           ...d,
           schedule: {
             morning: d.schedule?.morning
@@ -77,6 +78,16 @@ const Itineraries = () => {
           }
         } catch (err) {
           console.error("weather swap analysis failed", err);
+        }
+
+        try {
+          const res = await fetch("/api/profile");
+          if (res.ok) {
+            const profile = await res.json();
+            planData = applyProfileToPlan(planData, profile);
+          }
+        } catch (err) {
+          console.error("profile adjustment failed", err);
         }
       const id = Date.now().toString();
       const title = location?.name || "Trip";
