@@ -1,0 +1,28 @@
+name: QA
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - run: pnpm i
+      - run: pnpm lint
+      - run: pnpm tsc --noEmit
+      - run: pnpm build
+      - run: pnpm test:e2e:web
+      - run: pnpm test:e2e:mobile
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: reports

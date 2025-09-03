@@ -1,0 +1,17 @@
+{
+  "handsOffMode": ["/settings/automation"],
+  "replanDisruption": ["/plan/new"],
+  "weatherAwareAdjustments": ["/plan/new"],
+  "onTripChatActions": ["/plan/chat"],
+  "travelerProfiles": ["/onboarding/style"],
+  "hybridChatForm": ["/plan/new", "/plan/chat"],
+  "co2Sorting": ["/discover"],
+  "visaAndSafety": ["/preflight"],
+  "conciergeCheckout": ["/api/billing/checkout"],
+  "adminHumanLoop": ["/admin/review"],
+  "notifications": [],
+  "providerAbstractions": [],
+  "privacy": ["/api/profile"],
+  "metrics": ["/packages/metrics"],
+  "testHarness": ["/tools/simulate"]
+}

@@ -1,0 +1,49 @@
+
+> wishwander@1.0.0 lint /workspace/WishWander-App
+> expo lint
+
+
+/workspace/WishWander-App/app/(auth)/_layout.tsx
+  2:3  warning  'DarkTheme' is defined but never used      @typescript-eslint/no-unused-vars
+  3:3  warning  'DefaultTheme' is defined but never used   @typescript-eslint/no-unused-vars
+  4:3  warning  'ThemeProvider' is defined but never used  @typescript-eslint/no-unused-vars
+
+/workspace/WishWander-App/app/(auth)/sign-in.tsx
+  18:21  warning  'setIsLoading' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/workspace/WishWander-App/app/(auth)/sign-up.tsx
+  19:21  warning  'setIsLoading' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/workspace/WishWander-App/app/(auth)/welcome.tsx
+  1:40  warning  'Image' is defined but never used  @typescript-eslint/no-unused-vars
+
+/workspace/WishWander-App/app/(tabs)/discover.tsx
+  147:6  warning  React Hook useEffect has a missing dependency: 'loadFlightEmission'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspace/WishWander-App/app/(tabs)/mytrip.tsx
+  24:6   warning  React Hook useEffect has a missing dependency: 'getMyTrips'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  71:26  warning  Expected '===' and instead saw '=='                                                                            eqeqeq
+
+/workspace/WishWander-App/app/_layout.tsx
+   3:3  warning  'DarkTheme' is defined but never used                @typescript-eslint/no-unused-vars
+   4:3  warning  'DefaultTheme' is defined but never used             @typescript-eslint/no-unused-vars
+   5:3  warning  'ThemeProvider' is defined but never used            @typescript-eslint/no-unused-vars
+  20:3  warning  'DayPlan' is defined but never used                  @typescript-eslint/no-unused-vars
+  43:9  warning  'updateTripData' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  51:9  warning  'colorScheme' is assigned a value but never used     @typescript-eslint/no-unused-vars
+
+/workspace/WishWander-App/app/create-trip/_layout.tsx
+  2:3  warning  'DarkTheme' is defined but never used      @typescript-eslint/no-unused-vars
+  3:3  warning  'DefaultTheme' is defined but never used   @typescript-eslint/no-unused-vars
+  4:3  warning  'ThemeProvider' is defined but never used  @typescript-eslint/no-unused-vars
+
+/workspace/WishWander-App/app/generate-trip.tsx
+  87:18  warning  '_' is defined but never used  @typescript-eslint/no-unused-vars
+
+/workspace/WishWander-App/app/trip-details/_layout.tsx
+  2:3  warning  'DarkTheme' is defined but never used      @typescript-eslint/no-unused-vars
+  3:3  warning  'DefaultTheme' is defined but never used   @typescript-eslint/no-unused-vars
+  4:3  warning  'ThemeProvider' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 22 problems (0 errors, 22 warnings)
+

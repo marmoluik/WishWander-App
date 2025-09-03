@@ -1,0 +1,10 @@
+
+> wishwander@1.0.0 test:e2e:web /workspace/WishWander-App
+> playwright test e2e/web
+
+
+Running 1 test using 1 worker
+
+  ✓  1 e2e/web/disruption.spec.ts:7:5 › plan creation to disruption acceptance (533ms)
+
+  1 passed (3.2s)
