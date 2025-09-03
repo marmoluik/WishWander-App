@@ -1,0 +1,5 @@
+
+> wishwander@1.0.0 test:e2e:mobile /workspace/WishWander-App
+> detox test
+
+ ELIFECYCLE  Command failed with exit code 1.
