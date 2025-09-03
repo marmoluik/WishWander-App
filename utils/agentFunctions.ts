@@ -10,6 +10,10 @@ import {
   PolicyEvaluationRequest,
 } from "../packages/agent/policies";
 import { logDecision } from "../packages/db/schemas/DecisionLog";
+import {
+  addPendingAction,
+  PendingAction,
+} from "../packages/db/schemas/PendingAction";
 
 /**
  * Function declarations exposed to the LLM for structured function calling.
@@ -184,8 +188,21 @@ export const executeAgentFunction = async (
         return { status: "booked" };
       }
       const decision = evaluatePolicy({ cost, brand, tripTotal });
-      if (decision.allowed) {
+      if (decision.allowed && !decision.requiresHuman) {
         return { status: "booked" };
+      }
+      if (decision.requiresHuman) {
+        const entry: PendingAction = {
+          id: Date.now().toString(),
+          action: "book_restaurant",
+          reason: decision.reason || "Needs human review",
+          policyDeltas: decision.deltas,
+          payload: args,
+          status: "pending",
+          createdAt: new Date(),
+        };
+        addPendingAction(entry);
+        return { status: "pending_human", reason: decision.reason };
       }
       return { status: "needs_confirmation", reason: decision.reason };
     }
@@ -236,8 +253,21 @@ export const executeAgentFunction = async (
         timestamp: new Date(),
         payload: args,
       });
-      if (decision.allowed) {
+      if (decision.allowed && !decision.requiresHuman) {
         return { status: "confirmed" };
+      }
+      if (decision.requiresHuman) {
+        const entry: PendingAction = {
+          id: Date.now().toString(),
+          action: "confirm_booking",
+          reason: decision.reason || "Needs human review",
+          policyDeltas: decision.deltas,
+          payload: args,
+          status: "pending",
+          createdAt: new Date(),
+        };
+        addPendingAction(entry);
+        return { status: "pending_human", reason: decision.reason };
       }
       return { status: "needs_confirmation", reason: decision.reason };
     }
