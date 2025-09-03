@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Switch } from "react-native";
+import { View, Text, TouchableOpacity, Switch, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "@/config/FirebaseConfig";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
+import { exportUserData, deleteUserData } from "@/services/userData";
 import {
   getNotificationPreferences,
   setNotificationPreferences,
@@ -136,6 +137,37 @@ export default function Profile() {
             <Text className="ml-3 font-outfit">Disruptions (always on)</Text>
           </View>
         </View>
+      </View>
+
+      {/* Data & Privacy */}
+      <View className="mb-8">
+        <Text className="text-xl font-outfit-bold mb-4">Data & Privacy</Text>
+
+        <TouchableOpacity
+          className="flex-row items-center justify-between bg-background p-4 rounded-xl mb-3"
+          onPress={async () => {
+            const data = await exportUserData(user?.uid);
+            Alert.alert("Your Data", JSON.stringify(data));
+          }}
+        >
+          <View className="flex-row items-center">
+            <Ionicons name="download-outline" size={24} color="#9C00FF" />
+            <Text className="ml-3 font-outfit">Export My Data</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-row items-center justify-between bg-background p-4 rounded-xl"
+          onPress={async () => {
+            await deleteUserData(user?.uid);
+            Alert.alert("Data Deleted");
+          }}
+        >
+          <View className="flex-row items-center">
+            <Ionicons name="trash-outline" size={24} color="#9C00FF" />
+            <Text className="ml-3 font-outfit">Delete My Data</Text>
+          </View>
+        </TouchableOpacity>
       </View>
 
       {/* Logout Button */}

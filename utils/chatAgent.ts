@@ -4,6 +4,7 @@ import {
   executeAgentFunction,
   TravelFunctionName,
 } from "@/utils/agentFunctions";
+import { addChatLog } from "@/packages/db/schemas/ChatLog";
 
 /**
  * runTravelAgent
@@ -35,5 +36,13 @@ export const runTravelAgent = async (prompt: string) => {
       response = result.response;
     }
   }
-  return response.text();
+  const reply = response.text();
+  addChatLog({
+    id: Date.now().toString(),
+    userPrompt: prompt,
+    agentResponse: reply,
+    summary: reply,
+    timestamp: new Date(),
+  });
+  return reply;
 };
