@@ -16,7 +16,7 @@ export const runTravelAgent = async (prompt: string) => {
   const session = startChatSession(
     [{ role: "user", parts: [{ text: prompt }] }],
     "gemini-1.5-flash",
-    { functionDeclarations },
+    [{ functionDeclarations } as any],
     { tripMode: true }
   );
 
@@ -24,15 +24,19 @@ export const runTravelAgent = async (prompt: string) => {
   let result = await session.sendMessage(prompt);
   let { response } = result;
 
-  while (response.functionCalls && response.functionCalls.length > 0) {
-    for (const call of response.functionCalls) {
+  while (
+    (response as any).functionCalls &&
+    (response as any).functionCalls().length > 0
+  ) {
+    const calls = (response as any).functionCalls();
+    for (const call of calls) {
       const name = call.name as TravelFunctionName;
       const args = call.args ? JSON.parse(call.args) : {};
       const fnResult = await executeAgentFunction(name, args);
-      result = await session.sendMessage({
+      result = await (session as any).sendMessage({
         functionCall: call,
         functionResponse: { name, response: fnResult },
-      } as any);
+      });
       response = result.response;
     }
   }

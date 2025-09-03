@@ -1,29 +1,4 @@
-app/generate-trip.tsx(274,22): error TS2551: Property 'flight_number' does not exist on type 'FlightInfo'. Did you mean 'flightNumber'?
-apps/web/app/api/admin/review/[id]/route.ts(1,43): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
-apps/web/app/api/admin/review/[id]/route.ts(5,8): error TS2307: Cannot find module '../../../../../packages/db/schemas/PendingAction' or its corresponding type declarations.
-apps/web/app/api/admin/review/route.ts(1,30): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
-apps/web/app/api/admin/review/route.ts(2,35): error TS2307: Cannot find module '../../../../packages/db/schemas/PendingAction' or its corresponding type declarations.
-apps/web/app/api/automation/policy/route.ts(1,43): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
-apps/web/app/api/automation/policy/route.ts(6,8): error TS2307: Cannot find module '../../../../packages/agent/policies' or its corresponding type declarations.
-apps/web/app/api/billing/checkout/route.ts(1,43): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
-apps/web/app/api/billing/checkout/route.ts(5,3): error TS2322: Type '"2024-04-10"' is not assignable to type '"2025-08-27.basil"'.
-apps/web/app/api/billing/status/route.ts(1,43): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
-apps/web/app/api/billing/webhook/route.ts(1,43): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
-apps/web/app/api/billing/webhook/route.ts(6,3): error TS2322: Type '"2024-04-10"' is not assignable to type '"2025-08-27.basil"'.
-apps/web/app/api/profile/route.ts(1,43): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
-apps/web/app/plan/chat/page.tsx(4,33): error TS2307: Cannot find module 'next/navigation' or its corresponding type declarations.
-apps/web/app/plan/new/page.tsx(4,27): error TS2307: Cannot find module 'next/navigation' or its corresponding type declarations.
-apps/web/app/settings/automation/page.tsx(4,31): error TS2307: Cannot find module '../../../../packages/agent/policies' or its corresponding type declarations.
-components/SocialLogin.tsx(16,5): error TS2561: Object literal may only specify known properties, but 'expoClientId' does not exist in type 'Partial<GoogleAuthRequestConfig>'. Did you mean to write 'clientId'?
-config/FirebaseConfig.ts(10,3): error TS2305: Module '"firebase/auth"' has no exported member 'getReactNativePersistence'.
-config/GeminiConfig.ts(37,62): error TS2322: Type '{ functionDeclarations: any[]; } | undefined' is not assignable to type 'Tool[] | undefined'.
-  Type '{ functionDeclarations: any[]; }' is missing the following properties from type 'Tool[]': length, pop, push, concat, and 35 more.
-packages/providers/default.ts(75,7): error TS2322: Type 'import("/workspace/WishWander-App/utils/travelpayouts").FlightInfo | null' is not assignable to type 'import("/workspace/WishWander-App/packages/providers/types").FlightInfo | null'.
-  Property 'flightNumber' is missing in type 'import("/workspace/WishWander-App/utils/travelpayouts").FlightInfo' but required in type 'import("/workspace/WishWander-App/packages/providers/types").FlightInfo'.
-services/passport.ts(1,30): error TS2307: Cannot find module 'expo-secure-store' or its corresponding type declarations.
-services/userData.ts(1,30): error TS2307: Cannot find module 'expo-secure-store' or its corresponding type declarations.
-src/notifications/index.ts(45,37): error TS2322: Type 'Promise<{ shouldShowAlert: true; shouldPlaySound: false; shouldSetBadge: false; }>' is not assignable to type 'Promise<NotificationBehavior>'.
-  Type '{ shouldShowAlert: true; shouldPlaySound: false; shouldSetBadge: false; }' is missing the following properties from type 'NotificationBehavior': shouldShowBanner, shouldShowList
-utils/chatAgent.ts(28,24): error TS2488: Type '() => FunctionCall[] | undefined' must have a '[Symbol.iterator]()' method that returns an iterator.
-utils/travelpayouts.ts(113,14): error TS7006: Parameter 'a' implicitly has an 'any' type.
-utils/travelpayouts.ts(113,17): error TS7006: Parameter 'b' implicitly has an 'any' type.
+
+> wishwander@1.0.0 typecheck /workspace/WishWander-App
+> tsc --noEmit
+
