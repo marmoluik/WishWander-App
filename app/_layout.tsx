@@ -22,6 +22,8 @@ import {
 } from "@/context/ItineraryContext";
 import HeaderLogo from "@/components/HeaderLogo";
 import { registerTripMonitor } from "@/services/tripMonitor";
+import { initNotifications } from "@/src/notifications";
+import { auth } from "@/config/FirebaseConfig";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -62,6 +64,11 @@ export default function RootLayout() {
         console.warn("Background tasks are disabled in Expo Go. Skipping registerTripMonitor().");
       } else {
         registerTripMonitor(); // only runs in dev client / standalone
+      }
+
+      const uid = auth?.currentUser?.uid;
+      if (uid) {
+        initNotifications(uid);
       }
     }
   }, [loaded]);

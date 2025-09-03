@@ -7,6 +7,8 @@ import { Link, router } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/config/FirebaseConfig";
 import SocialLogin from "@/components/SocialLogin";
+import { setUserEmail } from "@/packages/notify";
+import { initNotifications } from "@/src/notifications";
 
 export default function SignUp() {
   const [form, setForm] = useState({
@@ -37,6 +39,10 @@ export default function SignUp() {
       // Successfully created user
       const user = userCredential.user;
       console.log(user);
+      if (user.email) {
+        setUserEmail(user.uid, user.email);
+        initNotifications(user.uid);
+      }
 
       // Navigate to the main app
       router.replace("/(tabs)/mytrip");
