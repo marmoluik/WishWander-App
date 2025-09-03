@@ -3,6 +3,7 @@ import React from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import moment from "moment";
 import CustomButton from "@/components/CustomButton";
+import PreFlightChecklist from "@/components/PreFlightChecklist";
 
 const DEFAULT_IMAGE_URL =
   "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?q=80&w=2071&auto=format&fit=crop";
@@ -44,6 +45,10 @@ const TripDetails = () => {
     startDate && endDate ? moment(endDate).diff(startDate, "days") + 1 : 0;
   const budget = parsedTripData?.find((item: any) => item.budget)?.budget?.type;
 
+  const countryNameToCode: Record<string, string> = { Japan: "JP" };
+  const destinationCode = countryNameToCode[locationInfo?.country as string] || "";
+  const dateArr = [startDate, endDate].filter(Boolean) as Date[];
+
   return (
     <ScrollView className="flex-1 bg-background">
       <Image
@@ -71,14 +76,17 @@ const TripDetails = () => {
           <Text className="text-lg font-outfit text-text-primary">
             {travelers?.type} ({travelers?.count})
           </Text>
-          <Text className="text-lg font-outfit text-text-primary">
-            Budget Type: {budget ?? "N/A"}
+        <Text className="text-lg font-outfit text-text-primary">
+          Budget Type: {budget ?? "N/A"}
+        </Text>
+        {destinationCode ? (
+          <PreFlightChecklist destinationCountry={destinationCode} dates={dateArr} />
+        ) : null}
+        <View className="flex mt-10 items-center justify-center">
+          <Text className="text-lg font-outfit-medium text-text-primary">
+            Want to see flights, hotel recommendations and more plan details?
           </Text>
-          <View className="flex mt-10 items-center justify-center">
-            <Text className="text-lg font-outfit-medium text-text-primary">
-              Want to see flights, hotel recommendations and more plan details?
-            </Text>
-          </View>
+        </View>
         </View>
 
         <CustomButton
