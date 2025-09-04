@@ -83,14 +83,28 @@ export async function notify(
 
   const useMock = !process.env.EXPO_ACCESS_TOKEN && !process.env.RESEND_API_KEY;
   if (useMock) {
-    const fs = await import('fs');
-    const path = await import('path');
-    const dir = path.resolve(__dirname, '../../reports/notifications');
-    fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(
-      path.join(dir, `${Date.now()}-${type}.json`),
-      JSON.stringify({ userId, type, payload }, null, 2)
-    );
+    // When running in a Node.js environment (like local tests) we want to persist
+    // the notification to the reports directory. The React Native runtime does
+    // not provide the Node standard library, so we guard the dynamic `require`
+    // calls with a runtime check and wrap them in `eval` so Metro doesn't try to
+    // resolve them during bundling.
+    if (typeof process !== "undefined" && process.release?.name === "node") {
+      try {
+        const fs: any = eval("require('fs')");
+        const path: any = eval("require('path')");
+        const dir = path.resolve(process.cwd(), "reports/notifications");
+        fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(
+          path.join(dir, `${Date.now()}-${type}.json`),
+          JSON.stringify({ userId, type, payload }, null, 2)
+        );
+      } catch (e) {
+        console.warn("Mock notification write failed", e);
+      }
+    } else {
+      // In non-Node environments, just log the notification for debugging.
+      console.log("Mock notification", { userId, type, payload });
+    }
     return;
   }
 
