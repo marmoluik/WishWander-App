@@ -1,4 +1,4 @@
-import * as SecureStore from "expo-secure-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getDecisionLogs, clearDecisionLogs } from "@/packages/db/schemas/DecisionLog";
 import {
   getDataAccessLogs,
@@ -29,7 +29,7 @@ export const exportUserData = async (userId?: string) => {
 };
 
 export const deleteUserData = async (userId?: string) => {
-  await SecureStore.deleteItemAsync(PASSPORT_KEY);
+  await AsyncStorage.removeItem(PASSPORT_KEY);
   clearDecisionLogs();
   clearDataAccessLogs();
   clearChatLogs();
