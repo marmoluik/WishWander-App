@@ -83,14 +83,18 @@ export async function notify(
 
   const useMock = !process.env.EXPO_ACCESS_TOKEN && !process.env.RESEND_API_KEY;
   if (useMock) {
-    const fs = await import('fs');
-    const path = await import('path');
-    const dir = path.resolve(__dirname, '../../reports/notifications');
-    fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(
-      path.join(dir, `${Date.now()}-${type}.json`),
-      JSON.stringify({ userId, type, payload }, null, 2)
-    );
+    if (typeof process !== 'undefined' && (process as any)?.versions?.node) {
+      const fs: any = (eval('require') as any)('fs');
+      const path: any = (eval('require') as any)('path');
+      const dir = path.resolve(process.cwd(), 'reports/notifications');
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(
+        path.join(dir, `${Date.now()}-${type}.json`),
+        JSON.stringify({ userId, type, payload }, null, 2)
+      );
+    } else {
+      console.log('Mock notification', { userId, type, payload });
+    }
     return;
   }
 
