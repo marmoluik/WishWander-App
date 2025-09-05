@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, TextInput, Button, ScrollView, Text } from "react-native";
 import ChatQuickActions from "@/components/ChatQuickActions";
 import { runTravelAgent } from "@/utils/chatAgent";
+import { CreateTripContext } from "@/context/CreateTripContext";
 
 interface Message {
   role: "user" | "agent";
@@ -9,14 +10,25 @@ interface Message {
 }
 
 export default function ChatScreen() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { tripData } = useContext(CreateTripContext);
+  const location = tripData.find((t: any) => t.locationInfo)?.locationInfo;
+  const tripId = `${location?.name || "trip"}`;
+  const [messagesByTrip, setMessagesByTrip] = useState<Record<string, Message[]>>({});
   const [input, setInput] = useState("");
+
+  const messages = messagesByTrip[tripId] || [];
 
   const sendPrompt = async (prompt: string) => {
     if (!prompt) return;
-    setMessages((m) => [...m, { role: "user", text: prompt }]);
+    setMessagesByTrip((prev) => ({
+      ...prev,
+      [tripId]: [...messages, { role: "user", text: prompt }],
+    }));
     const reply = await runTravelAgent(prompt);
-    setMessages((m) => [...m, { role: "agent", text: reply }]);
+    setMessagesByTrip((prev) => ({
+      ...prev,
+      [tripId]: [...(prev[tripId] || []), { role: "agent", text: reply }],
+    }));
   };
 
   return (

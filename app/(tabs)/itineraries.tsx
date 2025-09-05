@@ -91,7 +91,8 @@ const Itineraries = () => {
         }
       const id = Date.now().toString();
       const title = location?.name || "Trip";
-      const stored: StoredItinerary = { id, title, plan: planData };
+      const tripId = `${title}-${dates?.startDate || id}`;
+      const stored: StoredItinerary = { id, tripId, title, plan: planData };
       addItinerary(stored);
       setCurrentId(id);
     } catch (e) {
@@ -134,6 +135,16 @@ const Itineraries = () => {
     );
   }
 
+  const grouped = itineraries.reduce(
+    (acc: Record<string, StoredItinerary[]>, it) => {
+      const key = it.tripId || "";
+      acc[key] = acc[key] || [];
+      acc[key].push(it);
+      return acc;
+    },
+    {}
+  );
+
   return (
     <SafeAreaView className="flex-1 p-4">
       {itineraries.length === 0 ? (
@@ -141,27 +152,37 @@ const Itineraries = () => {
           <Text className="font-outfit text-text-primary">No itinerary saved.</Text>
         </View>
       ) : (
-        itineraries.map((it) => (
-          <View
-            key={it.id}
-            className="flex-row items-center p-4 mb-3 bg-background rounded-xl border border-primary"
-          >
-            <TouchableOpacity
-              className="flex-row items-center flex-1"
-              onPress={() => setCurrentId(it.id)}
-            >
-              <Ionicons
-                name="map"
-                size={24}
-                color="#9C00FF"
-                style={{ marginRight: 12 }}
-              />
-              <Text className="font-outfit-bold flex-1">{it.title}</Text>
-              <Ionicons name="chevron-forward" size={20} color="#9C00FF" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleDelete(it.id)} className="ml-4">
-              <Ionicons name="trash" size={20} color="#EF4444" />
-            </TouchableOpacity>
+        Object.values(grouped).map((group, idx) => (
+          <View key={idx} className="mb-6">
+            <Text className="font-outfit-bold text-lg mb-2">
+              {group[0]?.title}
+            </Text>
+            {group.map((it) => (
+              <View
+                key={it.id}
+                className="flex-row items-center p-4 mb-3 bg-background rounded-xl border border-primary"
+              >
+                <TouchableOpacity
+                  className="flex-row items-center flex-1"
+                  onPress={() => setCurrentId(it.id)}
+                >
+                  <Ionicons
+                    name="map"
+                    size={24}
+                    color="#9C00FF"
+                    style={{ marginRight: 12 }}
+                  />
+                  <Text className="font-outfit-bold flex-1">{it.title}</Text>
+                  <Ionicons name="chevron-forward" size={20} color="#9C00FF" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleDelete(it.id)}
+                  className="ml-4"
+                >
+                  <Ionicons name="trash" size={20} color="#EF4444" />
+                </TouchableOpacity>
+              </View>
+            ))}
           </View>
         ))
       )}

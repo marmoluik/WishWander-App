@@ -13,6 +13,7 @@ import { CreateTripContext } from "@/context/CreateTripContext";
 import CustomButton from "@/components/CustomButton";
 import moment from "moment";
 import { useRouter } from "expo-router";
+import { searchCheapestDateRanges } from "@/utils/flexibleDates";
 
 interface FlexibleResult {
   start: string;
@@ -43,12 +44,6 @@ const FlexibleDates = () => {
       Alert.alert("Select an origin and destination first");
       return;
     }
-    const tpToken = process.env.EXPO_PUBLIC_TRAVELPAYOUTS_TOKEN;
-    if (!tpToken) {
-      Alert.alert("Missing Travelpayouts token");
-      return;
-    }
-
     setLoading(true);
     try {
       const locRes = await fetch(
@@ -78,44 +73,16 @@ const FlexibleDates = () => {
         nightsTo = toNum;
       }
 
-      const searchUrl = `https://api.travelpayouts.com/v2/prices/month-matrix?origin=${originAirport.code}&destination=${arrival.code}&token=${tpToken}&currency=usd`;
-      const flightRes = await fetch(searchUrl);
-      if (!flightRes.ok) {
-        console.error("flexible search failed", await flightRes.text());
-        Alert.alert("Search failed. Please try again");
-        setLoading(false);
-        return;
-      }
-      const flightText = await flightRes.text();
-      let flightJson: any;
-      try {
-        flightJson = JSON.parse(flightText);
-      } catch (err) {
-        console.error("flexible search failed", err);
-        Alert.alert("Search failed. Please try again");
-        setLoading(false);
-        return;
-      }
-      const flights = Array.isArray(flightJson.data)
-        ? flightJson.data
-        : Object.values(flightJson.data || {});
-      const parsed: FlexibleResult[] = (flights as any[])
-        .map((f: any) => ({
-          start: f.depart_date,
-          end: f.return_date,
-          priceNum: f.value,
-        }))
-        .filter((r: any) => {
-          const diff = moment(r.end).diff(moment(r.start), "days");
-          return diff >= nightsFrom && diff <= nightsTo;
-        })
-        .sort((a: any, b: any) => a.priceNum - b.priceNum)
-        .slice(0, 10)
-        .map((r: any) => ({
-          start: r.start,
-          end: r.end,
-          price: `${r.priceNum} ${flightJson.currency || "USD"}`,
-        }));
+      const ranges = await searchCheapestDateRanges(
+        originAirport.code,
+        arrival.code,
+        [nightsFrom, nightsTo]
+      );
+      const parsed: FlexibleResult[] = ranges.map((r) => ({
+        start: r.startDate,
+        end: r.endDate,
+        price: `${r.price} USD`,
+      }));
       setResults(parsed);
     } catch (e) {
       console.error("flexible search failed", e);

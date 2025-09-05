@@ -38,14 +38,12 @@ export class DefaultFlightSearchProvider implements FlightSearchProvider {
     } catch {
       // ignore and fall back to mock
     }
-    return [
-      {
-        airline: "Demo Air",
-        flightNumber: "DM100",
-        price: 199,
-        bookingUrl: generateFlightLink(origin, destination, departDate),
-      },
-    ];
+    return Array.from({ length: 10 }).map((_, i) => ({
+      airline: "Demo Air",
+      flightNumber: `DM${100 + i}`,
+      price: 199 + i * 20,
+      bookingUrl: generateFlightLink(origin, destination, departDate),
+    }));
   }
 
   getSearchUrl({
