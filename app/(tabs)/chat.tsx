@@ -11,9 +11,7 @@ interface Message {
 
 export default function ChatScreen() {
   const { itineraries } = useContext(ItineraryContext);
-  const [tripId, setTripId] = useState<string | null>(
-    itineraries[0]?.tripId || null
-  );
+  const [tripId, setTripId] = useState<string | null>(null);
   const [messagesByTrip, setMessagesByTrip] = useState<Record<string, Message[]>>({});
   const [input, setInput] = useState("");
 
@@ -40,23 +38,30 @@ export default function ChatScreen() {
     );
   }
 
-  const messages = messagesByTrip[tripId] || [];
+  const currentTripId = tripId as string;
+  const messages = messagesByTrip[currentTripId] || [];
 
   const sendPrompt = async (prompt: string) => {
     if (!prompt) return;
     setMessagesByTrip((prev) => ({
       ...prev,
-      [tripId]: [...messages, { role: "user", text: prompt }],
+      [currentTripId]: [...messages, { role: "user", text: prompt }],
     }));
-    const reply = await runTravelAgent(prompt);
+    const reply = await runTravelAgent(prompt, currentTripId);
     setMessagesByTrip((prev) => ({
       ...prev,
-      [tripId]: [...(prev[tripId] || []), { role: "agent", text: reply }],
+      [currentTripId]: [...(prev[currentTripId] || []), { role: "agent", text: reply }],
     }));
   };
 
   return (
     <View className="flex-1 p-4">
+      <View className="flex-row justify-between mb-2">
+        <Text className="font-outfit text-lg">{
+          itineraries.find((it) => it.tripId === tripId)?.title || ""
+        }</Text>
+        <Button title="Change Trip" onPress={() => setTripId(null)} />
+      </View>
       <ScrollView className="flex-1">
         {messages.map((m, idx) => (
           <Text key={idx} className={m.role === "user" ? "text-right" : "text-left"}>

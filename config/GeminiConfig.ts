@@ -32,15 +32,18 @@ export function startChatSession(
   history: Array<{ role: 'user' | 'model'; parts: { text: string }[] }>,
   modelName: string = 'gemini-1.5-flash',
   tools?: Tool[],
-  options?: { tripMode?: boolean }
+  options?: { tripMode?: boolean; tripId?: string }
 ) {
   const model = genAI.getGenerativeModel({ model: modelName, tools });
   const chatOptions: any = {
     generationConfig: defaultGenerationConfig,
     history,
   };
-  if (options?.tripMode) {
-    chatOptions.context = { tripMode: true };
+  if (options?.tripMode || options?.tripId) {
+    chatOptions.context = {
+      ...(options?.tripMode ? { tripMode: true } : {}),
+      ...(options?.tripId ? { tripId: options.tripId } : {}),
+    };
   }
   return model.startChat(chatOptions);
 }
