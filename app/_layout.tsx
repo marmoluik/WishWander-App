@@ -22,6 +22,7 @@ import { initNotifications } from "@/src/notifications";
 import { auth } from "@/config/FirebaseConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CurrencyProvider } from "@/context/CurrencyContext";
+import { ChatProvider } from "@/context/ChatContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -100,7 +101,8 @@ export default function RootLayout() {
 
   return (
     <CurrencyProvider>
-      <CreateTripContext.Provider value={{ tripData, setTripData }}>
+      <ChatProvider>
+        <CreateTripContext.Provider value={{ tripData, setTripData }}>
         <ItineraryContext.Provider value={{ itineraries, addItinerary, removeItinerary }}>
           <StatusBar style="dark" />
           <Stack screenOptions={{ headerShown: false }}>
@@ -115,6 +117,7 @@ export default function RootLayout() {
           </Stack>
         </ItineraryContext.Provider>
       </CreateTripContext.Provider>
+      </ChatProvider>
     </CurrencyProvider>
   );
 }

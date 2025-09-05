@@ -9,14 +9,9 @@ import {
 } from "react-native";
 import { collection, getDocs } from "firebase/firestore";
 import ChatQuickActions from "@/components/ChatQuickActions";
-import { runTravelAgent } from "@/utils/chatAgent";
+import { useChat } from "@/context/ChatContext";
 import { ItineraryContext } from "@/context/ItineraryContext";
 import { auth, db } from "@/config/FirebaseConfig";
-
-interface Message {
-  role: "user" | "agent";
-  text: string;
-}
 
 interface TripOption {
   tripId: string;
@@ -25,8 +20,8 @@ interface TripOption {
 
 export default function ChatScreen() {
   const { itineraries } = useContext(ItineraryContext);
+  const { messagesByTrip, sendMessage } = useChat();
   const [tripId, setTripId] = useState<string | null>(null);
-  const [messagesByTrip, setMessagesByTrip] = useState<Record<string, Message[]>>({});
   const [input, setInput] = useState("");
   const [tripOptions, setTripOptions] = useState<TripOption[]>([]);
 
@@ -87,29 +82,9 @@ export default function ChatScreen() {
 
   const sendPrompt = async (prompt: string) => {
     if (!prompt) return;
-    setMessagesByTrip((prev) => ({
-      ...prev,
-      [currentTripId]: [...messages, { role: "user", text: prompt }],
-    }));
-    try {
-      const reply = await runTravelAgent(prompt, currentTripId);
-      setMessagesByTrip((prev) => ({
-        ...prev,
-        [currentTripId]: [
-          ...(prev[currentTripId] || []),
-          { role: "agent", text: reply || "" },
-        ],
-      }));
-    } catch (e) {
-      setMessagesByTrip((prev) => ({
-        ...prev,
-        [currentTripId]: [
-          ...(prev[currentTripId] || []),
-          { role: "agent", text: "Sorry, something went wrong." },
-        ],
-      }));
-    }
+    await sendMessage(prompt, currentTripId);
   };
+
 
   return (
     <View className="flex-1 p-4">
@@ -125,7 +100,7 @@ export default function ChatScreen() {
             key={idx}
             className={m.role === "user" ? "text-right" : "text-left"}
           >
-            {m.text}
+            {m.content}
           </Text>
         ))}
       </ScrollView>
