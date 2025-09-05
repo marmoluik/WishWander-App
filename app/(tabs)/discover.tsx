@@ -60,9 +60,14 @@ const Discover = () => {
       );
       const data = await response.json();
 
-      if (data.results && data.results[0] && data.results[0].photos) {
-        const photoReference = data.results[0].photos[0].photo_reference;
-        return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${photoReference}&key=${process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY}`;
+      if (data.results && data.results.length > 0) {
+        const result =
+          data.results.find((r: any) => !r.types?.includes("lodging")) ||
+          data.results[0];
+        const photoReference = result?.photos?.[0]?.photo_reference;
+        if (photoReference) {
+          return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${photoReference}&key=${process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY}`;
+        }
       }
       return DEFAULT_IMAGE_URL;
     } catch (error) {
