@@ -19,6 +19,7 @@
     "context/**/*",
     "services/**/*",
     "src/**/*",
+    "server/**/*",
     "utils/**/*",
     "packages/impact/**/*",
     "packages/providers/**/*",
