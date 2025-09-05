@@ -24,11 +24,14 @@ export const runTravelAgent = async (prompt: string, tripId?: string) => {
   let result = await session.sendMessage(prompt);
   let { response } = result;
 
-  while (
-    (response as any).functionCalls &&
-    (response as any).functionCalls().length > 0
-  ) {
-    const calls = (response as any).functionCalls();
+  // Some responses may not include any function calls. The previous implementation
+  // attempted to read `.length` on the result of `functionCalls()` without verifying
+  // it was defined, which caused a runtime error and surfaced the message
+  // "Cannot read property 'length' of undefined" in the UI. We guard against
+  // undefined here by retrieving the calls once and checking for existence before
+  // accessing `.length`.
+  let calls = (response as any).functionCalls?.() || [];
+  while (calls.length > 0) {
     for (const call of calls) {
       const name = call.name as TravelFunctionName;
       const args = call.args ? JSON.parse(call.args) : {};
@@ -39,6 +42,7 @@ export const runTravelAgent = async (prompt: string, tripId?: string) => {
       });
       response = result.response;
     }
+    calls = (response as any).functionCalls?.() || [];
   }
   const reply = response.text();
   addChatLog({
