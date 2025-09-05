@@ -12,12 +12,12 @@ import { addChatLog } from "@/packages/db/schemas/ChatLog";
  * with tool/function calling enabled. When the model requests a function, we
  * execute it and feed the result back, allowing the LLM to build richer answers.
  */
-export const runTravelAgent = async (prompt: string) => {
+export const runTravelAgent = async (prompt: string, tripId?: string) => {
   const session = startChatSession(
     [{ role: "user", parts: [{ text: prompt }] }],
     "gemini-1.5-flash",
     [{ functionDeclarations } as any],
-    { tripMode: true }
+    { tripMode: true, tripId }
   );
 
   // initial response from the model
@@ -47,6 +47,7 @@ export const runTravelAgent = async (prompt: string) => {
     agentResponse: reply,
     summary: reply,
     timestamp: new Date(),
+    ...(tripId ? { tripId } : {}),
   });
   return reply;
 };

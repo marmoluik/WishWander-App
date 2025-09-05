@@ -4,6 +4,7 @@ export interface ChatLog {
   agentResponse?: string;
   summary: string;
   timestamp: Date;
+  tripId?: string;
 }
 
 const chatLogs: ChatLog[] = [];
