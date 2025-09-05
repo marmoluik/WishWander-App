@@ -7,43 +7,42 @@ import {
   planningRequestToPrompt,
   queryToPlanningRequest,
 } from "@/utils/planning";
-import { runTravelAgent } from "@/utils/chatAgent";
-
-interface Message {
-  role: "user" | "agent";
-  text: string;
-}
+import { ChatProvider, useChat } from "@/context/ChatContext";
 
 export default function PlanChat() {
+  return (
+    <ChatProvider>
+      <PlanChatInner />
+    </ChatProvider>
+  );
+}
+
+function PlanChatInner() {
   const params = useSearchParams();
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { messagesByTrip, sendMessage } = useChat();
   const [input, setInput] = useState("");
   const [status, setStatus] = useState<{ conciergeActive: boolean; priority: string } | null>(null);
 
   const tripId = params.get("tripId") || "default";
+  const messages = messagesByTrip[tripId] || [];
 
   useEffect(() => {
     const req: PlanningRequest = queryToPlanningRequest(params);
     if (req) {
       const intro = planningRequestToPrompt(req);
-      setMessages([{ role: "user", text: intro }]);
-      runTravelAgent(intro).then((reply) =>
-        setMessages((m) => [...m, { role: "agent", text: reply }])
-      );
+      sendMessage(intro, tripId);
     }
     fetch(`/api/billing/status?tripId=${tripId}`)
       .then((res) => res.json())
       .then(setStatus)
       .catch(() => setStatus(null));
-  }, [params, tripId]);
+  }, [params, tripId, sendMessage]);
 
   const send = async () => {
     if (!input) return;
     const prompt = input;
-    setMessages((m) => [...m, { role: "user", text: prompt }]);
+    await sendMessage(prompt, tripId);
     setInput("");
-    const reply = await runTravelAgent(prompt);
-    setMessages((m) => [...m, { role: "agent", text: reply }]);
   };
 
   const checkout = async () => {
@@ -70,7 +69,7 @@ export default function PlanChat() {
       <div className="flex-1 overflow-y-auto space-y-2">
         {messages.map((m, idx) => (
           <div key={idx} className={m.role === "user" ? "text-right" : "text-left"}>
-            {m.text}
+            {m.content}
           </div>
         ))}
       </div>
