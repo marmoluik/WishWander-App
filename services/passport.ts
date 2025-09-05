@@ -1,11 +1,11 @@
-import * as SecureStore from "expo-secure-store";
+import { getItemAsync, setItemAsync } from "@/services/secureStore";
 import { logDataAccess } from "@/packages/db/schemas/DataAccessLog";
 
 const KEY = "passportCountry";
 
 export const getPassportCountry = async (): Promise<string | null> => {
   try {
-    const value = await SecureStore.getItemAsync(KEY);
+    const value = await getItemAsync(KEY);
     logDataAccess({
       id: Date.now().toString(),
       actor: "local-user",
@@ -20,7 +20,7 @@ export const getPassportCountry = async (): Promise<string | null> => {
 };
 
 export const setPassportCountry = async (code: string) => {
-  await SecureStore.setItemAsync(KEY, code.toUpperCase());
+  await setItemAsync(KEY, code.toUpperCase());
   logDataAccess({
     id: Date.now().toString(),
     actor: "local-user",
