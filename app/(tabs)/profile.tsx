@@ -10,6 +10,7 @@ import {
   getNotificationPreferences,
   setNotificationPreferences,
 } from "@/packages/notify";
+import { useCurrency, Currency } from "@/context/CurrencyContext";
 
 export default function Profile() {
   const user = auth?.currentUser;
@@ -18,6 +19,8 @@ export default function Profile() {
     replan: true,
     booking: true,
   }));
+  const { currency, setCurrency } = useCurrency();
+  const currencies: Currency[] = ["USD", "EUR", "GBP"];
 
   useEffect(() => {
     if (user?.uid) {
@@ -138,6 +141,23 @@ export default function Profile() {
               <Text className="ml-3 font-outfit">Disruptions (always on)</Text>
             </View>
           </View>
+        </View>
+
+        {/* Currency Preference */}
+        <View className="mb-8">
+          <Text className="text-xl font-outfit-bold mb-4">Currency</Text>
+          {currencies.map((cur) => (
+            <TouchableOpacity
+              key={cur}
+              className="flex-row items-center justify-between bg-background p-4 rounded-xl mb-3"
+              onPress={() => setCurrency(cur)}
+            >
+              <Text className="font-outfit">{cur}</Text>
+              {currency === cur && (
+                <Ionicons name="checkmark" size={20} color="#9C00FF" />
+              )}
+            </TouchableOpacity>
+          ))}
         </View>
 
         {/* Data & Privacy */}

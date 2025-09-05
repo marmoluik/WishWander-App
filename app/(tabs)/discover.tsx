@@ -686,6 +686,13 @@ const Discover = () => {
     {selectedPlaces.length > 0 && (
       <View className="absolute bottom-4 left-0 right-0 px-6">
         <CustomButton
+          title="Deselect All"
+          onPress={() => setSelectedPlaces([])}
+          className="mb-2"
+          bgVariant="outline"
+          textVariant="primary"
+        />
+        <CustomButton
           title="Generate Itinerary"
           onPress={() =>
             router.push({
