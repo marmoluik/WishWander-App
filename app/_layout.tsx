@@ -15,15 +15,12 @@ import "../global.css";
 import "react-native-get-random-values";
 import Constants from "expo-constants"; // ⬅️ NEW
 import { CreateTripContext } from "@/context/CreateTripContext";
-import {
-  ItineraryContext,
-  DayPlan,
-  StoredItinerary,
-} from "@/context/ItineraryContext";
+import { ItineraryContext, StoredItinerary } from "@/context/ItineraryContext";
 import HeaderLogo from "@/components/HeaderLogo";
 import { registerTripMonitor } from "@/services/tripMonitor";
 import { initNotifications } from "@/src/notifications";
 import { auth } from "@/config/FirebaseConfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -31,6 +28,25 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [tripData, setTripData] = useState<any[]>([]);
   const [itineraries, setItineraries] = useState<StoredItinerary[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const stored = await AsyncStorage.getItem("itineraries");
+        if (stored) {
+          setItineraries(JSON.parse(stored));
+        }
+      } catch (e) {
+        console.error("failed to load itineraries", e);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    AsyncStorage.setItem("itineraries", JSON.stringify(itineraries)).catch((e) =>
+      console.error("failed to save itineraries", e)
+    );
+  }, [itineraries]);
 
   const addItinerary = (it: StoredItinerary) => {
     setItineraries((prev) => [...prev, it]);
