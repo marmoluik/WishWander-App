@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   TextInput,
+  Switch,
   Button,
   ScrollView,
   Text,
@@ -21,6 +22,7 @@ interface TripOption {
 export default function ChatScreen() {
   const { itineraries } = useContext(ItineraryContext);
   const { messagesByTrip, sendMessage } = useChat();
+  const [tripMode, setTripMode] = useState(true);
   const [tripId, setTripId] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const [tripOptions, setTripOptions] = useState<TripOption[]>([]);
@@ -85,13 +87,15 @@ export default function ChatScreen() {
     await sendMessage(prompt, currentTripId);
   };
 
-
   return (
     <View className="flex-1 p-4">
       <View className="flex-row justify-between mb-2">
-        <Text className="font-outfit text-lg">
-          {tripOptions.find((t) => t.tripId === tripId)?.title || ""}
-        </Text>
+        <View className="flex-row items-center">
+          <Text className="font-outfit text-lg">
+            {tripOptions.find((t) => t.tripId === tripId)?.title || ""}
+          </Text>
+          <Switch className="ml-2" value={tripMode} onValueChange={setTripMode} />
+        </View>
         <Button title="Change Trip" onPress={() => setTripId(null)} />
       </View>
       <ScrollView className="flex-1">
@@ -123,4 +127,3 @@ export default function ChatScreen() {
     </View>
   );
 }
-

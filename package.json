@@ -16,7 +16,8 @@
     "sim:weather": "node --loader ts-node/esm tools/simulate/weather.ts",
     "test:e2e:web": "playwright test e2e/web",
     "test:e2e:mobile": "echo 'mobile e2e skipped'",
-    "test:a11y": "node tools/axe.js"
+    "test:a11y": "node tools/axe.js",
+    "server": "ts-node server/index.ts"
   },
   "jest": {
     "preset": "jest-expo",
@@ -67,7 +68,9 @@
     "react-native-web": "^0.20.0",
     "setimmediate": "^1.0.5",
     "stripe": "^18.5.0",
-    "tailwindcss": "^3.4.14"
+    "tailwindcss": "^3.4.14",
+    "express": "^4.19.2",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
