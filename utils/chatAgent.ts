@@ -12,41 +12,47 @@ import { addChatLog } from "@/packages/db/schemas/ChatLog";
  * with tool/function calling enabled. When the model requests a function, we
  * execute it and feed the result back, allowing the LLM to build richer answers.
  */
-export const runTravelAgent = async (prompt: string) => {
-  const session = startChatSession(
-    [{ role: "user", parts: [{ text: prompt }] }],
-    "gemini-1.5-flash",
-    [{ functionDeclarations } as any],
-    { tripMode: true }
-  );
+export const runTravelAgent = async (prompt: string, tripId?: string) => {
+  try {
+    const session = startChatSession(
+      [{ role: "user", parts: [{ text: prompt }] }],
+      "gemini-1.5-flash",
+      [{ functionDeclarations } as any],
+      { tripMode: true, tripId }
+    );
 
-  // initial response from the model
-  let result = await session.sendMessage(prompt);
-  let { response } = result;
+    // initial response from the model
+    let result = await session.sendMessage(prompt);
+    let { response } = result;
 
-  while (
-    (response as any).functionCalls &&
-    (response as any).functionCalls().length > 0
-  ) {
-    const calls = (response as any).functionCalls();
-    for (const call of calls) {
-      const name = call.name as TravelFunctionName;
-      const args = call.args ? JSON.parse(call.args) : {};
-      const fnResult = await executeAgentFunction(name, args);
-      result = await (session as any).sendMessage({
-        functionCall: call,
-        functionResponse: { name, response: fnResult },
-      });
-      response = result.response;
+    while (
+      (response as any).functionCalls &&
+      (response as any).functionCalls().length > 0
+    ) {
+      const calls = (response as any).functionCalls();
+      for (const call of calls) {
+        const name = call.name as TravelFunctionName;
+        const args = call.args ? JSON.parse(call.args) : {};
+        const fnResult = await executeAgentFunction(name, args);
+        result = await (session as any).sendMessage({
+          functionCall: call,
+          functionResponse: { name, response: fnResult },
+        });
+        response = result.response;
+      }
     }
+    const reply = response.text();
+    addChatLog({
+      id: Date.now().toString(),
+      userPrompt: prompt,
+      agentResponse: reply,
+      summary: reply,
+      timestamp: new Date(),
+      ...(tripId ? { tripId } : {}),
+    });
+    return reply;
+  } catch (e) {
+    console.error("runTravelAgent error", e);
+    return "Sorry, I couldn't process that request.";
   }
-  const reply = response.text();
-  addChatLog({
-    id: Date.now().toString(),
-    userPrompt: prompt,
-    agentResponse: reply,
-    summary: reply,
-    timestamp: new Date(),
-  });
-  return reply;
 };

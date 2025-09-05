@@ -1,8 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, TextInput, Button, ScrollView, Text, TouchableOpacity } from "react-native";
 import ChatQuickActions from "@/components/ChatQuickActions";
 import { runTravelAgent } from "@/utils/chatAgent";
-import { ItineraryContext } from "@/context/ItineraryContext";
+import { auth, db } from "@/config/FirebaseConfig";
+import { collection, getDocs } from "firebase/firestore";
 
 interface Message {
   role: "user" | "agent";
@@ -10,29 +11,45 @@ interface Message {
 }
 
 export default function ChatScreen() {
-  const { itineraries } = useContext(ItineraryContext);
-  const [tripId, setTripId] = useState<string | null>(
-    itineraries[0]?.tripId || null
-  );
+  const [trips, setTrips] = useState<any[]>([]);
+  const [tripId, setTripId] = useState<string | null>(null);
   const [messagesByTrip, setMessagesByTrip] = useState<Record<string, Message[]>>({});
   const [input, setInput] = useState("");
+
+  const user = auth?.currentUser;
+
+  useEffect(() => {
+    const fetchTrips = async () => {
+      if (!db || !user) return;
+      const tripCollection = collection(db, "UserTrips", user.uid, "trips");
+      const querySnapshot = await getDocs(tripCollection);
+      const list: any[] = [];
+      querySnapshot.forEach((docSnap) => {
+        list.push({ id: docSnap.id, ...docSnap.data() });
+      });
+      setTrips(list);
+    };
+    fetchTrips();
+  }, [user]);
 
   if (!tripId) {
     return (
       <View className="flex-1 p-4">
         <ScrollView>
-          {itineraries.map((it) => (
+          {trips.map((t) => (
             <TouchableOpacity
-              key={it.tripId}
+              key={t.id}
               className="p-4 mb-3 bg-background rounded-xl border border-primary"
-              onPress={() => setTripId(it.tripId)}
+              onPress={() => setTripId(t.id)}
             >
-              <Text className="font-outfit">{it.title}</Text>
+              <Text className="font-outfit">
+                {t.tripPlan?.trip_plan?.location || "Trip"}
+              </Text>
             </TouchableOpacity>
           ))}
-          {itineraries.length === 0 && (
+          {trips.length === 0 && (
             <Text className="font-outfit text-text-primary">
-              No trips available.
+              No trips found.
             </Text>
           )}
         </ScrollView>
@@ -40,23 +57,44 @@ export default function ChatScreen() {
     );
   }
 
-  const messages = messagesByTrip[tripId] || [];
+  const currentTripId = tripId as string;
+  const messages = messagesByTrip[currentTripId] || [];
 
   const sendPrompt = async (prompt: string) => {
     if (!prompt) return;
     setMessagesByTrip((prev) => ({
       ...prev,
-      [tripId]: [...messages, { role: "user", text: prompt }],
+      [currentTripId]: [...(prev[currentTripId] || []), { role: "user", text: prompt }],
     }));
-    const reply = await runTravelAgent(prompt);
-    setMessagesByTrip((prev) => ({
-      ...prev,
-      [tripId]: [...(prev[tripId] || []), { role: "agent", text: reply }],
-    }));
+    try {
+      const reply = await runTravelAgent(prompt, currentTripId);
+      setMessagesByTrip((prev) => ({
+        ...prev,
+        [currentTripId]: [
+          ...(prev[currentTripId] || []),
+          { role: "agent", text: reply || "No response" },
+        ],
+      }));
+    } catch (e) {
+      console.error("sendPrompt failed", e);
+      setMessagesByTrip((prev) => ({
+        ...prev,
+        [currentTripId]: [
+          ...(prev[currentTripId] || []),
+          { role: "agent", text: "Sorry, something went wrong." },
+        ],
+      }));
+    }
   };
 
   return (
     <View className="flex-1 p-4">
+      <View className="flex-row justify-between mb-2">
+        <Text className="font-outfit text-lg">
+          {trips.find((t) => t.id === tripId)?.tripPlan?.trip_plan?.location || ""}
+        </Text>
+        <Button title="Change Trip" onPress={() => setTripId(null)} />
+      </View>
       <ScrollView className="flex-1">
         {messages.map((m, idx) => (
           <Text key={idx} className={m.role === "user" ? "text-right" : "text-left"}>
