@@ -26,6 +26,8 @@ export interface DayPlan {
 
 export interface StoredItinerary {
   id: string;
+  /** Identifier for the trip this itinerary belongs to */
+  tripId: string;
   title: string;
   plan: DayPlan[];
 }

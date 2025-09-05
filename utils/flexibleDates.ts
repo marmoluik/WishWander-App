@@ -58,5 +58,5 @@ export async function searchCheapestDateRanges(
   }
 
   results.sort((a, b) => a.price - b.price);
-  return results.slice(0, 5);
+  return results.slice(0, 10);
 }

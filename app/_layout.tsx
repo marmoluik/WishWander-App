@@ -34,7 +34,11 @@ export default function RootLayout() {
       try {
         const stored = await AsyncStorage.getItem("itineraries");
         if (stored) {
-          setItineraries(JSON.parse(stored));
+          const parsed: StoredItinerary[] = JSON.parse(stored).map((it: any) => ({
+            tripId: it.tripId || it.title || "trip",
+            ...it,
+          }));
+          setItineraries(parsed);
         }
       } catch (e) {
         console.error("failed to load itineraries", e);

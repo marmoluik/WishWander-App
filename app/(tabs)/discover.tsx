@@ -237,15 +237,17 @@ const Discover = () => {
 
   const loadCheapestFlights = async () => {
     const { origin, destination } = getFlightCodes();
-    const depart = parsedTripPlan?.trip_plan?.flight_details?.departure_date;
-    if (!origin || !destination || !depart) return;
+    if (!origin || !destination) return;
+    const depart =
+      parsedTripPlan?.trip_plan?.flight_details?.departure_date ||
+      new Date().toISOString().split("T")[0];
     setLoadingFlights(true);
     const offers = await flightProvider.search({
       origin,
       destination,
       departDate: depart,
     });
-    setFlightOptions(offers);
+    setFlightOptions(offers.slice(0, 10));
     setLoadingFlights(false);
   };
 
@@ -547,12 +549,10 @@ const Discover = () => {
             <CustomButton
               title="See More Hotels"
               onPress={() => {
-                recordAffiliateClick("hotel");
-                Linking.openURL(
-                  hotelProvider.getSearchUrl({
-                    query: parsedTripPlan.trip_plan.location,
-                  })
-                );
+                router.push({
+                  pathname: "/hotels",
+                  params: { query: parsedTripPlan.trip_plan.location },
+                });
               }}
               bgVariant="outline"
               textVariant="primary"
@@ -597,9 +597,17 @@ const Discover = () => {
             </View>
           </>
         )}
-        <Text className="font-outfit text-text-primary mb-4">
+        <Text className="font-outfit text-text-primary mb-2">
           Tap the + to add a place to your itinerary.
         </Text>
+        {filteredPlaces.length > 0 && (
+          <TouchableOpacity
+            onPress={() => setSelectedPlaces(filteredPlaces)}
+            className="mb-4 self-start"
+          >
+            <Text className="text-primary font-outfit">Select All</Text>
+          </TouchableOpacity>
+        )}
         {filteredPlaces.length ? (
           filteredPlaces.map((place: any, index: number) => {
             const isSelected = selectedPlaces.find(
