@@ -4,9 +4,11 @@ import { Platform } from "react-native";
 import Constants from "expo-constants";
 import { initializeApp, FirebaseApp } from "firebase/app";
 import { getAuth, initializeAuth, Auth } from "firebase/auth";
-import { getReactNativePersistence } from "firebase/auth/react-native";
+import * as AuthModule from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getFirestore, Firestore } from "firebase/firestore";
+
+const getReactNativePersistence = (AuthModule as any).getReactNativePersistence as (storage: typeof AsyncStorage) => any;
 
 // Pull your values from app.config.js → extra (or .env → EXPO_PUBLIC_…)
 const {
