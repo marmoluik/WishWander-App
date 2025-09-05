@@ -48,6 +48,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="itineraries"
         options={{
+          headerShown: false,
           tabBarLabel: "Itineraries",
           tabBarIcon: ({ focused }) => (
             <Ionicons

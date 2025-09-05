@@ -42,7 +42,8 @@ const Itineraries = () => {
       const session = startChatSession([{ role: "user", parts: [{ text: prompt }] }]);
       const result = await session.sendMessage(prompt);
       const raw = await result.response.text();
-        const json = JSON.parse(raw);
+        const jsonStr = (raw.match(/\{[\s\S]*\}/) || ["{}"])[0];
+        const json = JSON.parse(jsonStr);
         const rawPlan: any[] = json.itinerary || [];
         let planData: DayPlan[] = rawPlan.map((d) => ({
           ...d,

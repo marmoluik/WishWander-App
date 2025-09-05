@@ -1,8 +1,8 @@
 import React, { useContext, useState } from "react";
-import { View, TextInput, Button, ScrollView, Text } from "react-native";
+import { View, TextInput, Button, ScrollView, Text, TouchableOpacity } from "react-native";
 import ChatQuickActions from "@/components/ChatQuickActions";
 import { runTravelAgent } from "@/utils/chatAgent";
-import { CreateTripContext } from "@/context/CreateTripContext";
+import { ItineraryContext } from "@/context/ItineraryContext";
 
 interface Message {
   role: "user" | "agent";
@@ -10,11 +10,35 @@ interface Message {
 }
 
 export default function ChatScreen() {
-  const { tripData } = useContext(CreateTripContext);
-  const location = tripData.find((t: any) => t.locationInfo)?.locationInfo;
-  const tripId = `${location?.name || "trip"}`;
+  const { itineraries } = useContext(ItineraryContext);
+  const [tripId, setTripId] = useState<string | null>(
+    itineraries[0]?.tripId || null
+  );
   const [messagesByTrip, setMessagesByTrip] = useState<Record<string, Message[]>>({});
   const [input, setInput] = useState("");
+
+  if (!tripId) {
+    return (
+      <View className="flex-1 p-4">
+        <ScrollView>
+          {itineraries.map((it) => (
+            <TouchableOpacity
+              key={it.tripId}
+              className="p-4 mb-3 bg-background rounded-xl border border-primary"
+              onPress={() => setTripId(it.tripId)}
+            >
+              <Text className="font-outfit">{it.title}</Text>
+            </TouchableOpacity>
+          ))}
+          {itineraries.length === 0 && (
+            <Text className="font-outfit text-text-primary">
+              No trips available.
+            </Text>
+          )}
+        </ScrollView>
+      </View>
+    );
+  }
 
   const messages = messagesByTrip[tripId] || [];
 
