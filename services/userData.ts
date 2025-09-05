@@ -1,4 +1,4 @@
-import * as SecureStore from "expo-secure-store";
+import { deleteItemAsync } from "@/services/secureStore";
 import { getDecisionLogs, clearDecisionLogs } from "@/packages/db/schemas/DecisionLog";
 import {
   getDataAccessLogs,
@@ -29,7 +29,7 @@ export const exportUserData = async (userId?: string) => {
 };
 
 export const deleteUserData = async (userId?: string) => {
-  await SecureStore.deleteItemAsync(PASSPORT_KEY);
+  await deleteItemAsync(PASSPORT_KEY);
   clearDecisionLogs();
   clearDataAccessLogs();
   clearChatLogs();
