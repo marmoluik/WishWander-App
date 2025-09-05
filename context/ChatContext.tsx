@@ -53,7 +53,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateLastAssistantMessage(tripId, m => ({ ...m, content: m.content + token }));
       });
     } catch (e) {
-      updateLastAssistantMessage(tripId, m => ({ ...m, content: 'Sorry, something went wrong.' }));
+      const message = e instanceof Error ? e.message : 'Sorry, something went wrong.';
+      updateLastAssistantMessage(tripId, m => ({ ...m, content: message }));
     }
   };
 
