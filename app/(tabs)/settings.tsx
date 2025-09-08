@@ -1,41 +1,48 @@
 import React, { useState } from 'react';
 import { View, Text, Switch, TextInput, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useThemeContext } from '@/context/ThemeContext';
 
 export default function Settings() {
+  const { scheme, toggle } = useThemeContext();
   const [handsOff, setHandsOff] = useState(false);
   const [tripLimit, setTripLimit] = useState('');
   const [bookingLimit, setBookingLimit] = useState('');
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    <SafeAreaView className="flex-1 bg-surface">
       <ScrollView contentContainerStyle={{ padding: 24 }}>
-        <Text className="text-3xl font-outfit-bold mb-8">Settings</Text>
+        <Text className="text-heading text-textPrimary font-bold mb-8">Settings</Text>
 
         <View className="flex-row items-center justify-between mb-6">
-          <Text className="text-lg font-outfit">Hands-off Mode</Text>
+          <Text className="text-subtitle text-textPrimary">Hands-off Mode</Text>
           <Switch value={handsOff} onValueChange={setHandsOff} />
         </View>
 
+        <View className="flex-row items-center justify-between mb-6">
+          <Text className="text-subtitle text-textPrimary">Dark Mode</Text>
+          <Switch value={scheme === 'dark'} onValueChange={toggle} />
+        </View>
+
         <View className="mb-6">
-          <Text className="font-outfit mb-2">Trip Budget Limit</Text>
+          <Text className="text-body text-textPrimary mb-2">Trip Budget Limit</Text>
           <TextInput
             value={tripLimit}
             onChangeText={setTripLimit}
             placeholder="$"
             keyboardType="numeric"
-            className="border p-2 rounded"
+            className="border border-textSecondary p-2 rounded text-textPrimary"
           />
         </View>
 
         <View className="mb-6">
-          <Text className="font-outfit mb-2">Per Booking Limit</Text>
+          <Text className="text-body text-textPrimary mb-2">Per Booking Limit</Text>
           <TextInput
             value={bookingLimit}
             onChangeText={setBookingLimit}
             placeholder="$"
             keyboardType="numeric"
-            className="border p-2 rounded"
+            className="border border-textSecondary p-2 rounded text-textPrimary"
           />
         </View>
       </ScrollView>
