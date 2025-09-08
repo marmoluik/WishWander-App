@@ -21,7 +21,9 @@
   },
   "jest": {
     "preset": "jest-expo",
-    "testPathIgnorePatterns": ["/e2e/"]
+    "testPathIgnorePatterns": [
+      "/e2e/"
+    ]
   },
   "dependencies": {
     "@appandflow/react-native-google-autocomplete": "^2.1.0",
@@ -70,7 +72,8 @@
     "stripe": "^18.5.0",
     "tailwindcss": "^3.4.14",
     "express": "^4.19.2",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
@@ -88,7 +91,6 @@
     "@axe-core/playwright": "^4.10.2",
     "react-native-svg-transformer": "^1.5.0",
     "react-test-renderer": "19.0.0",
-    "ts-node": "^10.9.2",
     "typescript": "~5.8.3"
   },
   "expo": {
