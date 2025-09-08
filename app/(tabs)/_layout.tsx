@@ -1,9 +1,8 @@
 import { Tabs } from "expo-router";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import HeaderLogo from "@/components/HeaderLogo";
+import colors from "@/src/theme/colors";
 
 export default function TabLayout() {
   return (
@@ -11,63 +10,62 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: true,
         headerTitle: () => <HeaderLogo />,
-        tabBarActiveTintColor: "#9C00FF",
-        tabBarInactiveTintColor: "#1E1B4B",
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textSecondary,
         tabBarLabelStyle: {
-          fontFamily: "outfit-medium",
+          fontFamily: 'Inter',
           fontSize: 12,
         },
       }}
     >
       <Tabs.Screen
-        name="mytrip"
+        name="index"
         options={{
-          tabBarLabel: "My Trips",
+          tabBarLabel: 'Home',
           tabBarIcon: ({ focused }) => (
             <Ionicons
-              name="location-sharp"
+              name="home"
               size={24}
-              color={focused ? "#9C00FF" : "#1E1B4B"}
+              color={focused ? colors.primary : colors.textSecondary}
             />
           ),
         }}
       />
       <Tabs.Screen
-        name="discover"
+        name="plan"
         options={{
-          tabBarLabel: "Discover",
-          tabBarIcon: ({ focused }) => (
-            <MaterialIcons
-              name="travel-explore"
-              size={24}
-              color={focused ? "#9C00FF" : "#1E1B4B"}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="itineraries"
-        options={{
-          headerShown: false,
-          tabBarLabel: "Itineraries",
+          tabBarLabel: 'Plan',
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name="calendar"
               size={24}
-              color={focused ? "#9C00FF" : "#1E1B4B"}
+              color={focused ? colors.primary : colors.textSecondary}
             />
           ),
         }}
       />
       <Tabs.Screen
-        name="chat"
+        name="nearby"
         options={{
-          tabBarLabel: "Chat",
+          tabBarLabel: 'Nearby',
           tabBarIcon: ({ focused }) => (
             <Ionicons
-              name="chatbubbles"
+              name="map"
               size={24}
-              color={focused ? "#9C00FF" : "#1E1B4B"}
+              color={focused ? colors.primary : colors.textSecondary}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="guides"
+        options={{
+          tabBarLabel: 'Guides',
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name="book"
+              size={24}
+              color={focused ? colors.primary : colors.textSecondary}
             />
           ),
         }}
@@ -75,25 +73,12 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          tabBarLabel: "Settings",
+          tabBarLabel: 'Settings',
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name="settings-sharp"
               size={24}
-              color={focused ? "#9C00FF" : "#1E1B4B"}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          tabBarLabel: "Profile",
-          tabBarIcon: ({ focused }) => (
-            <FontAwesome
-              name="user-o"
-              size={21}
-              color={focused ? "#9C00FF" : "#1E1B4B"}
+              color={focused ? colors.primary : colors.textSecondary}
             />
           ),
         }}
