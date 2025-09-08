@@ -7,24 +7,38 @@ import colors from "@/src/theme/colors";
 export default function TabLayout() {
   return (
     <Tabs
+      initialRouteName="mytrip"
       screenOptions={{
         headerShown: true,
         headerTitle: () => <HeaderLogo />,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
         tabBarLabelStyle: {
-          fontFamily: 'Inter',
+          fontFamily: "Inter",
           fontSize: 12,
         },
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="mytrip"
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: "My Trips",
           tabBarIcon: ({ focused }) => (
             <Ionicons
-              name="home"
+              name="airplane"
+              size={24}
+              color={focused ? colors.primary : colors.textSecondary}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="discover"
+        options={{
+          tabBarLabel: "Discover",
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name="compass"
               size={24}
               color={focused ? colors.primary : colors.textSecondary}
             />
@@ -34,7 +48,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="plan"
         options={{
-          tabBarLabel: 'Plan',
+          tabBarLabel: "Plan",
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name="calendar"
@@ -45,35 +59,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="nearby"
-        options={{
-          tabBarLabel: 'Nearby',
-          tabBarIcon: ({ focused }) => (
-            <Ionicons
-              name="map"
-              size={24}
-              color={focused ? colors.primary : colors.textSecondary}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="guides"
-        options={{
-          tabBarLabel: 'Guides',
-          tabBarIcon: ({ focused }) => (
-            <Ionicons
-              name="book"
-              size={24}
-              color={focused ? colors.primary : colors.textSecondary}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="settings"
         options={{
-          tabBarLabel: 'Settings',
+          tabBarLabel: "Settings",
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name="settings-sharp"

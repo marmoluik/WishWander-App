@@ -23,6 +23,9 @@
     "preset": "jest-expo",
     "testPathIgnorePatterns": [
       "/e2e/"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(?:@react-native|react-native|@react-native-async-storage|@react-native/js-polyfills)/)"
     ]
   },
   "dependencies": {
