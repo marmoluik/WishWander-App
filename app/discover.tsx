@@ -696,7 +696,7 @@ const Discover = () => {
           title="Generate Itinerary"
           onPress={() =>
             router.push({
-              pathname: "/(tabs)/itineraries",
+              pathname: "/itineraries",
               params: {
                 selectedPlaces: JSON.stringify(selectedPlaces),
                 tripData,

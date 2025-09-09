@@ -121,12 +121,32 @@ function RootNavigation() {
               <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="index" />
                 <Stack.Screen name="(auth)" />
-                <Stack.Screen name="(tabs)" />
-                <Stack.Screen name="create-trip" />
-                <Stack.Screen
-                  name="generate-trip"
-                  options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
-                />
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="create-trip" />
+              <Stack.Screen
+                name="generate-trip"
+                options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
+              />
+              <Stack.Screen
+                name="mytrip"
+                options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
+              />
+              <Stack.Screen
+                name="discover"
+                options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
+              />
+              <Stack.Screen
+                name="itineraries"
+                options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
+              />
+              <Stack.Screen
+                name="chat"
+                options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
+              />
+              <Stack.Screen
+                name="profile"
+                options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
+              />
               </Stack>
             </ItineraryContext.Provider>
           </CreateTripContext.Provider>
