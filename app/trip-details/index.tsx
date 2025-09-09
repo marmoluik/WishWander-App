@@ -93,7 +93,7 @@ const TripDetails = () => {
           title="Discover Location"
           onPress={() =>
             router.push({
-              pathname: "/(tabs)/discover",
+              pathname: "/discover",
               params: { tripData, tripPlan },
             })
           }
