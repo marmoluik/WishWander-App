@@ -71,6 +71,13 @@ export default function TabLayout() {
           ),
         }}
       />
+      {/* Hide routes that should not appear in the tab bar */}
+      <Tabs.Screen name="index" options={{ href: null }} />
+      <Tabs.Screen name="chat" options={{ href: null }} />
+      <Tabs.Screen name="guides" options={{ href: null }} />
+      <Tabs.Screen name="itineraries" options={{ href: null }} />
+      <Tabs.Screen name="nearby" options={{ href: null }} />
+      <Tabs.Screen name="profile" options={{ href: null }} />
     </Tabs>
   );
 }
