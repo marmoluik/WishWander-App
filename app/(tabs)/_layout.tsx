@@ -7,7 +7,7 @@ import colors from "@/src/theme/colors";
 export default function TabLayout() {
   return (
     <Tabs
-      initialRouteName="mytrip"
+      initialRouteName="index"
       screenOptions={{
         headerShown: true,
         headerTitle: () => <HeaderLogo />,
@@ -20,25 +20,12 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="mytrip"
+        name="index"
         options={{
-          tabBarLabel: "My Trips",
+          tabBarLabel: "Home",
           tabBarIcon: ({ focused }) => (
             <Ionicons
-              name="airplane"
-              size={24}
-              color={focused ? colors.primary : colors.textSecondary}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="discover"
-        options={{
-          tabBarLabel: "Discover",
-          tabBarIcon: ({ focused }) => (
-            <Ionicons
-              name="compass"
+              name="home"
               size={24}
               color={focused ? colors.primary : colors.textSecondary}
             />
@@ -59,6 +46,32 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="nearby"
+        options={{
+          tabBarLabel: "Nearby",
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name="map"
+              size={24}
+              color={focused ? colors.primary : colors.textSecondary}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="guides"
+        options={{
+          tabBarLabel: "Guides",
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name="book"
+              size={24}
+              color={focused ? colors.primary : colors.textSecondary}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
           tabBarLabel: "Settings",
@@ -72,11 +85,10 @@ export default function TabLayout() {
         }}
       />
       {/* Hide routes that should not appear in the tab bar */}
-      <Tabs.Screen name="index" options={{ href: null }} />
-      <Tabs.Screen name="chat" options={{ href: null }} />
-      <Tabs.Screen name="guides" options={{ href: null }} />
+      <Tabs.Screen name="mytrip" options={{ href: null }} />
+      <Tabs.Screen name="discover" options={{ href: null }} />
       <Tabs.Screen name="itineraries" options={{ href: null }} />
-      <Tabs.Screen name="nearby" options={{ href: null }} />
+      <Tabs.Screen name="chat" options={{ href: null }} />
       <Tabs.Screen name="profile" options={{ href: null }} />
     </Tabs>
   );
