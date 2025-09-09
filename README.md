@@ -49,6 +49,9 @@ https://drive.google.com/file/d/1UbQjPsd1CdqOqducUJLfNspNC3GU2N6Z/view?usp=shari
 - Interactive Date Selection Calendar
 - Budget-based Trip Planning
 - Real-time Trip Updates
+- Streaming chat with live itinerary side panel
+- Offline queueing and retry for prompts
+- English and Estonian localisation
 
 ### 🌍 Travel Planning
 - AI-Powered Custom Itinerary Generation

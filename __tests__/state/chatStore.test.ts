@@ -9,10 +9,13 @@ describe("chatStore", () => {
     useChatStore.getState().clear();
   });
 
-  it("adds and updates messages", () => {
-    const { addMessage, updateMessage } = useChatStore.getState();
-    addMessage("t1", { id: "1", role: "user", content: "hi" });
-    updateMessage("t1", "1", "hello");
-    expect(useChatStore.getState().threads["t1"].messages[0].content).toBe("hello");
+  it("streams assistant messages", () => {
+    const store = useChatStore.getState();
+    const assistant = store.send("t1", "hello");
+    store.receiveChunk("t1", assistant.id, "world");
+    store.complete("t1", assistant.id);
+    const msgs = useChatStore.getState().threads["t1"].messages;
+    expect(msgs[1].content).toBe("world");
+    expect(msgs[1].partial).toBe(false);
   });
 });
