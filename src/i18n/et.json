@@ -1,3 +1,9 @@
 {
-  "hello": "Tere"
+  "hello": "Tere",
+  "quick": {
+    "shift": "Nihuta +2p",
+    "shorten": "Lühenda",
+    "budget": "Eelarve ≤ €1200",
+    "gems": "Lisa peidetud pärlid"
+  }
 }

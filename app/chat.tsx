@@ -13,6 +13,10 @@ import ChatQuickActions from "@/components/ChatQuickActions";
 import { useChat } from "@/context/ChatContext";
 import { ItineraryContext } from "@/context/ItineraryContext";
 import { auth, db } from "@/config/FirebaseConfig";
+import ItineraryPane from "@/src/features/itinerary/ItineraryPane";
+import { PlaceResult } from "@/src/services/tools";
+import { parseIntent } from "@/src/services/intent";
+import { Message } from "@/src/state/chatStore";
 
 interface TripOption {
   tripId: string;
@@ -21,11 +25,12 @@ interface TripOption {
 
 export default function ChatScreen() {
   const { itineraries } = useContext(ItineraryContext);
-  const { messagesByTrip, sendMessage } = useChat();
+  const { threads, sendMessage } = useChat();
   const [tripMode, setTripMode] = useState(true);
   const [tripId, setTripId] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const [tripOptions, setTripOptions] = useState<TripOption[]>([]);
+  const [places, setPlaces] = useState<PlaceResult[]>([]);
 
   // merge itineraries into trip options
   useEffect(() => {
@@ -80,50 +85,60 @@ export default function ChatScreen() {
   }
 
   const currentTripId = tripId as string;
-  const messages = messagesByTrip[currentTripId] || [];
+  const messages = threads[currentTripId]?.messages || [];
 
   const sendPrompt = async (prompt: string) => {
     if (!prompt) return;
     await sendMessage(prompt, currentTripId);
+    const intent = parseIntent(prompt);
+    if (intent?.type === 'replaceActivity') {
+      setPlaces((prev) => prev.filter((p, idx) => idx !== intent.day - 1));
+    }
   };
 
   return (
-    <View className="flex-1 p-4">
-      <View className="flex-row justify-between mb-2">
-        <View className="flex-row items-center">
-          <Text className="font-outfit text-lg">
-            {tripOptions.find((t) => t.tripId === tripId)?.title || ""}
-          </Text>
-          <Switch className="ml-2" value={tripMode} onValueChange={setTripMode} />
+    <View className="flex-1 flex-row">
+      <View className="flex-1 p-4">
+        <View className="flex-row justify-between mb-2">
+          <View className="flex-row items-center">
+            <Text className="font-outfit text-lg">
+              {tripOptions.find((t) => t.tripId === tripId)?.title || ""}
+            </Text>
+            <Switch className="ml-2" value={tripMode} onValueChange={setTripMode} />
+          </View>
+          <Button title="Change Trip" onPress={() => setTripId(null)} />
         </View>
-        <Button title="Change Trip" onPress={() => setTripId(null)} />
+        <ScrollView className="flex-1">
+          {messages.map((m: Message) => (
+            <Text
+              key={m.id}
+              className={m.role === "user" ? "text-right" : "text-left"}
+            >
+              {m.content}
+              {m.partial && " …"}
+            </Text>
+          ))}
+        </ScrollView>
+        <ChatQuickActions onSelect={sendPrompt} />
+        <View className="flex-row mt-2">
+          <TextInput
+            className="flex-1 border border-gray-300 p-2 mr-2"
+            value={input}
+            onChangeText={setInput}
+            multiline
+          />
+          <Button
+            title="Send"
+            onPress={() => {
+              const p = input;
+              setInput("");
+              sendPrompt(p);
+            }}
+            disabled={!input}
+          />
+        </View>
       </View>
-      <ScrollView className="flex-1">
-        {messages.map((m, idx) => (
-          <Text
-            key={idx}
-            className={m.role === "user" ? "text-right" : "text-left"}
-          >
-            {m.content}
-          </Text>
-        ))}
-      </ScrollView>
-      <ChatQuickActions onSelect={sendPrompt} />
-      <View className="flex-row mt-2">
-        <TextInput
-          className="flex-1 border border-gray-300 p-2 mr-2"
-          value={input}
-          onChangeText={setInput}
-        />
-        <Button
-          title="Send"
-          onPress={() => {
-            const p = input;
-            setInput("");
-            sendPrompt(p);
-          }}
-        />
-      </View>
+      <ItineraryPane places={places} />
     </View>
   );
 }

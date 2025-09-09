@@ -1,3 +1,9 @@
 {
-  "hello": "Hello"
+  "hello": "Hello",
+  "quick": {
+    "shift": "Shift +2d",
+    "shorten": "Shorten",
+    "budget": "Budget ≤ €1200",
+    "gems": "Add hidden gems"
+  }
 }

@@ -40,6 +40,7 @@ export default ({ config }) => ({
     googleIosClientId: process.env.GOOGLE_IOS_CLIENT_ID,
     googleAndroidClientId: process.env.GOOGLE_ANDROID_CLIENT_ID,
     facebookAppId: process.env.FACEBOOK_APP_ID,
+    llmProxyUrl: process.env.EXPO_PUBLIC_LLM_PROXY_URL,
 
     // keep EAS project link here too (safe)
     eas: {

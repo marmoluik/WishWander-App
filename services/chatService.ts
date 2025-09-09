@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { runTravelAgent } from '@/utils/chatAgent';
+import { streamChat } from '@/src/services/streamClient';
 
 export type StreamCallback = (token: string) => void;
 
@@ -15,17 +15,16 @@ interface QueuedMessage {
 export default class ChatService {
   private queueKey = 'offline-chat-queue';
 
-  async sendMessage(prompt: string, tripId?: string, onToken?: StreamCallback): Promise<string> {
+  async sendMessage(prompt: string, threadId?: string, onToken?: StreamCallback): Promise<string> {
     try {
-      const reply = await runTravelAgent(prompt, tripId);
-      if (onToken) {
-        for (const token of reply.split(/(\s+)/)) {
-          onToken(token);
-        }
-      }
-      return reply;
+      let final = '';
+      await streamChat({ threadId, messages: [{ role: 'user', content: prompt }] }, (t) => {
+        final += t;
+        onToken?.(t);
+      });
+      return final;
     } catch (e) {
-      await this.enqueue({ prompt, tripId });
+      await this.enqueue({ prompt, tripId: threadId });
       throw e;
     }
   }
