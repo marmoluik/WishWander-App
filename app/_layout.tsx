@@ -100,16 +100,14 @@ export default function RootLayout() {
   }
 
   return (
-    <NavigationThemeProvider
-      value={scheme === 'dark' ? DarkTheme : DefaultTheme}
-    >
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <CurrencyProvider>
         <ChatProvider>
           <CreateTripContext.Provider value={{ tripData, setTripData }}>
             <ItineraryContext.Provider
               value={{ itineraries, addItinerary, removeItinerary }}
             >
-              <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+              <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
               <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="index" />
                 <Stack.Screen name="(auth)" />
@@ -144,6 +142,6 @@ export default function RootLayout() {
           </CreateTripContext.Provider>
         </ChatProvider>
       </CurrencyProvider>
-    </NavigationThemeProvider>
+    </ThemeProvider>
   );
 }
