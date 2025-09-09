@@ -99,12 +99,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      {/* Hide routes that should not appear in the tab bar */}
-      <Tabs.Screen name="mytrip" options={{ href: null }} />
-      <Tabs.Screen name="discover" options={{ href: null }} />
-      <Tabs.Screen name="itineraries" options={{ href: null }} />
-      <Tabs.Screen name="chat" options={{ href: null }} />
-      <Tabs.Screen name="profile" options={{ href: null }} />
+      {/* Additional screens are handled outside the tab navigator */}
     </Tabs>
   );
 }

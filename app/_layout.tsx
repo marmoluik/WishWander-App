@@ -100,24 +100,50 @@ export default function RootLayout() {
   }
 
   return (
-    <CurrencyProvider>
-      <ChatProvider>
-        <CreateTripContext.Provider value={{ tripData, setTripData }}>
-        <ItineraryContext.Provider value={{ itineraries, addItinerary, removeItinerary }}>
-          <StatusBar style="dark" />
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="(auth)" />
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="create-trip" />
-            <Stack.Screen
-              name="generate-trip"
-              options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
-            />
-          </Stack>
-        </ItineraryContext.Provider>
-      </CreateTripContext.Provider>
-      </ChatProvider>
-    </CurrencyProvider>
+    <NavigationThemeProvider
+      value={scheme === 'dark' ? DarkTheme : DefaultTheme}
+    >
+      <CurrencyProvider>
+        <ChatProvider>
+          <CreateTripContext.Provider value={{ tripData, setTripData }}>
+            <ItineraryContext.Provider
+              value={{ itineraries, addItinerary, removeItinerary }}
+            >
+              <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="index" />
+                <Stack.Screen name="(auth)" />
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="create-trip" />
+              <Stack.Screen
+                name="generate-trip"
+                options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
+              />
+              <Stack.Screen
+                name="mytrip"
+                options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
+              />
+              <Stack.Screen
+                name="discover"
+                options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
+              />
+              <Stack.Screen
+                name="itineraries"
+                options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
+              />
+              <Stack.Screen
+                name="chat"
+                options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
+              />
+              <Stack.Screen
+                name="profile"
+                options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
+              />
+              </Stack>
+            </ItineraryContext.Provider>
+          </CreateTripContext.Provider>
+        </ChatProvider>
+      </CurrencyProvider>
+    </NavigationThemeProvider>
   );
 }
