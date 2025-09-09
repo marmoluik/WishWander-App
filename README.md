@@ -18,6 +18,12 @@ A smart travel planning mobile application that leverages AI to create personali
 - User Authentication (Email and Password) with Firebase
 - Database is Firebase's Firestore DB
 - Google Maps API for mapping features
+- Zustand for local state management
+- i18next for localization
+
+## Environment variables
+
+Create a `.env` file based on `.env.example` and fill in the required keys. For streaming chat, set `EXPO_PUBLIC_LLM_PROXY_URL` to a secure server that holds your model API key.
 
 ## Custom Color Palette
 
