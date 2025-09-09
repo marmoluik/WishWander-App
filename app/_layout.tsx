@@ -2,13 +2,14 @@ import 'setimmediate';
 import {
   DarkTheme,
   DefaultTheme,
-  ThemeProvider as NavigationThemeProvider,
+  ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import "react-native-reanimated";
+import { useColorScheme } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import "../global.css";
 import "react-native-get-random-values";
@@ -22,21 +23,11 @@ import { auth } from "@/config/FirebaseConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { ChatProvider } from "@/context/ChatContext";
-import { ThemeModeProvider, useThemeContext } from "@/context/ThemeContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  return (
-    <ThemeModeProvider>
-      <RootNavigation />
-    </ThemeModeProvider>
-  );
-}
-
-function RootNavigation() {
-  const { scheme } = useThemeContext();
   const [tripData, setTripData] = useState<any[]>([]);
   const [itineraries, setItineraries] = useState<StoredItinerary[]>([]);
 
@@ -79,6 +70,7 @@ function RootNavigation() {
     });
   };
 
+  const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     outfit: require("@/assets/fonts/Outfit-Regular.ttf"),
     "outfit-medium": require("@/assets/fonts/Outfit-Medium.ttf"),
@@ -108,30 +100,24 @@ function RootNavigation() {
   }
 
   return (
-    <NavigationThemeProvider
-      value={scheme === 'dark' ? DarkTheme : DefaultTheme}
-    >
-      <CurrencyProvider>
-        <ChatProvider>
-          <CreateTripContext.Provider value={{ tripData, setTripData }}>
-            <ItineraryContext.Provider
-              value={{ itineraries, addItinerary, removeItinerary }}
-            >
-              <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
-              <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="index" />
-                <Stack.Screen name="(auth)" />
-                <Stack.Screen name="(tabs)" />
-                <Stack.Screen name="create-trip" />
-                <Stack.Screen
-                  name="generate-trip"
-                  options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
-                />
-              </Stack>
-            </ItineraryContext.Provider>
-          </CreateTripContext.Provider>
-        </ChatProvider>
-      </CurrencyProvider>
-    </NavigationThemeProvider>
+    <CurrencyProvider>
+      <ChatProvider>
+        <CreateTripContext.Provider value={{ tripData, setTripData }}>
+        <ItineraryContext.Provider value={{ itineraries, addItinerary, removeItinerary }}>
+          <StatusBar style="dark" />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="create-trip" />
+            <Stack.Screen
+              name="generate-trip"
+              options={{ headerShown: true, headerTitle: () => <HeaderLogo /> }}
+            />
+          </Stack>
+        </ItineraryContext.Provider>
+      </CreateTripContext.Provider>
+      </ChatProvider>
+    </CurrencyProvider>
   );
 }

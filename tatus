@@ -1,0 +1,151 @@
+[33m2520e1f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge pull request #167 from marmoluik/codex/redesign-wishwander-ui-to-rival-mindtrip
+[33mf757d58[m[33m ([m[1;31morigin/codex/redesign-wishwander-ui-to-rival-mindtrip[m[33m)[m feat: update bottom tab navigation
+[33mbc97740[m Merge pull request #166 from marmoluik/codex/review-and-fix-all-functions
+[33m8649a34[m[33m ([m[1;31morigin/codex/review-and-fix-all-functions[m[33m)[m Hide extra tabs from bottom navigation
+[33ma2fc767[m Merge pull request #165 from marmoluik/codex/review-functions-and-optimize-menu-items
+[33m0903d81[m[33m ([m[1;31morigin/codex/review-functions-and-optimize-menu-items[m[33m)[m Simplify bottom tab navigation
+[33mb2eebba[m Merge pull request #164 from marmoluik/codex/fix-missing-ts-node-module
+[33mba14035[m[33m ([m[1;31morigin/codex/fix-missing-ts-node-module[m[33m)[m chore: inline tailwind theme tokens
+[33mfc21daa[m Merge pull request #163 from marmoluik/codex/fix-missing-ts-node-module-error
+[33mb69bc56[m[33m ([m[1;31morigin/codex/fix-missing-ts-node-module-error[m[33m)[m fix: ensure ts-node is installed
+[33m9400a24[m Merge pull request #162 from marmoluik/codex/redesign-wishwander-ui-for-improved-aesthetics
+[33med01a14[m[33m ([m[1;31morigin/codex/redesign-wishwander-ui-for-improved-aesthetics[m[33m)[m feat: add basic theme system and navigation
+[33m2be07e7[m Merge pull request #161 from marmoluik/codex/add-autonomous-travel-consultant-features
+[33m7fc4ea4[m[33m ([m[1;31morigin/codex/add-autonomous-travel-consultant-features[m[33m)[m feat: scaffold server and settings
+[33m1d3bf08[m Merge pull request #160 from marmoluik/codex/fix-chat-functionality-issues
+[33m10e3f40[m[33m ([m[1;31morigin/codex/fix-chat-functionality-issues[m[33m)[m fix: guard function call handling in chat
+[33m742829c[m Merge pull request #159 from marmoluik/codex/fix-chat-functionality-issue
+[33m368ae27[m[33m ([m[1;31morigin/codex/fix-chat-functionality-issue[m[33m)[m Improve chat error reporting
+[33m8d9eed2[m Merge pull request #158 from marmoluik/codex/fix-chat-functionality-error
+[33m947a114[m[33m ([m[1;31morigin/codex/fix-chat-functionality-error[m[33m)[m feat: support env gemini key
+[33m300ca40[m Merge pull request #157 from marmoluik/codex/fix-firebase/auth/react-native-import-error
+[33mb330b64[m[33m ([m[1;31morigin/codex/fix-firebase/auth/react-native-import-error[m[33m)[m fix: resolve firebase auth import
+[33m4eceff3[m Merge pull request #156 from marmoluik/codex/implement-robust-chat-system
+[33m9523bd7[m[33m ([m[1;31morigin/codex/implement-robust-chat-system[m[33m)[m feat: add chat service and context with offline queue
+[33mb6b2771[m Merge pull request #155 from marmoluik/codex/fix-trip-selection-in-chat-functionality
+[33m337632f[m[33m ([m[1;31morigin/codex/fix-trip-selection-in-chat-functionality[m[33m)[m feat: enable chat for trips without itineraries
+[33m40a397b[m Merge pull request #153 from marmoluik/codex/improve-chat-trip-selection-process
+[33mf83e064[m[33m ([m[1;31morigin/codex/improve-chat-trip-selection-process[m[33m)[m feat(chat): allow trip selection
+[33m77c42c4[m Merge pull request #152 from marmoluik/codex/resolve-various-trip-planning-issues
+[33m9a6e70e[m[33m ([m[1;31morigin/codex/resolve-various-trip-planning-issues[m[33m)[m feat: improve itinerary flow and currency support
+[33m8f7073c[m Merge pull request #151 from marmoluik/codex/add-log-out-button-to-profile
+[33m4d1db04[m[33m ([m[1;31morigin/codex/add-log-out-button-to-profile[m[33m)[m Enhance trip interactions and search features
+[33mbebfcdc[m Merge pull request #150 from marmoluik/codex/fix-json5-parse-error-and-related-issues
+[33mcbf1e9f[m[33m ([m[1;31morigin/codex/fix-json5-parse-error-and-related-issues[m[33m)[m fix: improve trip generation stability
+[33mf1b3554[m Merge pull request #149 from marmoluik/codex/fix-module-not-found-error-for-expo-secure-store
+[33m8b0252f[m[33m ([m[1;31morigin/codex/fix-module-not-found-error-for-expo-secure-store[m[33m)[m feat: add secure store fallback
+[33m7f4f218[m Merge pull request #148 from marmoluik/codex/fix-module-resolution-for-fs-in-notify
+[33m8fbbaf4[m[33m ([m[1;31morigin/codex/fix-module-resolution-for-fs-in-notify[m[33m)[m chore: guard fs usage in notifications
+[33m9cbdd0b[m Merge pull request #145 from marmoluik/codex/fix-ios-bundling-issue-with-fs-import
+[33me9d1e6c[m[33m ([m[1;31morigin/codex/fix-ios-bundling-issue-with-fs-import[m[33m)[m chore: make notify mock compatible with RN
+[33m1898cb3[m Update tsconfig.json
+[33m1071c7d[m Merge pull request #144 from marmoluik/codex/fix-firebase-auth-import-error
+[33m503537a[m[33m ([m[1;31morigin/codex/fix-firebase-auth-import-error[m[33m)[m fix(firebase): import persistence from firebase/auth
+[33m289db90[m Merge pull request #143 from marmoluik/codex/fix-and-re-run-qa-tests-based-on-reports
+[33m897475a[m[33m ([m[1;31morigin/codex/fix-and-re-run-qa-tests-based-on-reports[m[33m)[m feat: stabilize build and qa
+[33m9ed272f[m Merge pull request #142 from marmoluik/codex/validate-autonomous-ai-travel-assistant
+[33me382954[m[33m ([m[1;31morigin/codex/validate-autonomous-ai-travel-assistant[m[33m)[m chore: add QA reports and workflow
+[33m30c156b[m Merge pull request #141 from marmoluik/codex/add-test-harness-for-disruptions-and-weather
+[33m5074774[m[33m ([m[1;31morigin/codex/add-test-harness-for-disruptions-and-weather[m[33m)[m Add simulation scripts and E2E tests
+[33mb6bd940[m Merge pull request #140 from marmoluik/codex/add-metrics-and-funnels-feature
+[33ma301576[m[33m ([m[1;31morigin/codex/add-metrics-and-funnels-feature[m[33m)[m feat: add metrics events and dashboard
+[33m8e99ae4[m Merge pull request #139 from marmoluik/codex/add-gdpr-compliant-data-management-features
+[33m0878086[m[33m ([m[1;31morigin/codex/add-gdpr-compliant-data-management-features[m[33m)[m feat: add data access and chat logs
+[33mb141ed1[m Merge pull request #138 from marmoluik/codex/implement-provider-interfaces-and-stubs
+[33mc6d53ad[m[33m ([m[1;31morigin/codex/implement-provider-interfaces-and-stubs[m[33m)[m feat: add search provider interfaces and stubs
+[33m58f5999[m Merge pull request #137 from marmoluik/codex/implement-unified-notifications-system
+[33m469f3ea[m[33m ([m[1;31morigin/codex/implement-unified-notifications-system[m[33m)[m feat: add unified notification system
+[33ma716bc6[m Merge pull request #136 from marmoluik/codex/add-human-in-the-loop-console
+[33mb891285[m[33m ([m[1;31morigin/codex/add-human-in-the-loop-console[m[33m)[m feat: add admin review console
+[33mfb649df[m Merge pull request #135 from marmoluik/codex/add-visa-and-safety-assist-feature
+[33m0819624[m[33m ([m[1;31morigin/codex/add-visa-and-safety-assist-feature[m[33m)[m feat: add visa and safety advisories
+[33mba3390e[m Merge pull request #134 from marmoluik/codex/add-concierge-per-trip-checkout-feature
+[33m3491cc9[m[33m ([m[1;31morigin/codex/add-concierge-per-trip-checkout-feature[m[33m)[m feat: concierge billing API
+[33m13930f4[m Merge pull request #133 from marmoluik/codex/add-co2-smart-flights-feature
+[33m8473fac[m[33m ([m[1;31morigin/codex/add-co2-smart-flights-feature[m[33m)[m feat: add CO2 estimates and sorting for flights
+[33m58eb8fe[m Merge pull request #132 from marmoluik/codex/add-hybrid-flow-for-chat-and-form
+[33m2c4eeb9[m[33m ([m[1;31morigin/codex/add-hybrid-flow-for-chat-and-form[m[33m)[m feat(web): add plan wizard and chat handoff
+[33m7e3100d[m Merge pull request #131 from marmoluik/codex/add-traveler-style-profiles-feature
+[33m7a4f68c[m[33m ([m[1;31morigin/codex/add-traveler-style-profiles-feature[m[33m)[m Add traveler style profiles with onboarding and plan scoring
+[33mf040c0e[m Merge pull request #130 from marmoluik/codex/add-on-trip-ai-companion-features
+[33m8c273ca[m[33m ([m[1;31morigin/codex/add-on-trip-ai-companion-features[m[33m)[m feat: add on-trip chat actions
+[33m9418ed1[m Merge pull request #129 from marmoluik/codex/add-weather-aware-day-plan-adjustments
+[33me9e9f9d[m[33m ([m[1;31morigin/codex/add-weather-aware-day-plan-adjustments[m[33m)[m feat: add optional weather api key
+[33mf961c5b[m Merge pull request #128 from marmoluik/codex/add-real-time-flight-status-feature
+[33mafec473[m[33m ([m[1;31morigin/codex/add-real-time-flight-status-feature[m[33m)[m Add flight status monitoring and replan engine
+[33m37798ae[m Merge pull request #127 from marmoluik/codex/add-hands-off-mode-for-autonomous-booking
+[33ma160b3d[m[33m ([m[1;31morigin/codex/add-hands-off-mode-for-autonomous-booking[m[33m)[m feat: add hands-off automation policies
+[33m6fa2b86[m Error fixes and updates
+[33m2606c12[m Merge pull request #126 from marmoluik/codex/fix-errors-and-warnings-in-expo-project
+[33m1e9acb2[m[33m ([m[1;31morigin/codex/fix-errors-and-warnings-in-expo-project[m[33m)[m Configure background tasks and auth persistence
+[33mb02d308[m package updates
+[33m8a08362[m package updates
+[33m32e54ae[m Update package-lock.json
+[33m887dff8[m Merge pull request #100 from marmoluik/codex/refine-booking-links-and-affiliate-integrations
+[33mdca42ed[m[33m ([m[1;31morigin/codex/refine-booking-links-and-affiliate-integrations[m[33m)[m Add affiliate links sorting and tracking
+[33mebf1e69[m Merge pull request #99 from marmoluik/rfm1qa-codex/implement-chat-agent-with-travel-monitoring
+[33m557c6c8[m[33m ([m[1;31morigin/rfm1qa-codex/implement-chat-agent-with-travel-monitoring[m[33m)[m Merge branch 'main' into rfm1qa-codex/implement-chat-agent-with-travel-monitoring
+[33mf38c2fb[m fix: handle flexible search errors and define background task
+[33m9438634[m Merge pull request #97 from marmoluik/0knqr3-codex/implement-chat-agent-with-travel-monitoring
+[33mbb47bf0[m[33m ([m[1;31morigin/0knqr3-codex/implement-chat-agent-with-travel-monitoring[m[33m)[m feat: add travel agent functions and background monitoring
+[33me217df3[m Revert "Merge pull request #96 from marmoluik/codex/implement-chat-agent-with-travel-monitoring"
+[33m87f41dd[m Merge pull request #96 from marmoluik/codex/implement-chat-agent-with-travel-monitoring
+[33m072ced8[m[33m ([m[1;31morigin/codex/implement-chat-agent-with-travel-monitoring[m[33m)[m feat: add chat agent planning and background monitoring
+[33m72f4e87[m Merge pull request #95 from marmoluik/codex/integrate-flight-emission-estimates-api
+[33mc3bdc33[m[33m ([m[1;31morigin/codex/integrate-flight-emission-estimates-api[m[33m)[m feat: add emission estimates to flights
+[33m3b297ee[m Merge pull request #94 from marmoluik/codex/refactor-ai-travel-consultant-solution
+[33ma698640[m[33m ([m[1;31morigin/codex/refactor-ai-travel-consultant-solution[m[33m)[m feat: support Travel Impact Model
+[33m069a0d3[m New features
+[33m7267142[m expo-notifications
+[33m86533b8[m Merge pull request #93 from marmoluik/codex/create-autonomous-ai-travel-consultant-plan
+[33mcc9e5c2[m[33m ([m[1;31morigin/codex/create-autonomous-ai-travel-consultant-plan[m[33m)[m feat: add autonomous chat agent and background monitoring
+[33mf8dbb23[m Merge pull request #92 from marmoluik/codex/remove-dummy-account-usage
+[33m39e6797[m[33m ([m[1;31morigin/codex/remove-dummy-account-usage[m[33m)[m Merge branch 'main' into codex/remove-dummy-account-usage
+[33mf469c6b[m Remove dummy login component
+[33m5954eff[m Dummy login
+[33m3794cf3[m expo-random
+[33m00bc56a[m Merge pull request #91 from marmoluik/codex/remove-dummy-account-usage
+[33m1e20a17[m feat: replace dummy login with OAuth
+[33m1857afe[m Merge pull request #90 from marmoluik/codex/update-flight-and-booking-functionality
+[33m75e3430[m[33m ([m[1;31morigin/codex/update-flight-and-booking-functionality[m[33m)[m Improve booking links and flight search
+[33m4ea7735[m Merge pull request #89 from marmoluik/codex/fix-proxy-url-error-for-web
+[33m45e9682[m[33m ([m[1;31morigin/codex/fix-proxy-url-error-for-web[m[33m)[m fix web autocomplete
+[33m686e2e6[m Merge pull request #88 from marmoluik/codex/make-ui-changes-for-trip-details
+[33macab021[m[33m ([m[1;31morigin/codex/make-ui-changes-for-trip-details[m[33m)[m refactor: improve readability of trip views
+[33m1c694d0[m Merge pull request #87 from marmoluik/codex/fix-trip-generation-console-error
+[33m56db0a3[m[33m ([m[1;31morigin/codex/fix-trip-generation-console-error[m[33m)[m fix: adjust trip storage path and clean UI
+[33m56f7b00[m Revert "Merge pull request #86 from marmoluik/codex/fix-trip-generation-console-error"
+[33m3de81e3[m Merge pull request #86 from marmoluik/codex/fix-trip-generation-console-error
+[33m4cf8db4[m chore: improve trip generation
+[33m17062aa[m Revert "Merge pull request #85 from marmoluik/codex/fix-json5-parse-errors-in-trip-generation"
+[33ma230f79[m Merge pull request #85 from marmoluik/codex/fix-json5-parse-errors-in-trip-generation
+[33m0e0a57f[m[33m ([m[1;31morigin/codex/fix-json5-parse-errors-in-trip-generation[m[33m)[m Improve JSON parsing for trip generation
+[33mf66dcb7[m Merge pull request #84 from marmoluik/codex/improve-input-box-visibility-and-colors
+[33m519b3fe[m[33m ([m[1;31morigin/codex/improve-input-box-visibility-and-colors[m[33m)[m Improve form visibility and update colors
+[33m62a84b1[m Merge pull request #83 from marmoluik/codex/fix-trip-generation-errors
+[33mc33d7d0[m[33m ([m[1;31morigin/codex/fix-trip-generation-errors[m[33m)[m Improve trip plan parsing resilience
+[33maef68a7[m Merge pull request #82 from marmoluik/codex/fix-trip-generation-json-parse-error
+[33maaabde2[m[33m ([m[1;31morigin/codex/fix-trip-generation-json-parse-error[m[33m)[m Handle travel data parsing and Firestore permission errors
+[33m3221fdb[m Merge branch 'main' of https://github.com/marmoluik/WishWander-App
+[33md184c75[m Changes of branding
+[33m98ade24[m Merge pull request #81 from marmoluik/codex/update-color-palette-and-button-styles
+[33mb1a2ac6[m[33m ([m[1;31morigin/codex/update-color-palette-and-button-styles[m[33m)[m feat: refresh color palette
+[33m2d6fe2f[m Logo change and loading icon
+[33m6ff822b[m Merge pull request #80 from marmoluik/codex/update-color-palette-for-user-interface
+[33m4b838fa[m[33m ([m[1;31morigin/codex/update-color-palette-for-user-interface[m[33m)[m feat: refresh color palette with modern purple tones
+[33mc99c3e4[m Merge pull request #79 from marmoluik/codex/update-color-palette-to-yellows-and-oranges
+[33m98b1c71[m[33m ([m[1;31morigin/codex/update-color-palette-to-yellows-and-oranges[m[33m)[m feat: adopt warm color palette
+[33mb6c61d9[m Merge pull request #78 from marmoluik/jl0axx-codex/update-color-palette-for-better-balance
+[33m8866041[m Revert "color fix"
+[33madf84a5[m Revert "Merge branch 'main' of https://github.com/marmoluik/WishWander-App"
+[33mac6b553[m[33m ([m[1;31morigin/jl0axx-codex/update-color-palette-for-better-balance[m[33m)[m refactor: refresh app palette and lighten buttons
+[33m3ee20ae[m Merge branch 'main' of https://github.com/marmoluik/WishWander-App
+[33m9d4f8c1[m color fix
+[33m439e738[m Merge pull request #77 from marmoluik/2ty9b0-codex/update-color-palette-for-better-balance
+[33m8043032[m[33m ([m[1;31morigin/2ty9b0-codex/update-color-palette-for-better-balance[m[33m)[m refactor: update color palette and button styles
+[33m260a7e8[m Revert "Merge pull request #76 from marmoluik/codex/update-color-palette-for-better-balance"
+[33m8e80d38[m Merge pull request #76 from marmoluik/codex/update-color-palette-for-better-balance
+[33mc8de62d[m[33m ([m[1;31morigin/codex/update-color-palette-for-better-balance[m[33m)[m refactor: refresh color palette and button styles
+[33m2de10bf[m Revert "Merge pull request #75 from marmoluik/bkfadv-codex/update-color-palette-for-balance"
+[33m1725565[m Merge pull request #75 from marmoluik/bkfadv-codex/update-color-palette-for-balance
+[33m6edc288[m[33m ([m[1;31morigin/bkfadv-codex/update-color-palette-for-balance[m[33m)[m style: refresh color palette
