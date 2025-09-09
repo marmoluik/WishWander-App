@@ -344,7 +344,7 @@ export default function GenerateTrip() {
           itinerary,
           docId,
         });
-        router.push("/mytrip");
+        router.push("/(tabs)/mytrip");
       } else {
         setError("Unable to save trip. Please sign in and try again.");
       }

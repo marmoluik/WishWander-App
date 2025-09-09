@@ -45,7 +45,7 @@ export default function SignUp() {
       }
 
       // Navigate to the main app
-      router.replace("/mytrip");
+      router.replace("/(tabs)/mytrip");
     } catch (error: any) {
       // Handle specific Firebase auth errors
       switch (error.code) {

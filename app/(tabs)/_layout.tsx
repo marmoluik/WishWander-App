@@ -1,14 +1,12 @@
 import { Tabs } from "expo-router";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import HeaderLogo from "@/components/HeaderLogo";
 
 export default function TabLayout() {
   return (
     <Tabs
-      initialRouteName="index"
+      initialRouteName="mytrip"
       screenOptions={{
         headerShown: true,
         headerTitle: () => <HeaderLogo />,
@@ -23,23 +21,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="mytrip"
         options={{
-          tabBarLabel: "My Trips",
+          tabBarLabel: "Trips",
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name="location-sharp"
-              size={24}
-              color={focused ? "#9C00FF" : "#1E1B4B"}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="discover"
-        options={{
-          tabBarLabel: "Discover",
-          tabBarIcon: ({ focused }) => (
-            <MaterialIcons
-              name="travel-explore"
               size={24}
               color={focused ? "#9C00FF" : "#1E1B4B"}
             />
@@ -63,7 +48,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="chat"
         options={{
-          tabBarLabel: "Chat",
+          tabBarLabel: "Chats",
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name="chatbubbles"
@@ -81,19 +66,6 @@ export default function TabLayout() {
             <Ionicons
               name="settings-sharp"
               size={24}
-              color={focused ? "#9C00FF" : "#1E1B4B"}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          tabBarLabel: "Profile",
-          tabBarIcon: ({ focused }) => (
-            <FontAwesome
-              name="user-o"
-              size={21}
               color={focused ? "#9C00FF" : "#1E1B4B"}
             />
           ),

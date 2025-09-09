@@ -30,7 +30,7 @@ export default function HomeScreen() {
     );
   }
 
-  if (user) return <Redirect href="/mytrip" />;
+  if (user) return <Redirect href="/(tabs)/mytrip" />;
 
   return <Redirect href="/(auth)/welcome" />;
 }

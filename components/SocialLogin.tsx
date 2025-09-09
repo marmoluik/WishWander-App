@@ -28,7 +28,7 @@ const SocialLogin = () => {
       const { id_token } = gResponse.params;
       const credential = GoogleAuthProvider.credential(id_token);
       signInWithCredential(auth, credential)
-        .then(() => router.replace('/mytrip'))
+        .then(() => router.replace('/(tabs)/mytrip'))
         .catch((e) => alert('Google sign-in error: ' + e.message));
     }
   }, [gResponse]);
@@ -38,7 +38,7 @@ const SocialLogin = () => {
       const { access_token } = fbResponse.params;
       const credential = FacebookAuthProvider.credential(access_token);
       signInWithCredential(auth, credential)
-        .then(() => router.replace('/mytrip'))
+        .then(() => router.replace('/(tabs)/mytrip'))
         .catch((e) => alert('Facebook sign-in error: ' + e.message));
     }
   }, [fbResponse]);
