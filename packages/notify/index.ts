@@ -85,7 +85,10 @@ export async function notify(
   if (useMock) {
     try {
       const isNode =
-        typeof process !== 'undefined' && (process as any)?.versions?.node;
+        typeof process !== 'undefined' &&
+        (process as any)?.versions?.node &&
+        !(typeof navigator === 'object' && navigator.product === 'ReactNative');
+
       if (isNode) {
         const fs: any = (eval('require') as any)('fs');
         const path: any = (eval('require') as any)('path');
