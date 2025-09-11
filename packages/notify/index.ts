@@ -86,8 +86,8 @@ export async function notify(
     try {
       const isNode =
         typeof process !== 'undefined' &&
-        (process as any)?.versions?.node &&
-        typeof window === 'undefined';
+        typeof require === 'function' &&
+        (process as any)?.versions?.node;
 
       if (isNode) {
         const fs: any = (eval('require') as any)('fs');
