@@ -87,7 +87,7 @@ export async function notify(
       const isNode =
         typeof process !== 'undefined' &&
         (process as any)?.versions?.node &&
-        typeof navigator === 'undefined';
+        typeof window === 'undefined';
 
       if (isNode) {
         const fs: any = (eval('require') as any)('fs');
